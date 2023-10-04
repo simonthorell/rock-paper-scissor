@@ -2,13 +2,21 @@
 #include "aLCD.h"
 
 const int baud_rate = 9600;
-int i = 97;
+const char keys[4][4] = {
+    { '1', '2', '3', 'A'},
+    { '4', '5', '6', 'B'},
+    { '7', '8', '9', 'C'},
+    { '*', '0', '#', 'D'}
+};
+byte rowPins[4] = {11, 10, 9, 8};
+byte colPins[4] = {7, 6, 5, 4};
 
-//needs big scope
+Keypad myKeypad = Keypad(makeKeymap(keys), rowPins, colPins, 4, 4);
 LiquidCrystal_I2C lcd(0, 0, 0);
 
+
 //forward declarations
-void lcdDraw(LiquidCrystal_I2C *lcd, int i);
+void getChoice(char c);
 
 void setup()
 {
@@ -18,17 +26,40 @@ void setup()
 
 void loop()
 {
-    lcdDraw(&lcd, i);
-    delay(1000);
-    Serial.println(i);
-    i++;
+    char keyPressed = myKeypad.getKey();
+    if(keyPressed)
+        getChoice(keyPressed);
 }
 
-void lcdDraw(LiquidCrystal_I2C *lcd, int i)
+/* 
+Char byte values
+1 = 49
+2 = 50
+3 = 51
+ */
+void getChoice(char c)
 {
-    lcd->clear();
-    char a = (char)i;
-    lcd->setCursor(0, 0);
-    lcd->print(a);
-    Serial.println(a);
-}   
+    lcd.clear();
+    switch(c)
+    {
+        case 49:
+            Serial.println(1);
+            lcd.print("Sten");
+        break;
+        
+        case 50:
+            Serial.println(2);
+            lcd.print("Sax");
+        break;
+
+        case 51:
+            Serial.println(3);
+            lcd.print("Påse");
+        break;
+
+        default:
+            Serial.println("DEFAULT!");
+            lcd.print("Tryck på 123!");
+        break;
+    }
+}
