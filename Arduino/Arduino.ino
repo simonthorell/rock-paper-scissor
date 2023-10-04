@@ -30,6 +30,32 @@ void loop()
         getChoice(keyPressed);
 }
 
+
+/* 
+Preparing a interrupt for displaying if you win or lose later
+ */
+void serialEvent()
+{
+    char inChar;
+    if(Serial.available())
+    {
+        inChar = Serial.read();
+        Serial.println("Recieved data");
+        if(inChar == 'W')
+        {
+            Serial.println("W");
+            lcd.clear();
+            lcd.print("You won!");
+        }
+        else if(inChar == 'L')
+        {
+            Serial.println("L");
+            lcd.clear();
+            lcd.print("You lost!");
+        }
+    }
+}
+
 /* 
 Char byte values
 1 = 49
@@ -43,22 +69,22 @@ void getChoice(char c)
     {
         case 49:
             Serial.println(1);
-            lcd.print("Sten");
+            lcd.print("Rock");
         break;
         
         case 50:
             Serial.println(2);
-            lcd.print("Sax");
+            lcd.print("Paper");
         break;
 
         case 51:
             Serial.println(3);
-            lcd.print("Påse");
+            lcd.print("Scissor");
         break;
 
         default:
             Serial.println(4);
-            lcd.print("Tryck på 123!");
+            lcd.print("Press 1, 2 or 3!");
         break;
     }
 }
