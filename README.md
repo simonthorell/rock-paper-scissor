@@ -17,7 +17,7 @@ Muntlig redovisning sker med mig, högst 5-10 minuter.
 
 ## Krav för godkänt
 ● Programmet ska fungera enligt exemplet ovan eller på annat sätt kunna
-redovisa logiken bakom sten sax och påse.
+redovisa logiken bakom sten sax och påse.  
 ● Arbetet ska bedrivas i grupp och alla medlemmar ska vara delaktiga och förstå
-koden.
+koden.  
 ● Programmet ska vara utvecklat objektorienterat, tänk klasser och metoder.
