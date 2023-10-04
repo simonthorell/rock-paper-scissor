@@ -21,3 +21,24 @@ redovisa logiken bakom sten sax och påse.
 ● Arbetet ska bedrivas i grupp och alla medlemmar ska vara delaktiga och förstå
 koden.
 ● Programmet ska vara utvecklat objektorienterat, tänk klasser och metoder.
+
+## Git / Github
+
+# klona Github repo från din terminal: 
+gh repo clone simonthorell/StenSaxPase
+
+# Pusha endast commits till "dev" branch:
+git checkout dev
+
+# Hämta senaste commits från collaborators:
+git pull
+
+# För att stage och commit:
+git add .
+git commit -m "SKRIV DIN KOMMENTAR HÄR PÅ ENGELSKA"
+git push
+
+# För att merge dev branch to main när version av program är redo för produktion:
+git checkout main
+git merge dev
+git push origin main
