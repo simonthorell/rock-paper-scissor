@@ -1,3 +1,10 @@
+/* 
+This requires the LiquidCrystal and Keypad libraries included with the freenove ultimate starter kit download
+You also need to set your own paths to build it
+
+The Keypad is connected to pin 11 through 4
+the LCD is connected to A4 and A5
+ */
 #include <Keypad.h>
 #include "aLCD.h"
 
