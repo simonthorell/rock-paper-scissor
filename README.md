@@ -27,6 +27,9 @@ koden.
 # klona Github repo från din terminal: 
 gh repo clone simonthorell/StenSaxPase
 
+# Klona Github repo utan github CLI
+git clone https://github.com/simonthorell/StenSaxPase
+
 # Pusha endast commits till "dev" branch:
 git checkout dev
 
