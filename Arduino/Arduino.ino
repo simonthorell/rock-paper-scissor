@@ -14,7 +14,6 @@ byte colPins[4] = {7, 6, 5, 4};
 Keypad myKeypad = Keypad(makeKeymap(keys), rowPins, colPins, 4, 4);
 LiquidCrystal_I2C lcd(0, 0, 0);
 
-
 //forward declarations
 void getChoice(char c);
 
@@ -58,7 +57,7 @@ void getChoice(char c)
         break;
 
         default:
-            Serial.println("DEFAULT!");
+            Serial.println(4);
             lcd.print("Tryck på 123!");
         break;
     }
