@@ -19,9 +19,7 @@ client.connect(mqttClient, mqttPort)
 
 while True:
     if serialbus.in_waiting > 0:
-        
         message = serialbus.readline()
-        print(message)
         try:
             message = int(message)
             match message:
