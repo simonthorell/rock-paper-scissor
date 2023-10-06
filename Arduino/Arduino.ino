@@ -5,6 +5,16 @@ You also need to set your own paths to build it
 The Keypad is connected to pin 11 through 4
 the LCD is connected to A4 and A5
  */
+
+/* 
+TODO 
+Wait before a connection is established before promoting a ask for rock/paper/scissor
+
+promt on LCD asking for rock/paper/scissor
+
+wait for select confirmation before sending?
+*/
+
 #include <Keypad.h>
 #include "aLCD.h"
 
@@ -24,38 +34,33 @@ LiquidCrystal_I2C lcd(0, 0, 0);
 //forward declarations
 void getChoice(char c);
 
-void setup()
-{
+void setup(){
     lcd = aLCD::startLCD();
     Serial.begin(baud_rate);
 }
 
-void loop()
-{
+void loop(){
     char keyPressed = myKeypad.getKey();
     if(keyPressed)
         getChoice(keyPressed);
 }
 
-
 /* 
 Preparing a interrupt for displaying if you win or lose later
  */
-void serialEvent()
-{
+void serialEvent(){
     char inChar;
-    if(Serial.available())
-    {
+
+    if(Serial.available()){
         inChar = Serial.read();
         Serial.println("Recieved data");
-        if(inChar == 'W')
-        {
+
+        if(inChar == 'W'){
             Serial.println("W");
             lcd.clear();
             lcd.print("You won!");
         }
-        else if(inChar == 'L')
-        {
+        else if(inChar == 'L'){
             Serial.println("L");
             lcd.clear();
             lcd.print("You lost!");
@@ -69,8 +74,7 @@ Char byte values
 2 = 50
 3 = 51
  */
-void getChoice(char c)
-{
+void getChoice(char c){
     lcd.clear();
     switch(c)
     {
