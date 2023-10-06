@@ -11,7 +11,7 @@ public class Handler {
         
             // FOR TESTING OF ARDUINO MULTIPLAYER ONLY
             testMQTT();
-            runGame = false;
+            Thread.sleep(5000); // SLEEP FOR 5 SECONDS BEFORE RUNNING GAME AGAIN
         }
     }
 

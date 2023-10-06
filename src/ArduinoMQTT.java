@@ -54,7 +54,7 @@ public class ArduinoMQTT {
                 // Handle delivery complete
             }
         });
-        client.subscribe(playerTopic);  // Assuming `moveTopic` is the topic for incoming moves
+        client.subscribe(playerTopic);  // Assuming `playerTopic` is the topic for incoming moves
     }
 
     // Method 1 - Asking arduino player to play - returns the button pressed
