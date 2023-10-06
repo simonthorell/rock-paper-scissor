@@ -10,26 +10,34 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 /* EXAMPLE USAGE
     public static void main(String[] args) throws MqttException, InterruptedException {
-        ArduinoMQTT onlinePlayer1 = new ArduinoMQTT(playerID);
+        String displayMessage = "Push any button to play!";
+        String[] countDownMsg = {"3", "2", "1", "Rock", "Paper", "Scissors!"};
+        String gameResultMsg = "Player" + playerID + " won!"; 
+
+        ArduinoMQTT onlinePlayer1 = new ArduinoMQTT(playerID);  // Add playerID of player1
+        ArduinoMQTT onlinePlayer2 = new ArduinoMQTT(playerID);  // Add playerID of player2
         
         // Example usage of the methods
-        int chosenButton = onlinePlayer1.askToPlay();
-        onlinePlayer1.countDownAndThrow("3", "2", "1", "Rock", "Paper", "Scissors!");
+        int chosenButton = onlinePlayer1.askToPlay(displayMessage);
+        onlinePlayer1.countDownAndThrow(countDownMsg);
         int arduinoMove = onlinePlayer1.getArduinoMove();
+        ... do the same for player 2 ...
         
         // game logic here
+
+        onlinePlayer1.displayGameResult(gameResultMsg);
         
         onlinePlayer1.disconnect();  // Don't forget to disconnect at the end or when no longer needed
     }
 */ 
 
 public class ArduinoMQTT {
+    private MqttClient client;
+    private int playerID;
+    private String topic = "sten-sax-pase/player" + playerID;
 
-    MqttClient client;
-    int playerID;
-    String topic = "sten-sax-pase/" + playerID;
-
-    public ArduinoMQTT() throws MqttException {
+    public ArduinoMQTT(int playerID) throws MqttException {
+        this.playerID = playerID;
         String brokerUrl = "ssl://1c87c890092b4b9aaa4e1ca5a02dfc9e.s1.eu.hivemq.cloud:8883";
         String clientId = String.valueOf(playerID);
         client = new MqttClient(brokerUrl, clientId, new MemoryPersistence());
@@ -51,8 +59,8 @@ public class ArduinoMQTT {
     }
 
     // Method 1 - Asking arduino player to play - returns the button pressed
-    public int askToPlay() throws MqttException, InterruptedException {
-        client.publish(topic, new MqttMessage("Push any button to play!".getBytes()));
+    public int askToPlay(String displayMsg) throws MqttException, InterruptedException {
+        client.publish(topic, new MqttMessage(displayMsg.getBytes()));
         return getArduinoMove();
     }
 
@@ -99,6 +107,12 @@ public class ArduinoMQTT {
         return arduinoMove.get();
     }
 
+    // Method 4 - Displaying the game result on the Arduino
+    public void displayGameResult(String gameResultMsg) throws MqttException, InterruptedException {
+        client.publish(topic, new MqttMessage(gameResultMsg.getBytes()));
+    }
+
+    // Method 5 - Disconnecting from the MQTT broker
     public void disconnect() {
         if (client != null && client.isConnected()) {
             try {
