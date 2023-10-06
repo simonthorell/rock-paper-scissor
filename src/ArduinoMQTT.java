@@ -38,6 +38,7 @@ public class ArduinoMQTT {
 
     public ArduinoMQTT(int playerID) throws MqttException {
         this.playerID = playerID;
+        this.topic = "sten-sax-pase/player" + playerID;
         String brokerUrl = "ssl://1c87c890092b4b9aaa4e1ca5a02dfc9e.s1.eu.hivemq.cloud:8883";
         String clientId = String.valueOf(playerID);
         client = new MqttClient(brokerUrl, clientId, new MemoryPersistence());
