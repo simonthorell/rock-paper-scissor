@@ -12,6 +12,10 @@ public class ComputerStatus {
         this.name = "Computer";
     }
 
+    public int getPlayerID() {
+        return playerID;
+    }
+
     private int setRockPaperScissor() {
         // generate random number between 1 and 3
         // 1 = rock, 2 = paper, 3 = scissor
@@ -19,4 +23,26 @@ public class ComputerStatus {
         Random random = new Random();
         return random.nextInt(3) + 1;
     }
+
+    public int getRockPaperScissor() {
+        // 1 = rock, 2 = paper, 3 = scissor
+        return rockPaperScissor;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setScore(String score) {
+        this.name = score;
+    }
+
+    public int getScore() {
+        return score;
+    }
+    
 }
