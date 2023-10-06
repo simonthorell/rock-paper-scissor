@@ -2,6 +2,10 @@ import paho.mqtt.client as mqtt
 import json
 import serial
 
+""" 
+TODO RE-WRITE IN JAVA
+"""
+
 """
 You need to set your own stuff here for it to work 
 """
