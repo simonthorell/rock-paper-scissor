@@ -14,7 +14,7 @@ import java.util.concurrent.atomic.AtomicInteger;
         
         // Example usage of the methods
         int chosenButton = onlinePlayer.askToPlay();
-        game.countDownAndThrow();
+        onlinePlayer.countDownAndThrow();
         int arduinoMove = onlinePlayer.getArduinoMove();
         
         // game logic here
