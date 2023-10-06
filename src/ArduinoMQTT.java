@@ -5,40 +5,19 @@ import org.eclipse.paho.client.mqttv3.persist.MemoryPersistence;
 
 import javax.net.ssl.SSLSocketFactory;
 import java.util.Properties;
-import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.atomic.AtomicInteger;
-
-/* EXAMPLE USAGE
-    public static void main(String[] args) throws MqttException, InterruptedException {
-        String displayMessage = "Push any button to play!";
-        String[] countDownMsg = {"3", "2", "1", "Rock", "Paper", "Scissors!"};
-        String gameResultMsg = "Player" + playerID + " won!"; 
-
-        ArduinoMQTT onlinePlayer1 = new ArduinoMQTT(playerID);  // Add playerID of player1
-        ArduinoMQTT onlinePlayer2 = new ArduinoMQTT(playerID);  // Add playerID of player2
-        
-        // Example usage of the methods
-        int chosenButton = onlinePlayer1.askToPlay(displayMessage);
-        onlinePlayer1.countDownAndThrow(countDownMsg);
-        int arduinoMove = onlinePlayer1.getArduinoMove();
-        ... do the same for player 2 ...
-        
-        // game logic here
-
-        onlinePlayer1.displayGameResult(gameResultMsg);
-        
-        onlinePlayer1.disconnect();  // Don't forget to disconnect at the end or when no longer needed
-    }
-*/ 
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.LinkedBlockingQueue;
 
 public class ArduinoMQTT {
-    private MqttClient client;
+    private static MqttClient client;
     private int playerID;
-    private String topic = "sten-sax-pase/player" + playerID;
+    private String playerTopic = "sten-sax-pase/player" + playerID;
+    private static String messageTopic = "sten-sax-pase/message";
+    private BlockingQueue<Integer> messageQueue = new LinkedBlockingQueue<>();
 
     public ArduinoMQTT(int playerID) throws MqttException {
         this.playerID = playerID;
-        this.topic = "sten-sax-pase/player" + playerID;
+        this.playerTopic = "sten-sax-pase/player" + playerID;
         String brokerUrl = "ssl://1c87c890092b4b9aaa4e1ca5a02dfc9e.s1.eu.hivemq.cloud:8883";
         String clientId = String.valueOf(playerID);
         client = new MqttClient(brokerUrl, clientId, new MemoryPersistence());
@@ -57,60 +36,57 @@ public class ArduinoMQTT {
 
         // Connect
         client.connect(options);
+
+        client.setCallback(new MqttCallback() {
+            @Override
+            public void connectionLost(Throwable cause) {
+                // Handle connection lost
+            }
+        
+            @Override
+            public void messageArrived(String topic, MqttMessage message) throws Exception {
+                // Parse and add to queue
+                messageQueue.put(Integer.parseInt(new String(message.getPayload())));
+            }
+        
+            @Override
+            public void deliveryComplete(IMqttDeliveryToken token) {
+                // Handle delivery complete
+            }
+        });
+        client.subscribe(playerTopic);  // Assuming `moveTopic` is the topic for incoming moves
     }
 
     // Method 1 - Asking arduino player to play - returns the button pressed
-    public int askToPlay(String displayMsg) throws MqttException, InterruptedException {
-        client.publish(topic, new MqttMessage(displayMsg.getBytes()));
-        return getArduinoMove();
+    public static void askToPlay(String displayMsg) throws MqttException, InterruptedException {
+        client.publish(messageTopic, new MqttMessage(displayMsg.getBytes()));
+        // return getArduinoMove();
     }
 
     // Method 2 - Sending a countdown over MQTT that is displayed on the Arduino
-    public void countDownAndThrow(String[] messages) throws MqttException, InterruptedException {
+    public static void countDownAndThrow(String[] messages) throws MqttException, InterruptedException {
         // EXAMPLE: String[] messages = {"3", "2", "1", "Rock", "Paper", "Scissors!"};
         for (String msg : messages) {
-            client.publish(topic, new MqttMessage(msg.getBytes()));
+            client.publish(messageTopic, new MqttMessage(msg.getBytes()));
             Thread.sleep(1000);  // 1 second pause
         }
     }
 
     // Method 3 - Getting the Arduino player's move - returns the button pressed
-    public int getArduinoMove() throws InterruptedException {
-        AtomicInteger arduinoMove = new AtomicInteger(-1);
-        CountDownLatch latch = new CountDownLatch(1);  // To wait for a message from Arduino
-
-        client.setCallback(new MqttCallback() {
-            @Override
-            public void connectionLost(Throwable cause) {
-                // Implement what should happen if the connection is lost
-            }
-
-            @Override
-            public void messageArrived(String topic, MqttMessage message) throws Exception {
-                arduinoMove.set(Integer.parseInt(new String(message.getPayload())));
-                latch.countDown();  // Release the latch
-            }
-
-            @Override
-            public void deliveryComplete(IMqttDeliveryToken token) {
-                // Implement what should happen when delivery is complete
-            }
-        });
-
-        // Subscribe to get Arduino’s move
+    public int getArduinoMove() {
         try {
-            client.subscribe(topic);
-            latch.await();  // Wait for Arduino's move
-        } catch (MqttException e) {
-            e.printStackTrace();
+            // Simply take the next move from the queue, waiting if necessary
+            return messageQueue.take();
+        } catch (InterruptedException e) {
+            // Log and handle interruption appropriately for your use case
+            Thread.currentThread().interrupt();
+            return -1;  // Or handle it in some other appropriate manner
         }
-
-        return arduinoMove.get();
     }
 
     // Method 4 - Displaying the game result on the Arduino
-    public void displayGameResult(String gameResultMsg) throws MqttException, InterruptedException {
-        client.publish(topic, new MqttMessage(gameResultMsg.getBytes()));
+    public static void displayGameResult(String gameResultMsg) throws MqttException, InterruptedException {
+        client.publish(messageTopic, new MqttMessage(gameResultMsg.getBytes()));
     }
 
     // Method 5 - Disconnecting from the MQTT broker
