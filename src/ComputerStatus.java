@@ -29,10 +29,6 @@ public class ComputerStatus {
         return rockPaperScissor;
     }
 
-    public void setName(String name) {
-        this.name = name;
-    }
-
     public String getName() {
         return name;
     }
@@ -44,5 +40,5 @@ public class ComputerStatus {
     public int getScore() {
         return score;
     }
-    
+
 }
