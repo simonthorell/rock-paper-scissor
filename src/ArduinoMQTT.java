@@ -10,27 +10,28 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 /* EXAMPLE USAGE
     public static void main(String[] args) throws MqttException, InterruptedException {
-        ArduinoMQTT onlinePlayer = new ArduinoMQTT();
+        ArduinoMQTT onlinePlayer1 = new ArduinoMQTT(playerID);
         
         // Example usage of the methods
-        int chosenButton = onlinePlayer.askToPlay();
-        onlinePlayer.countDownAndThrow();
-        int arduinoMove = onlinePlayer.getArduinoMove();
+        int chosenButton = onlinePlayer1.askToPlay();
+        onlinePlayer1.countDownAndThrow("3", "2", "1", "Rock", "Paper", "Scissors!");
+        int arduinoMove = onlinePlayer1.getArduinoMove();
         
         // game logic here
         
-        onlinePlayer.disconnect();  // Don't forget to disconnect at the end or when no longer needed
+        onlinePlayer1.disconnect();  // Don't forget to disconnect at the end or when no longer needed
     }
 */ 
 
 public class ArduinoMQTT {
 
     MqttClient client;
-    String topic = "game/rps/java";
+    int playerID;
+    String topic = "sten-sax-pase/" + playerID;
 
     public ArduinoMQTT() throws MqttException {
         String brokerUrl = "ssl://1c87c890092b4b9aaa4e1ca5a02dfc9e.s1.eu.hivemq.cloud:8883";
-        String clientId = "JavaRPSSample";
+        String clientId = String.valueOf(playerID);
         client = new MqttClient(brokerUrl, clientId, new MemoryPersistence());
 
         // Connection options
@@ -51,13 +52,13 @@ public class ArduinoMQTT {
 
     // Method 1 - Asking arduino player to play - returns the button pressed
     public int askToPlay() throws MqttException, InterruptedException {
-        client.publish("game/rps/java", new MqttMessage("Push any button to play!".getBytes()));
+        client.publish(topic, new MqttMessage("Push any button to play!".getBytes()));
         return getArduinoMove();
     }
 
     // Method 2 - Sending a countdown over MQTT that is displayed on the Arduino
-    public void countDownAndThrow() throws MqttException, InterruptedException {
-        String[] messages = {"3", "2", "1", "Rock", "Paper", "Scissors!"};
+    public void countDownAndThrow(String[] messages) throws MqttException, InterruptedException {
+        // EXAMPLE: String[] messages = {"3", "2", "1", "Rock", "Paper", "Scissors!"};
         for (String msg : messages) {
             client.publish(topic, new MqttMessage(msg.getBytes()));
             Thread.sleep(1000);  // 1 second pause
