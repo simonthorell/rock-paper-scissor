@@ -24,7 +24,7 @@ const char *scissor = "Scissor";
 uint8_t playerID = 0;
 uint8_t waiting = 0;
 char pressedKey;
-byte selected = 0b0000;
+byte selected;
 bool waitForResult = false;
 
 Keypad myKeypad = Keypad(makeKeymap(keys), rowPins, colPins, 4, 4);
@@ -126,17 +126,17 @@ void getKeypadPress(char c){
         break;
 
         case 49:
-            selected = 0b0001;
+            selected = 0b001;
             printSelection(rock);
         break;
         
         case 50:
-            selected = 0b0010;
+            selected = 0b010;
             printSelection(paper);
         break;
 
         case 51:
-            selected = 0b0100;
+            selected = 0b100;
             printSelection(scissor);
         break;
 
@@ -165,11 +165,11 @@ void printSelection(const char* str)
 }
 
 const char * getSelection(byte flags){
-    if(flags & 0b0001)
+    if(flags & 0b001)
         return rock;
-    if(flags & 0b0010)
+    if(flags & 0b010)
         return paper;
-    if(flags & 0b0100)
+    if(flags & 0b100)
         return scissor;
     return "how the fuck";
 }
