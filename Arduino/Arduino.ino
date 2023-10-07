@@ -93,7 +93,7 @@ void serialEvent(){
             lcd.clear();
             lcd.print("You lost!");
         }
-        else{
+        else if(playerID == 0){
             lcd.clear();
             playerID = inChar;
             lcd.print("PlayerID: ");
@@ -111,7 +111,6 @@ Char byte values
 3 = 51
  */
 void getKeypadPress(char c){
-    //lcd.clear();
     switch(c){
         case 49:
             Serial.println(1);
