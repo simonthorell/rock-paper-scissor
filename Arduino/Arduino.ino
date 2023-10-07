@@ -6,15 +6,6 @@ The Keypad is connected to pin 11 through 4
 the LCD is connected to A4 and A5
  */
 
-/* 
-TODO 
-Wait before a connection is established before promoting a ask for rock/paper/scissor
-
-promt on LCD asking for rock/paper/scissor
-
-wait for select confirmation before sending?
-*/
-
 #include <Keypad.h>
 #include "aLCD.h"
 
