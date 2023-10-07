@@ -9,6 +9,10 @@ the LCD is connected to A4 and A5
 #include <Keypad.h>
 #include "aLCD.h"
 
+#define rockBitFlag 0b001
+#define paperBitFlag 0b010
+#define scissorBitFlag 0b100
+
 const int baud_rate = 9600;
 const char keys[4][4] = {
     { '1', '2', '3', 'A'},
@@ -126,17 +130,17 @@ void getKeypadPress(char c){
         break;
 
         case 49:
-            selected = 0b001;
+            selected = rockBitFlag;
             printSelection(rock);
         break;
         
         case 50:
-            selected = 0b010;
+            selected = paperBitFlag;
             printSelection(paper);
         break;
 
         case 51:
-            selected = 0b100;
+            selected = scissorBitFlag;
             printSelection(scissor);
         break;
 
@@ -165,11 +169,11 @@ void printSelection(const char* str)
 }
 
 const char * getSelection(byte flags){
-    if(flags & 0b001)
+    if(flags & rockBitFlag)
         return rock;
-    if(flags & 0b010)
+    if(flags & paperBitFlag)
         return paper;
-    if(flags & 0b100)
+    if(flags & scissorBitFlag)
         return scissor;
     return "how the fuck";
 }
