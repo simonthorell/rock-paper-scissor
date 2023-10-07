@@ -26,10 +26,15 @@ const char keys[4][4] = {
     { '*', '0', '#', 'D'}};
 byte rowPins[4] = {11, 10, 9, 8};
 byte colPins[4] = {7, 6, 5, 4};
+const char *rock = "Rock";
+const char *paper = "Paper";
+const char *scissor = "Scissor";
 
 uint8_t playerID = 0;
 uint8_t waiting = 0;
 char pressedKey;
+byte selected = 0b0000;
+bool waitForResult = false;
 
 Keypad myKeypad = Keypad(makeKeymap(keys), rowPins, colPins, 4, 4);
 LiquidCrystal_I2C lcd(0, 0, 0);
@@ -37,7 +42,8 @@ LiquidCrystal_I2C lcd(0, 0, 0);
 //forward declarations, do you even need these for the compiler here?
 void getKeypadPress(char c);
 void waitForID();
-void printSelection(char* str);
+void printSelection(const char* str);
+const char * getSelection(byte flags);
 
 
 void setup(){
@@ -46,10 +52,15 @@ void setup(){
 }
 
 void loop(){
-    if(playerID == 0 ? false : true){
+    if(playerID == 0 ? false : true && waitForResult == false){
         pressedKey = myKeypad.getKey();
         if(pressedKey)
             getKeypadPress(pressedKey);
+    }
+    else if(playerID == 0 ? false : true && waitForResult == true){
+        lcd.setCursor(0, 1);
+        lcd.print("Waiting for result");
+        delay(500);
     }
     else{
         waitForID();
@@ -83,15 +94,17 @@ void serialEvent(){
         inChar = Serial.read();
         Serial.println("Recieved data");
 
-        if(inChar == 'W'){
+        if(inChar == 'W' && playerID != 0){
             Serial.println("W");
             lcd.clear();
             lcd.print("You won!");
+            waitForResult = false;
         }
-        else if(inChar == 'L'){
+        else if(inChar == 'L' && playerID != 0){
             Serial.println("L");
             lcd.clear();
             lcd.print("You lost!");
+            waitForResult = false;
         }
         else if(playerID == 0){
             lcd.clear();
@@ -106,25 +119,34 @@ void serialEvent(){
 
 /* 
 Char byte values
+* = 42
 1 = 49
 2 = 50
 3 = 51
  */
 void getKeypadPress(char c){
     switch(c){
+        case 42:
+            Serial.println(selected);
+            lcd.clear();
+            lcd.print("SENT: ");
+            lcd.print(getSelection(selected));
+            waitForResult = true;
+        break;
+
         case 49:
-            Serial.println(1);
-            printSelection("Rock");
+            selected = 0b0001;
+            printSelection(rock);
         break;
         
         case 50:
-            Serial.println(2);
-            printSelection("Paper");
+            selected = 0b0010;
+            printSelection(paper);
         break;
 
         case 51:
-            Serial.println(3);
-            printSelection("Scissor");
+            selected = 0b0100;
+            printSelection(scissor);
         break;
 
         default:
@@ -132,11 +154,12 @@ void getKeypadPress(char c){
             lcd.print("Press 1, 2 or 3!");
             lcd.setCursor(0, 1);
             lcd.print(c);
+            lcd.print((int)c);
         break;
     }
 }
 
-void printSelection(char* str)
+void printSelection(const char* str)
 {
     lcd.clear();
     lcd.print("Selected: ");
@@ -146,4 +169,16 @@ void printSelection(char* str)
         i++;
     }  */      
     lcd.print(str);
+    lcd.setCursor(0, 1);
+    lcd.print("* to confirm");
+}
+
+const char * getSelection(byte flags){
+    if(flags & 0b0001)
+        return rock;
+    if(flags & 0b0010)
+        return paper;
+    if(flags & 0b0100)
+        return scissor;
+    return "how the fuck";
 }
