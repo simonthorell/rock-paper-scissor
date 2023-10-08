@@ -38,12 +38,14 @@ def on_message(client, userdata, message):
     latest_playerID = payload_json.get('playerID')
     expectReturn = payload_json.get('expectReturn')
 
-    if playerID is None:
+    if playerID is None and latest_playerID == 1:
         print(f"\n{display_message}")
     elif display_message == None:
         pass
     elif latest_playerID is None:
         print(f"{display_message}")
+    elif latest_playerID != playerID:
+        pass
     else:
         print("Waiting for other players...")
         expectReturn = False

@@ -106,13 +106,12 @@ public class ArduinoMQTT {
     }
 
     // Ask MQTT player to play again
-    public static void playAgain(String playAgainMsg) throws MqttException, InterruptedException {
+    public static void askToPlayAgain(String playAgainMsg) throws MqttException, InterruptedException {
         JSONObject jsonMsg = new JSONObject();
         jsonMsg.put("message", playAgainMsg);
         jsonMsg.put("expectReturn", true);
         client.publish(messageTopic, new MqttMessage(jsonMsg.toString().getBytes()));
     }
-
 
     // Disconnecting from the MQTT broker
     public void disconnect() {
