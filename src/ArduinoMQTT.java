@@ -54,21 +54,21 @@ public class ArduinoMQTT {
                 // Handle delivery complete
             }
         });
-        client.subscribe(playerTopic);  // Assuming `playerTopic` is the topic for incoming moves
+
+        client.subscribe(playerTopic);  // Subscribe to each player topic
     }
 
-    // Method 1 - Asking arduino player to play - returns the button pressed
+    // Method 1 - Asking arduino player to play, assigning playerID for topic - returns the button pressed
     public void askToPlay(String displayMsg, int countPlayerID) throws MqttException, InterruptedException {
         JSONObject jsonMsg = new JSONObject();
         jsonMsg.put("message", displayMsg);
         jsonMsg.put("playerID", countPlayerID);
         client.publish(messageTopic, new MqttMessage(jsonMsg.toString().getBytes()));
-        // client.publish(messageTopic, new MqttMessage(displayMsg.getBytes()));
     }
 
     // Method 2 - Sending a countdown over MQTT that is displayed on the Arduino
     public static void countDownAndThrow(String[] messages) throws MqttException, InterruptedException {
-        // EXAMPLE: String[] messages = {"3", "2", "1", "Rock", "Paper", "Scissors!"};
+        // EXAMPLE: String[] messages = {"3", "2", "1", "Rock, Paper, Scissors!"};
         for (String msg : messages) {
             client.publish(messageTopic, new MqttMessage(msg.getBytes()));
             Thread.sleep(1000);  // 1 second pause
