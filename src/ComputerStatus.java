@@ -2,13 +2,13 @@ import java.util.Random;
 
 public class ComputerStatus {
     private int playerID;
-    private int rockPaperScissor;
+    private int playerMove;
     private String name;
     private int score;
 
     public ComputerStatus(int playerID) {
         this.playerID = playerID;
-        this.rockPaperScissor = setRockPaperScissor();
+        this.playerMove = setPlayerMove();
         this.name = "Computer";
     }
 
@@ -16,7 +16,7 @@ public class ComputerStatus {
         return playerID;
     }
 
-    private int setRockPaperScissor() {
+    private int setPlayerMove() {
         // generate random number between 1 and 3
         // 1 = rock, 2 = paper, 3 = scissor
         // set this.rockPaperScissor to the random number
@@ -24,9 +24,9 @@ public class ComputerStatus {
         return random.nextInt(3) + 1;
     }
 
-    public int getRockPaperScissor() {
+    public int getPlayerMove() {
         // 1 = rock, 2 = paper, 3 = scissor
-        return rockPaperScissor;
+        return playerMove;
     }
 
     public String getName() {

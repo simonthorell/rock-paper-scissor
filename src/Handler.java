@@ -50,10 +50,10 @@ public class Handler {
 
         MqttPlayer.countDownAndThrow(countDownMsg);
 
-        player1.setRockPaperScissor(player1.mqttPlayer().getMove());
-        player2.setRockPaperScissor(player2.mqttPlayer().getMove());
+        player1.setPlayerMove(player1.mqttPlayer().getMove());
+        player2.setPlayerMove(player2.mqttPlayer().getMove());
 
-        GameLogic gameLogic = new GameLogic(player1.getRockPaperScissor(), player2.getRockPaperScissor());
+        GameLogic gameLogic = new GameLogic(player1.getPlayerMove(), player2.getPlayerMove());
         int winner = gameLogic.getWinner();
 
         if (winner == 0) {
