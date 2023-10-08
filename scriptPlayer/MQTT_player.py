@@ -14,11 +14,11 @@ latest_playerID = None
 rockPaperScissor = None
 countDown = 3
 
-def on_connect(client, rc):    
+def on_connect(client, userdata, flags, rc):    
     print(f"Connected with result code {str(rc)}")
     client.subscribe(f"{TOPIC_PREFIX}message")
 
-def on_message(message):
+def on_message(client, userdata, message):
     global latest_playerID
     global countDown
 
