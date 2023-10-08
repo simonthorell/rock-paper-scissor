@@ -48,7 +48,7 @@ public class Handler {
         PlayerStatus player1 = next2Players.get(0);
         PlayerStatus player2 = next2Players.get(1);
 
-        mqttPlayer.countDownAndThrow(countDownMsg);
+        MqttPlayer.countDownAndThrow(countDownMsg);
 
         player1.setRockPaperScissor(player1.mqttPlayer().getMove());
         player2.setRockPaperScissor(player2.mqttPlayer().getMove());
@@ -57,13 +57,13 @@ public class Handler {
         int winner = gameLogic.getWinner();
 
         if (winner == 0) {
-            mqttPlayer.displayGameResult("Tie!");
+            MqttPlayer.displayGameResult("Tie!");
         } else if (winner == 1) {
-            mqttPlayer.displayGameResult("Player 1 won!");
+            MqttPlayer.displayGameResult("Player 1 won!");
         } else if (winner == 2) {
-            mqttPlayer.displayGameResult("Player 2 won!");
+            MqttPlayer.displayGameResult("Player 2 won!");
         } else {
-            mqttPlayer.displayGameResult("Error!");
+            MqttPlayer.displayGameResult("Error!");
         }
 
         for (PlayerStatus currentPlayer : players) {

@@ -5,13 +5,13 @@ public class PlayerStatus {
     private int rockPaperScissor;
     private String name;
     private int score;
-    private mqttPlayer mqttPlayer;
+    private MqttPlayer mqttPlayer;
 
     public PlayerStatus(int playerID, boolean isMqttPlayer) throws MqttException {
         this.playerID = playerID;
 
         if (isMqttPlayer) {
-            mqttPlayer = new mqttPlayer(playerID);
+            mqttPlayer = new MqttPlayer(playerID);
         }
     }
 
@@ -45,7 +45,7 @@ public class PlayerStatus {
         return score;
     }
 
-    public mqttPlayer mqttPlayer() {
+    public MqttPlayer mqttPlayer() {
         return mqttPlayer;
     }
 
