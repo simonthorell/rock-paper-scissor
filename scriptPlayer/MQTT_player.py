@@ -38,13 +38,13 @@ def on_message(client, userdata, message):
     latest_playerID = payload_json.get('playerID')
     expectReturn = payload_json.get('expectReturn')
 
-    if playerID is None and latest_playerID == 1:
+    if (playerID is None) and (latest_playerID is 1):
         print(f"\n{display_message}")
-    elif display_message == None:
+    elif display_message is None:
         pass
     elif latest_playerID is None:
         print(f"{display_message}")
-    elif (playerID is None) and (latest_playerID != playerID):
+    elif (playerID is None) and (latest_playerID is not playerID):
         pass
         expectReturn = False
     else:
