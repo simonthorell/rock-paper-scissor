@@ -18,7 +18,7 @@ askForInput = False
 def waiting(wait_message):
     global expectReturn
     while not expectReturn:
-        print(f"\r{wait_message}", end="", flush=True)
+        print(f"\r\033[3m{wait_message}\033[0m", end="", flush=True)
         for _ in range(5):
             sleep(0.5)
             if expectReturn: 
@@ -26,7 +26,7 @@ def waiting(wait_message):
             print(".", end="", flush=True)
 
 def on_connect(client, userdata, flags, rc):    
-    print(f"Connected successfully to Sten Sax Påse! (result code {str(rc)})")
+    print(f"\033[1mConnected successfully to Sten Sax Påse!\033[0m \033[3m(Connection result code {str(rc)})\033[0m")
     client.subscribe(f"{TOPIC_PREFIX}message")
 
 def on_message(client, userdata, message):
@@ -79,7 +79,7 @@ if __name__ == "__main__":
     user_input_thread = threading.Thread(target=user_input, args=(client,))
 
     listener_thread.start()
-    sleep(3) # Give some time for the connection to establish
+    sleep(2.2) # Give some time for the connection to establish
     waiting("Waiting for host to start game")
     user_input_thread.start()
 
