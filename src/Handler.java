@@ -37,7 +37,7 @@ public class Handler {
             countPlayerID++;
             PlayerStatus currentPlayer = new PlayerStatus(countPlayerID, true);
             players.add(currentPlayer);
-            currentPlayer.arduino().askToPlay(displayMessage); // Send msg as object with msg and next available player ID/topic
+            currentPlayer.arduino().askToPlay(displayMessage, countPlayerID); // Send msg as object with msg and next available player ID/topic
             currentPlayer.arduino().getMove(); // Get move from player
         }
 

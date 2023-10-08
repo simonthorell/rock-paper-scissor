@@ -1,5 +1,3 @@
-// Import JAR-file and save in lib-folder
-// https://repo1.maven.org/maven2/org/eclipse/paho/org.eclipse.paho.client.mqttv3/1.2.5/
 import org.eclipse.paho.client.mqttv3.*;
 import org.eclipse.paho.client.mqttv3.persist.MemoryPersistence;
 
@@ -7,6 +5,8 @@ import javax.net.ssl.SSLSocketFactory;
 import java.util.Properties;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
+
+import org.json.JSONObject;
 
 public class ArduinoMQTT {
     private static MqttClient client;
@@ -58,8 +58,12 @@ public class ArduinoMQTT {
     }
 
     // Method 1 - Asking arduino player to play - returns the button pressed
-    public void askToPlay(String displayMsg) throws MqttException, InterruptedException {
-        client.publish(messageTopic, new MqttMessage(displayMsg.getBytes()));
+    public void askToPlay(String displayMsg, int countPlayerID) throws MqttException, InterruptedException {
+        JSONObject jsonMsg = new JSONObject();
+        jsonMsg.put("message", displayMsg);
+        jsonMsg.put("playerID", countPlayerID);
+        client.publish(messageTopic, new MqttMessage(jsonMsg.toString().getBytes()));
+        // client.publish(messageTopic, new MqttMessage(displayMsg.getBytes()));
     }
 
     // Method 2 - Sending a countdown over MQTT that is displayed on the Arduino
