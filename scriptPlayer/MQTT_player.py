@@ -44,8 +44,9 @@ def on_message(client, userdata, message):
         pass
     elif latest_playerID is None:
         print(f"{display_message}")
-    elif latest_playerID != playerID:
+    elif (playerID is None) and (latest_playerID != playerID):
         pass
+        expectReturn = False
     else:
         print("Waiting for other players...")
         expectReturn = False
