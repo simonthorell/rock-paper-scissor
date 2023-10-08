@@ -8,7 +8,7 @@ import java.util.concurrent.LinkedBlockingQueue;
 
 import org.json.JSONObject;
 
-public class mqttPlayer {
+public class MqttPlayer {
     private static MqttClient client;
     private int playerID;
     private String playerTopic = "sten-sax-pase/player" + playerID;
@@ -16,7 +16,7 @@ public class mqttPlayer {
     private BlockingQueue<String> messageQueue = new LinkedBlockingQueue<>();
 
     // Constructor method - connecting to the MQTT broker
-    public mqttPlayer(int playerID) throws MqttException {
+    public MqttPlayer(int playerID) throws MqttException {
         this.playerID = playerID;
         this.playerTopic = "sten-sax-pase/player" + playerID;
         String brokerUrl = "ssl://1c87c890092b4b9aaa4e1ca5a02dfc9e.s1.eu.hivemq.cloud:8883";
