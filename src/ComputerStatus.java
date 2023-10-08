@@ -33,8 +33,8 @@ public class ComputerStatus {
         return name;
     }
 
-    public void setScore(String score) {
-        this.name = score;
+    public void setScore(int score) {
+        this.score = score;
     }
 
     public int getScore() {

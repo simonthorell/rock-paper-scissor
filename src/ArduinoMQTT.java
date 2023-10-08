@@ -58,9 +58,8 @@ public class ArduinoMQTT {
     }
 
     // Method 1 - Asking arduino player to play - returns the button pressed
-    public static void askToPlay(String displayMsg) throws MqttException, InterruptedException {
+    public void askToPlay(String displayMsg) throws MqttException, InterruptedException {
         client.publish(messageTopic, new MqttMessage(displayMsg.getBytes()));
-        // return getArduinoMove();
     }
 
     // Method 2 - Sending a countdown over MQTT that is displayed on the Arduino
@@ -73,7 +72,7 @@ public class ArduinoMQTT {
     }
 
     // Method 3 - Getting the Arduino player's move - returns the button pressed
-    public int getArduinoMove() {
+    public int getMove() {
         try {
             // Simply take the next move from the queue, waiting if necessary
             return messageQueue.take();

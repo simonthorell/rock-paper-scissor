@@ -1,11 +1,18 @@
+import org.eclipse.paho.client.mqttv3.MqttException;
+
 public class PlayerStatus {
     private int playerID;
     private int rockPaperScissor;
     private String name;
     private int score;
+    private ArduinoMQTT arduinoMQTT;
 
-    public PlayerStatus(int playerID) {
+    public PlayerStatus(int playerID, boolean isArduino) throws MqttException {
         this.playerID = playerID;
+
+        if (isArduino) {
+            arduinoMQTT = new ArduinoMQTT(playerID);
+        }
     }
 
     public int getPlayerID() {
@@ -30,12 +37,16 @@ public class PlayerStatus {
         return name;
     }
 
-    public void setScore(String score) {
-        this.name = score;
+    public void setScore(int score) {
+        this.score = score;
     }
 
     public int getScore() {
         return score;
+    }
+
+    public ArduinoMQTT arduino() {
+        return arduinoMQTT;
     }
 
 }
