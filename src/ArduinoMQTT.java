@@ -63,6 +63,7 @@ public class ArduinoMQTT {
         JSONObject jsonMsg = new JSONObject();
         jsonMsg.put("message", displayMsg);
         jsonMsg.put("playerID", countPlayerID);
+        jsonMsg.put("expectReturn", true);
         client.publish(messageTopic, new MqttMessage(jsonMsg.toString().getBytes()));
     }
 
@@ -72,9 +73,13 @@ public class ArduinoMQTT {
         for (String msg : messages) {
             JSONObject jsonMsg = new JSONObject();
             jsonMsg.put("message", msg);
+            jsonMsg.put("expectReturn", false);
             client.publish(messageTopic, new MqttMessage(jsonMsg.toString().getBytes()));
             Thread.sleep(1000);  // 1 second pause
         }
+        JSONObject jsonMsg = new JSONObject();
+        jsonMsg.put("expectReturn", true);
+        client.publish(messageTopic, new MqttMessage(jsonMsg.toString().getBytes()));
     }
 
     // Method 3 - Getting the Arduino player's move - returns the button pressed
@@ -95,6 +100,7 @@ public class ArduinoMQTT {
     public static void displayGameResult(String gameResultMsg) throws MqttException, InterruptedException {
         JSONObject jsonMsg = new JSONObject();
         jsonMsg.put("message", gameResultMsg);
+        jsonMsg.put("expectReturn", false);
         client.publish(messageTopic, new MqttMessage(jsonMsg.toString().getBytes()));
     }
 

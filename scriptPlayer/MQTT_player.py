@@ -40,12 +40,12 @@ def on_message(client, userdata, message):
 
     if playerID is None:
         print(f"\n{payload_json.get('message')}")
-        askForInput = True
+        askForInput = payload_json.get('expectReturn')
+    elif payload_json.get('message') == None:
+        askForInput = payload_json.get('expectReturn')
     elif payload_json.get('playerID') is None:
         print(f"{payload_json.get('message')}")
-        counter -= 1
-        if counter < 0:
-            askForInput = True
+        askForInput = payload_json.get('expectReturn')
     else:
         print("Waiting for new players to join...")
         askForInput = False
@@ -70,8 +70,7 @@ def user_input(client):
 
             client.publish(f"{TOPIC_PREFIX}player{playerID}", json.dumps({"message": user_command}))
             askForInput = False
-
-        sleep(1)
+            
 
 if __name__ == "__main__":
     client = mqtt.Client()
