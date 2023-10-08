@@ -1,4 +1,5 @@
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import org.eclipse.paho.client.mqttv3.MqttException;
 
@@ -41,10 +42,11 @@ public class Handler {
         }
 
         // TOURNAMENT TREE GAME LOGIC HERE
+        TournamentTree tournamentTree = new TournamentTree(players);
+        List<PlayerStatus> next2Players = Arrays.asList(tournamentTree.nextGame()); // Play next game in tournament tree
 
-        // THIS LOGICS SHOULD ONLY RUN 2 PLAYERS AGAINST EACH OTHER AT A TIME - BELOW IS ONLY FOR TESTING USING FIRST 2 PLAYERS IN LIST. 
-        PlayerStatus player1 = players.get(0);
-        PlayerStatus player2 = players.get(1);
+        PlayerStatus player1 = next2Players.get(0);
+        PlayerStatus player2 = next2Players.get(1);
 
         ArduinoMQTT.countDownAndThrow(countDownMsg);
 
