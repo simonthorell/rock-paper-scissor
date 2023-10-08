@@ -15,6 +15,7 @@ public class ArduinoMQTT {
     private static String messageTopic = "sten-sax-pase/message";
     private BlockingQueue<String> messageQueue = new LinkedBlockingQueue<>();
 
+    // Constructor method - connecting to the MQTT broker
     public ArduinoMQTT(int playerID) throws MqttException {
         this.playerID = playerID;
         this.playerTopic = "sten-sax-pase/player" + playerID;
@@ -58,7 +59,7 @@ public class ArduinoMQTT {
         client.subscribe(playerTopic);  // Subscribe to each player topic
     }
 
-    // Method 1 - Asking arduino player to play, assigning playerID for topic - returns the button pressed
+    // Asking arduino player to play, assigning playerID for topic - returns the button pressed
     public void askToPlay(String displayMsg, int countPlayerID) throws MqttException, InterruptedException {
         JSONObject jsonMsg = new JSONObject();
         jsonMsg.put("message", displayMsg);
@@ -67,7 +68,7 @@ public class ArduinoMQTT {
         client.publish(messageTopic, new MqttMessage(jsonMsg.toString().getBytes()));
     }
 
-    // Method 2 - Sending a countdown over MQTT that is displayed on the Arduino
+    // Sending a countdown over MQTT that is displayed on the Arduino
     public static void countDownAndThrow(String[] messages) throws MqttException, InterruptedException {
         // EXAMPLE: String[] messages = {"3", "2", "1", "Rock, Paper, Scissors!"};
         for (String msg : messages) {
@@ -82,7 +83,7 @@ public class ArduinoMQTT {
         client.publish(messageTopic, new MqttMessage(jsonMsg.toString().getBytes()));
     }
 
-    // Method 3 - Getting the Arduino player's move - returns the button pressed
+    // Getting the Arduino player's move - returns the button pressed
     public int getMove() {
         try {
             // Simply take the next move from the queue, waiting if necessary
@@ -96,7 +97,7 @@ public class ArduinoMQTT {
         }
     }
 
-    // Method 4 - Displaying the game result on the Arduino
+    // Displaying the game result on the Arduino
     public static void displayGameResult(String gameResultMsg) throws MqttException, InterruptedException {
         JSONObject jsonMsg = new JSONObject();
         jsonMsg.put("message", gameResultMsg);
@@ -104,7 +105,16 @@ public class ArduinoMQTT {
         client.publish(messageTopic, new MqttMessage(jsonMsg.toString().getBytes()));
     }
 
-    // Method 5 - Disconnecting from the MQTT broker
+    // Ask MQTT player to play again
+    public static void playAgain(String playAgainMsg) throws MqttException, InterruptedException {
+        JSONObject jsonMsg = new JSONObject();
+        jsonMsg.put("message", playAgainMsg);
+        jsonMsg.put("expectReturn", true);
+        client.publish(messageTopic, new MqttMessage(jsonMsg.toString().getBytes()));
+    }
+
+
+    // Disconnecting from the MQTT broker
     public void disconnect() {
         if (client != null && client.isConnected()) {
             try {
