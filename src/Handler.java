@@ -37,8 +37,8 @@ public class Handler {
             countPlayerID++;
             PlayerStatus currentPlayer = new PlayerStatus(countPlayerID, true);
             players.add(currentPlayer);
-            currentPlayer.arduino().askToPlay(displayMessage, countPlayerID); // Send msg as object with msg and next available player ID/topic
-            currentPlayer.arduino().getMove(); // Get move from player
+            currentPlayer.mqttPlayer().askToPlay(displayMessage, countPlayerID); // Send msg as object with msg and next available player ID/topic
+            currentPlayer.mqttPlayer().getMove(); // Get move from player
         }
 
         // TOURNAMENT TREE GAME LOGIC HERE
@@ -48,26 +48,26 @@ public class Handler {
         PlayerStatus player1 = next2Players.get(0);
         PlayerStatus player2 = next2Players.get(1);
 
-        ArduinoMQTT.countDownAndThrow(countDownMsg);
+        mqttPlayer.countDownAndThrow(countDownMsg);
 
-        player1.setRockPaperScissor(player1.arduino().getMove());
-        player2.setRockPaperScissor(player2.arduino().getMove());
+        player1.setRockPaperScissor(player1.mqttPlayer().getMove());
+        player2.setRockPaperScissor(player2.mqttPlayer().getMove());
 
         GameLogic gameLogic = new GameLogic(player1.getRockPaperScissor(), player2.getRockPaperScissor());
         int winner = gameLogic.getWinner();
 
         if (winner == 0) {
-            ArduinoMQTT.displayGameResult("Tie!");
+            mqttPlayer.displayGameResult("Tie!");
         } else if (winner == 1) {
-            ArduinoMQTT.displayGameResult("Player 1 won!");
+            mqttPlayer.displayGameResult("Player 1 won!");
         } else if (winner == 2) {
-            ArduinoMQTT.displayGameResult("Player 2 won!");
+            mqttPlayer.displayGameResult("Player 2 won!");
         } else {
-            ArduinoMQTT.displayGameResult("Error!");
+            mqttPlayer.displayGameResult("Error!");
         }
 
         for (PlayerStatus currentPlayer : players) {
-            currentPlayer.arduino().disconnect();
+            currentPlayer.mqttPlayer().disconnect();
         }
     }
 
