@@ -22,20 +22,23 @@ serialbus = serial.Serial(usbPort, baud_rate, timeout = 1)
 client = mqtt.Client()
 client.connect(mqttClient, mqttPort)
 
-def wtfisarduinosending(incomingByte):
+def arduinoDecode(incomingByte):
     match incomingByte:
         
         case 49: #Ascii 1
             print("RECIEVED Rock")
             sendRandomToArduino() # Send over MQTT here
+            mqttDummySend("ROCK")
             
         case 50: #Ascii 2
             print("RECIEVED Paper")
             sendRandomToArduino()
+            mqttDummySend("PAPER")
             
         case 52: #Ascii 4
             print("RECIEVED Scissor")
             sendRandomToArduino()
+            mqttDummySend("SCISSOR")
             
         case 0b01000100: #upper case D, last in needs player ID
             print("Sent player ID x01")
@@ -50,6 +53,9 @@ def sendRandomToArduino():
     else:
         print("SENT L")
         serialbus.write(b'L')
+        
+def mqttDummySend(value):
+    client.publish(value)
 
 
 while True:
@@ -57,4 +63,4 @@ while True:
         message = serialbus.readline()
         print("RECIEVED: " + str(message))
         for a_byte in message: #Go through byte by byte
-            wtfisarduinosending(a_byte)
+            arduinoDecode(a_byte)
