@@ -1,6 +1,7 @@
+import time
 import paho.mqtt.client as mqtt
-import json
 import serial
+from random import randint
 
 """ 
 TODO RE-WRITE IN JAVA
@@ -21,25 +22,39 @@ serialbus = serial.Serial(usbPort, baud_rate, timeout = 1)
 client = mqtt.Client()
 client.connect(mqttClient, mqttPort)
 
+def wtfisarduinosending(incomingByte):
+    match incomingByte:
+        
+        case 49: #Ascii 1
+            print("RECIEVED Rock")
+            sendRandomToArduino() # Send over MQTT here
+            
+        case 50: #Ascii 2
+            print("RECIEVED Paper")
+            sendRandomToArduino()
+            
+        case 52: #Ascii 4
+            print("RECIEVED Scissor")
+            sendRandomToArduino()
+            
+        case 0b01000100: #upper case D, last in needs player ID
+            print("Sent player ID x01")
+            serialbus.write(b'\x01') #player ID 1, should wait for response from MQTT here
+            
+            
+def sendRandomToArduino():
+    time.sleep(3)
+    if randint(0, 1) == 1:
+        print("SENT W")
+        serialbus.write(b'W') 
+    else:
+        print("SENT L")
+        serialbus.write(b'L')
+
+
 while True:
     if serialbus.in_waiting > 0:
         message = serialbus.readline()
-        try:
-            message = int(message)
-            match message:
-                case 1:
-                    client.publish(mqttTopic, 1)
-                    print(1)
-
-                case 2:
-                    client.publish(mqttTopic, 2)
-                    print(2)
-
-                case 3:
-                    client.publish(mqttTopic, 3)
-                    print(3)
-
-                case _:
-                    print("Read a invalid value from the port!")
-        except:
-            pass
+        print("RECIEVED: " + str(message))
+        for a_byte in message: #Go through byte by byte
+            wtfisarduinosending(a_byte)
