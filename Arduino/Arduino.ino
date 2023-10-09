@@ -6,6 +6,10 @@ The Keypad is connected to pin 11 through 4
 the LCD is connected to A4 and A5
  */
 
+/* 
+Fix pressing star doesnt instantly resend the same after W/L
+ */
+
 #include <Keypad.h>
 #include "aLCD.h"
 
