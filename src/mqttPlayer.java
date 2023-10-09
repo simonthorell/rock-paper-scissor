@@ -105,6 +105,15 @@ public class MqttPlayer {
         client.publish(messageTopic, new MqttMessage(jsonMsg.toString().getBytes()));
     }
 
+    public static void displayNextMatch(TournamentTree.Node nextMatch) throws MqttException, InterruptedException {
+        JSONObject jsonMsg = new JSONObject();
+        jsonMsg.put("player1Id", nextMatch.player1.getPlayerID());
+        jsonMsg.put("player2Id", nextMatch.player2.getPlayerID());
+        // jsonMsg.put("message", nextMatch.player1.getPlayerID());
+        jsonMsg.put("expectReturn", false);
+        client.publish(messageTopic, new MqttMessage(jsonMsg.toString().getBytes()));
+    }
+
     // Ask MQTT player to play again
     public static void askToPlayAgain(String playAgainMsg) throws MqttException, InterruptedException {
         JSONObject jsonMsg = new JSONObject();

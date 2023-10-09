@@ -24,7 +24,7 @@ public class Handler {
 
     public void multiPlayer() throws MqttException, InterruptedException {
         // [Adjustable] MAX_PLAYERS could be dynamic based on a GUI interaction or game setup stage
-        final int MAX_PLAYERS = 2; 
+        final int MAX_PLAYERS = 4; 
         String displayMessage = "Push any button to play!";
         String[] countDownMsg = {"3", "2", "1", "Rock, Paper, Scissors!"};
         boolean waitForPlayers = true;
@@ -40,9 +40,10 @@ public class Handler {
 
         // TOURNAMENT LOGIC HERE...
         TournamentTree tournamentTree = new TournamentTree(players);
-
+        
         while (true) {
             TournamentTree.Node nextMatch = tournamentTree.nextGame();
+            MqttPlayer.displayNextMatch(nextMatch);
 
             if (nextMatch == null) {
                 System.out.println("Tournament over!");
