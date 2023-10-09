@@ -10,17 +10,24 @@ TODO RE-WRITE IN JAVA
 """
 You need to set your own stuff here for it to work 
 """
+
+#USB stuff
 baud_rate = 9600
+usbPort = "COM3"
+serialbus = serial.Serial(usbPort, baud_rate, timeout = 1)
+
+
+
+#MQTT stuff
 mqttClient = "test.mosquitto.org"
 mqttPort = 1883
 mqttTopic = "nacka/mqttTest"
-usbPort = "COM3"
-
-
-serialbus = serial.Serial(usbPort, baud_rate, timeout = 1)
-
 client = mqtt.Client()
 client.connect(mqttClient, mqttPort)
+
+
+
+
 
 def arduinoDecode(incomingByte):
     match incomingByte:
