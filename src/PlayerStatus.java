@@ -15,6 +15,10 @@ public class PlayerStatus {
         }
     }
 
+    public PlayerStatus (int playerID){
+        this.playerID = playerID;
+    }
+
     public int getPlayerID() {
         return playerID;
     }
