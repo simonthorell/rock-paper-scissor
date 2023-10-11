@@ -11,6 +11,11 @@ import java.io.IOException;
 public class GUISimple{
 
     private static JFrame frame;
+    private static JLayeredPane bottomContainer;
+    private static JPanel menuLayer;
+    private static JLabel singleMulti;
+    private static JButton singlePlayerButton;
+    private static JButton multiPlayerButton;
     private static JPanel container;
     private static JPanel top;
     private static JPanel topLeft;
@@ -68,11 +73,22 @@ public class GUISimple{
     public static void window(){
 
         frame = new JFrame();
-        frame.setSize(800, 600);
+        frame.setSize(800, 640);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setLocationRelativeTo(null);
         frame.setResizable(false);
         frame.setVisible(true);
+
+        bottomContainer = new JLayeredPane();
+
+        menuLayer = new JPanel(new GridLayout(3, 1));
+        menuLayer.setBounds(250, 150, 200, 200);
+        menuLayer.setBackground(Color.GRAY);
+        menuLayer.setVisible(true);
+        
+        singleMulti = new JLabel("<html><h3>Choose Game Setting!</h3></html>");
+        singlePlayerButton = new JButton("<html><h2>SINGLEPLAYER</h2></html>");
+        multiPlayerButton = new JButton("<html><h2>MULTIPLAYER</h2></html>");
 
         container = new JPanel(new GridLayout(2, 1));
         container.setSize(800, 600);
@@ -140,8 +156,11 @@ public class GUISimple{
 
         bottomMiddle = new JPanel(new GridLayout(3, 1));
         rockButton = new JButton("<html><h1>ROCK</h1></html>");
+        rockButton.setEnabled(false);
         paperButton = new JButton("<html><h1>PAPER</h1></html>");
+        paperButton.setEnabled(false);
         scissorButton = new JButton("<html><h1>SCISSOR</h1></html>");
+        scissorButton.setEnabled(false);
 
         bottomRight = new JPanel(new GridLayout(2, 1));
         bottomRight.setSize(300, 300);
@@ -154,7 +173,15 @@ public class GUISimple{
         bottomRightBottom = new JPanel();
         cpuName = new JLabel("<html><h1>COMPUTER</h1></html>");
 
-        frame.add(container);
+        frame.add(bottomContainer);
+
+        bottomContainer.add(container, JLayeredPane.DEFAULT_LAYER);
+        bottomContainer.add(menuLayer, JLayeredPane.PALETTE_LAYER);
+
+        menuLayer.add(singleMulti);
+        menuLayer.add(singlePlayerButton);
+        menuLayer.add(multiPlayerButton);
+
         container.add(top);
         container.add(bottom);
         top.add(topLeft);
@@ -222,6 +249,15 @@ public class GUISimple{
             player2.setComputerMove();
             scenario();
         });
+        singlePlayerButton.addActionListener((ActionEvent e) -> {
+            menuLayer.setVisible(false);
+            rockButton.setEnabled(true);
+            paperButton.setEnabled(true);
+            scissorButton.setEnabled(true);
+         });
+         singlePlayerButton.addActionListener((ActionEvent e) -> {
+            menuLayer.setVisible(false);
+         });
     }
 
     private static BufferedImage loadImage(String sheetPath) {
