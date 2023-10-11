@@ -200,7 +200,7 @@ public class GUISimple{
             playerWin.setText(null);
             cpuWin.setText(null);
 
-            player1.setPlayerMove(1);
+            player1.setPlayerMove(0);
             System.out.println(player1.getPlayerMove());
             scenario();
             // Handler.pressedButton(1);
@@ -213,7 +213,7 @@ public class GUISimple{
             playerWin.setText(null);
             cpuWin.setText(null);
 
-            player1.setPlayerMove(2);
+            player1.setPlayerMove(1);
             System.out.println(player1.getPlayerMove());
             scenario();
             // Handler.pressedButton(2);
@@ -226,7 +226,7 @@ public class GUISimple{
             playerWin.setText(null);
             cpuWin.setText(null);
 
-            player1.setPlayerMove(3);
+            player1.setPlayerMove(2);
             System.out.println(player1.getPlayerMove());
             scenario();
             // Handler.pressedButton(3);
