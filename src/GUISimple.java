@@ -198,6 +198,7 @@ public class GUISimple{
             playerWin.setText(null);
             cpuWin.setText(null);
             scenario(1); // for testing
+            Handler.pressedButton(1);
         });
 
         paperButton.addActionListener((ActionEvent e) -> {
@@ -206,6 +207,7 @@ public class GUISimple{
             playerWin.setText(null);
             cpuWin.setText(null);
             scenario(6); // for testing
+            Handler.pressedButton(2);
         });
 
         scissorButton.addActionListener((ActionEvent e) -> {
@@ -214,6 +216,7 @@ public class GUISimple{
             playerWin.setText(null);
             cpuWin.setText(null);
             scenario(8); // for testing
+            Handler.pressedButton(3);
         });
     }
 
@@ -246,7 +249,7 @@ public class GUISimple{
         }
     }
 
-    private static void startDisplayAction(int player, int cpu, int wld){
+    public static void startDisplayAction(int player, int cpu, int wld){
         
         rockButton.setEnabled(false);
         paperButton.setEnabled(false);
@@ -325,44 +328,44 @@ public class GUISimple{
         }
     }
 
-    public static void scenario(int option){
+    // public static void scenario(int option){
 
-        if (option == 1){ // 1 - 1
-            rockButton.setEnabled(false);
-            startDisplayAction(0, 3, 1);     
-        }
+    //     if (option == 1){ // 1 - 1
+    //         rockButton.setEnabled(false);
+    //         startDisplayAction(0, 3, 1);     
+    //     }
 
-        if (option == 2){ // 1 - 2
-            startDisplayAction(0, 4, 3);
-        }
+    //     if (option == 2){ // 1 - 2
+    //         startDisplayAction(0, 4, 3);
+    //     }
         
-        if (option == 3){ // 1 - 3
-            startDisplayAction(0, 5, 2);
-        }
+    //     if (option == 3){ // 1 - 3
+    //         startDisplayAction(0, 5, 2);
+    //     }
         
-        if (option == 4){ // 2 - 1
-            startDisplayAction(1, 3, 2);
-        }
+    //     if (option == 4){ // 2 - 1
+    //         startDisplayAction(1, 3, 2);
+    //     }
         
-        if (option == 5){ // 2 - 2
-            startDisplayAction(1, 4, 1);
-        }
+    //     if (option == 5){ // 2 - 2
+    //         startDisplayAction(1, 4, 1);
+    //     }
         
-        if (option == 6){ // 2 - 3
-            startDisplayAction(1, 5, 3);
-        }
+    //     if (option == 6){ // 2 - 3
+    //         startDisplayAction(1, 5, 3);
+    //     }
         
-        if (option == 7){ // 3 - 1
-            startDisplayAction(2, 3, 3);
-        }
+    //     if (option == 7){ // 3 - 1
+    //         startDisplayAction(2, 3, 3);
+    //     }
         
-        if (option == 8){ // 3 - 2
-            startDisplayAction(2, 4, 2);
-        }
+    //     if (option == 8){ // 3 - 2
+    //         startDisplayAction(2, 4, 2);
+    //     }
 
-        if (option == 9){ // 3 - 3
-            startDisplayAction(2, 5, 1);
-        }
+    //     if (option == 9){ // 3 - 3
+    //         startDisplayAction(2, 5, 1);
+    //     }
     
-    }
+    // }
 }
