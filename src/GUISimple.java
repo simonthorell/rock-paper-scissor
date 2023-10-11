@@ -284,14 +284,14 @@ public class GUISimple{
     }
 
     private static void winLooseDraw(int wld){
-        if(wld == 1){
+        if(wld == 0){
             draw.setText("<html><h1>DRAW!</h1></html>");  
-        }else if(wld == 2){
+        }else if(wld == 1){
             playerWin.setText("<html><h1>WIN!</h1></html>");
             pScore++;
             playerScore.setText("<html><h1>"+pScore+"</h1></html>");
             gameFinnished();
-        }else if(wld == 3){
+        }else if(wld == 2){
             cpuWin.setText("<html><h1>WIN!</h1></html>");
             cScore++;
             cpuScore.setText("<html><h1>"+cScore+"</h1></html>");
