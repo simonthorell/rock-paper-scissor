@@ -201,6 +201,7 @@ public class GUISimple{
             cpuWin.setText(null);
 
             player1.setPlayerMove(1);
+            System.out.println(player1.getPlayerMove());
             scenario();
             // Handler.pressedButton(1);
             // Handler.scenario();
@@ -213,6 +214,7 @@ public class GUISimple{
             cpuWin.setText(null);
 
             player1.setPlayerMove(2);
+            System.out.println(player1.getPlayerMove());
             scenario();
             // Handler.pressedButton(2);
             // Handler.scenario();
@@ -225,12 +227,12 @@ public class GUISimple{
             cpuWin.setText(null);
 
             player1.setPlayerMove(3);
+            System.out.println(player1.getPlayerMove());
             scenario();
             // Handler.pressedButton(3);
             // Handler.scenario();
         });
     }
-
 
 
     private static BufferedImage loadImage(String sheetPath) {
