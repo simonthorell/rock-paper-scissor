@@ -75,7 +75,7 @@ void waitForID(){
     lcd.print("Connecting");
     for(int i = 0; i <= waiting % 3; i++)
         lcd.print(".");
-    delay(500);
+    delay(1000);
     waiting++;
 }
 
