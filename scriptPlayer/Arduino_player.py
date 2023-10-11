@@ -5,6 +5,7 @@ import paho.mqtt.client as mqtt
 import serial
 import threading
 import uuid
+import os
 
 #USB stuff
 baud_rate = 9600
@@ -71,7 +72,13 @@ def arduinoUSBDecode(incoming_byte, client, serial_bus):
                 serial_bus.write(player_id.to_bytes(1, "big"))
 
 def serial_listen(client):
-    serial_bus = serial.Serial(usb_port, baud_rate, timeout = 1)
+    try:
+        serial_bus = serial.Serial(usb_port, baud_rate, timeout = 1)
+        
+    except:
+        print(f"Unable to open serial port {usb_port} terminating")
+        os._exit(1)
+        
     
     while True:
         if serial_bus.in_waiting > 0:
