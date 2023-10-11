@@ -41,7 +41,7 @@ public class Handler {
         }
     }
 
-    public void setOption(){
+    public void scenario(){
         if (computer.getPlayerMove() == 1 && player.getPlayerMove() == 1){
             GUISimple.startDisplayAction(0, 3, 1); 
         } 
@@ -54,35 +54,23 @@ public class Handler {
         if (computer.getPlayerMove() == 2 && player.getPlayerMove() == 1){
             GUISimple.startDisplayAction(1, 3, 2);
         }
-    }
-
-    public static void scenario (int option){
-
-        
-        if (option == 4){ // 2 - 1
-            GUISimple.startDisplayAction(1, 3, 2);
-        }
-        
-        if (option == 5){ // 2 - 2
+        if (computer.getPlayerMove() == 2 && player.getPlayerMove() == 2){
             GUISimple.startDisplayAction(1, 4, 1);
         }
-        
-        if (option == 6){ // 2 - 3
+        if (computer.getPlayerMove() == 2 && player.getPlayerMove() == 3){
             GUISimple.startDisplayAction(1, 5, 3);
         }
-        
-        if (option == 7){ // 3 - 1
+        if (computer.getPlayerMove() == 3 && player.getPlayerMove() == 1){
             GUISimple.startDisplayAction(2, 3, 3);
         }
-        
-        if (option == 8){ // 3 - 2
+        if (computer.getPlayerMove() == 3 && player.getPlayerMove() == 2){
             GUISimple.startDisplayAction(2, 4, 2);
         }
-
-        if (option == 9){ // 3 - 3
+        if (computer.getPlayerMove() == 3 && player.getPlayerMove() == 3){
             GUISimple.startDisplayAction(2, 5, 1);
         }
     }
+
 
     public void multiPlayer() throws MqttException, InterruptedException {
         // [Adjustable] MAX_PLAYERS could be dynamic based on a GUI interaction or game setup stage
