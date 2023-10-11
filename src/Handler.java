@@ -10,6 +10,7 @@ public class Handler {
 
     public Handler() throws MqttException, InterruptedException {
         while (runGame) {
+            GUISimple.window();
             // Add GUI interactions and other pre-game setup here...
 
             multiPlayer();

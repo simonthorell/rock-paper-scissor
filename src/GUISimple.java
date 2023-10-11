@@ -367,12 +367,4 @@ public class GUISimple{
         }
     
     }
-
-    
-
-    // main method is only here for testing!
-    public static void main (String[] args) throws MqttException, InterruptedException{
-        new Handler();
-        window();
-    }
 }
