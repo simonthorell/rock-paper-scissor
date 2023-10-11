@@ -10,18 +10,18 @@ USERNAME = "W-bot"
 PASSWORD = "W-bot123!"
 TOPIC_PREFIX = "sten-sax-pase/"
 
-playerID = None
-latest_playerID = None
-expectReturn = False
-askForInput = False
+player_id = None
+latest_player_id = None
+expect_return = False
+ask_for_input = False
 
 def waiting(wait_message):
-    global expectReturn
-    while not expectReturn:
+    global expect_return
+    while not expect_return:
         print(f"\r\033[3m{wait_message}\033[0m", end="", flush=True)
         for _ in range(5):
             sleep(0.5)
-            if expectReturn: 
+            if expect_return: 
                 break
             print(".", end="", flush=True)
 
@@ -30,28 +30,28 @@ def on_connect(client, userdata, flags, rc):
     client.subscribe(f"{TOPIC_PREFIX}message")
 
 def on_message(client, userdata, message):
-    global expectReturn, playerID, latest_playerID, askForInput
+    global expect_return, player_id, latest_player_id, ask_for_input
 
     payload_str = message.payload.decode('utf-8')
     payload_json = json.loads(payload_str)
     display_message = payload_json.get('message')
-    latest_playerID = payload_json.get('playerID')
-    expectReturn = payload_json.get('expectReturn')
+    latest_player_id = payload_json.get('playerID')
+    expect_return = payload_json.get('expectReturn')
 
-    if (playerID is None) and (latest_playerID is 1):
+    if (player_id is None) and (latest_player_id is 1):
         print(f"\n{display_message}")
     elif display_message is None:
         pass
-    elif latest_playerID is None:
+    elif latest_player_id is None:
         print(f"{display_message}")
-    elif (playerID is None) and (latest_playerID is not playerID):
+    elif (player_id is None) and (latest_player_id is not player_id):
         pass
-        expectReturn = False
+        expect_return = False
     else:
         print("Waiting for other players...")
-        expectReturn = False
+        expect_return = False
 
-    askForInput = expectReturn
+    ask_for_input = expect_return
 
 def mqtt_listener(client):
     client.on_connect = on_connect
@@ -61,18 +61,18 @@ def mqtt_listener(client):
     client.loop_forever()
 
 def user_input(client):
-    global playerID, latest_playerID, askForInput
+    global player_id, latest_player_id, ask_for_input
     
     while True:
-        if askForInput is True:
+        if ask_for_input is True:
             user_command = input("Enter a command: ")
 
-            if playerID is None:
-                playerID = latest_playerID
-                print(f"Welcome Player {playerID}!")
+            if player_id is None:
+                player_id = latest_player_id
+                print(f"Welcome Player {player_id}!")
 
-            client.publish(f"{TOPIC_PREFIX}player{playerID}", json.dumps({"message": user_command}))
-            askForInput = False
+            client.publish(f"{TOPIC_PREFIX}player{player_id}", json.dumps({"message": user_command}))
+            ask_for_input = False
 
 if __name__ == "__main__":
     client = mqtt.Client()
