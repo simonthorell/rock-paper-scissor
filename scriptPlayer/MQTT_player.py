@@ -96,6 +96,7 @@ def arduinoUSBDecode(incoming_byte, client, serial_bus):
             print("requesting player ID")
             player_id = None #temp shit
             latest_player_id = 1 #temp shit
+            #just copied the structure from user_input()
             if player_id == None:
                 player_id = latest_player_id
                 serial_bus.write(player_id.to_bytes(1, "big")) #Convert to 1 byte so arduino can read

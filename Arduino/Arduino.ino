@@ -179,5 +179,5 @@ const char * getSelection(byte flags){
         return paper;
     if(flags & scissorBitFlag)
         return scissor;
-    return "how the fuck";
+    return NULL;
 }
