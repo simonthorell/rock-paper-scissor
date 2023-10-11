@@ -89,7 +89,6 @@ public class GUISimple{
 
         playerHand = new JLabel();
 
-
         topMiddle = new JPanel(new GridLayout(2, 1));
         topMiddle.setSize(800/3, 300);
         topMiddle.setAlignmentX(800/3);
@@ -199,12 +198,9 @@ public class GUISimple{
             draw.setText(null);
             playerWin.setText(null);
             cpuWin.setText(null);
-
             player1.setPlayerMove(0);
-            System.out.println(player1.getPlayerMove());
+            player2.setComputerMove();
             scenario();
-            // Handler.pressedButton(1);
-            // Handler.scenario();
         });
 
         paperButton.addActionListener((ActionEvent e) -> {
@@ -212,12 +208,9 @@ public class GUISimple{
             draw.setText(null);
             playerWin.setText(null);
             cpuWin.setText(null);
-
             player1.setPlayerMove(1);
-            System.out.println(player1.getPlayerMove());
+            player2.setComputerMove();
             scenario();
-            // Handler.pressedButton(2);
-            // Handler.scenario();
         });
 
         scissorButton.addActionListener((ActionEvent e) -> {
@@ -225,15 +218,11 @@ public class GUISimple{
             draw.setText(null);
             playerWin.setText(null);
             cpuWin.setText(null);
-
             player1.setPlayerMove(2);
-            System.out.println(player1.getPlayerMove());
+            player2.setComputerMove();
             scenario();
-            // Handler.pressedButton(3);
-            // Handler.scenario();
         });
     }
-
 
     private static BufferedImage loadImage(String sheetPath) {
         try {
@@ -344,7 +333,6 @@ public class GUISimple{
     public static void scenario() {
         GameLogic gameLogic = new GameLogic(player1.getPlayerMove(), player2.getPlayerMove());
         startDisplayAction(player1.getPlayerMove(), player2.getPlayerMove(), gameLogic.getWinner());
-
     }
 
     // public static void scenario(int option){

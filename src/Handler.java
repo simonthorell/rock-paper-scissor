@@ -29,49 +29,6 @@ public class Handler {
         GUISimple.player2 = player2;
     }
 
-    // public static void pressedButton(int buttonPressed){
-    //     if (buttonPressed == 1){
-    //         player.setPlayerMove(1);
-
-    //     } else if (buttonPressed == 2){
-    //         player.setPlayerMove(2);
-
-    //     } else if (buttonPressed == 3){
-    //         player.setPlayerMove(3);
-    //     }
-    // }
-
-    // public void scenario(){
-    //     if (computer.getPlayerMove() == 1 && player.getPlayerMove() == 1){
-    //         GUISimple.startDisplayAction(0, 3, 1); 
-    //     } 
-    //     if (computer.getPlayerMove() == 1 && player.getPlayerMove() == 2){
-    //         GUISimple.startDisplayAction(0, 4, 3);
-    //     }
-    //     if (computer.getPlayerMove() == 1 && player.getPlayerMove() == 3){
-    //         GUISimple.startDisplayAction(0, 5, 2);
-    //     }
-    //     if (computer.getPlayerMove() == 2 && player.getPlayerMove() == 1){
-    //         GUISimple.startDisplayAction(1, 3, 2);
-    //     }
-    //     if (computer.getPlayerMove() == 2 && player.getPlayerMove() == 2){
-    //         GUISimple.startDisplayAction(1, 4, 1);
-    //     }
-    //     if (computer.getPlayerMove() == 2 && player.getPlayerMove() == 3){
-    //         GUISimple.startDisplayAction(1, 5, 3);
-    //     }
-    //     if (computer.getPlayerMove() == 3 && player.getPlayerMove() == 1){
-    //         GUISimple.startDisplayAction(2, 3, 3);
-    //     }
-    //     if (computer.getPlayerMove() == 3 && player.getPlayerMove() == 2){
-    //         GUISimple.startDisplayAction(2, 4, 2);
-    //     }
-    //     if (computer.getPlayerMove() == 3 && player.getPlayerMove() == 3){
-    //         GUISimple.startDisplayAction(2, 5, 1);
-    //     }
-    // }
-
-
     public void multiPlayer() throws MqttException, InterruptedException {
         // [Adjustable] MAX_PLAYERS could be dynamic based on a GUI interaction or game setup stage
         final int MAX_PLAYERS = 4; 
