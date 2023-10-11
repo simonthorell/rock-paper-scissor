@@ -55,6 +55,8 @@ public class ArduinoMQTT {
                 messageQueue.put(new String(message.getPayload()));
                 if(!sentPlayerID){ //If we've sent out player ID no need to listen to it anymore
                     getIDRequest();
+                }else if(sentPlayerID){
+                    
                 }
             }
         
@@ -73,13 +75,20 @@ public class ArduinoMQTT {
             JSONObject jsonIncMsg = new JSONObject(jsonMessage);
             if(jsonIncMsg.has("MAC"))
             {
+                if(jsonIncMsg.has("playerID")){
+                    if(jsonIncMsg.getInt("playerID") == this.playerID){
+                        sentPlayerID = true;
+                        client.subscribe(playerTopic);
+                        return;
+                    }
+                }
                 System.out.println(jsonIncMsg.getLong("MAC"));
                 JSONObject jsonOutMsg = new JSONObject();
                 jsonOutMsg.put("MAC", jsonIncMsg.getLong("MAC"));
                 jsonOutMsg.put("playerID", this.playerID);
                 client.publish("sten-sax-pase/message", new MqttMessage(jsonOutMsg.toString().getBytes()));
-                sentPlayerID = true;
-                client.subscribe(playerTopic); //change to the appropriate player topic
+                //sentPlayerID = true;
+                //client.subscribe(playerTopic); //change to the appropriate player topic
             } 
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();

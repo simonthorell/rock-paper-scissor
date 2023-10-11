@@ -33,11 +33,12 @@ def on_message(client, userdata, message):
     expect_return = payload_json.get("expectReturn")
     incoming_MAC = payload_json.get("MAC")
     
-    if(uuid.getnode() == incoming_MAC):
+    if(uuid.getnode() == incoming_MAC & player_id != -1):
         print("uuid match")
         player_id = latest_player_id
         #Confirmation message with playerID + mac so backend knows which one it picked
-        client.publish(f"{TOPIC_PREFIX}message", json.dumps({"playerID" : {player_id}, "MAC" : uuid.getnode()}))
+        testDict = {"playerID" : player_id, "MAC" : int(uuid.getnode())}
+        client.publish(f"{TOPIC_PREFIX}message", json.dumps(testDict))
     
 def mqtt_listener(client):
     client.on_connect = on_connect
