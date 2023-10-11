@@ -197,8 +197,8 @@ public class GUISimple{
             draw.setText(null);
             playerWin.setText(null);
             cpuWin.setText(null);
-            scenario(1); // for testing
             Handler.pressedButton(1);
+            Handler.scenario();
         });
 
         paperButton.addActionListener((ActionEvent e) -> {
@@ -206,8 +206,8 @@ public class GUISimple{
             draw.setText(null);
             playerWin.setText(null);
             cpuWin.setText(null);
-            scenario(6); // for testing
             Handler.pressedButton(2);
+            Handler.scenario();
         });
 
         scissorButton.addActionListener((ActionEvent e) -> {
@@ -215,8 +215,8 @@ public class GUISimple{
             draw.setText(null);
             playerWin.setText(null);
             cpuWin.setText(null);
-            scenario(8); // for testing
             Handler.pressedButton(3);
+            Handler.scenario();
         });
     }
 
