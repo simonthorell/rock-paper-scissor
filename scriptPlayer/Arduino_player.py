@@ -36,6 +36,8 @@ def on_message(client, userdata, message):
     if(uuid.getnode() == incoming_MAC):
         print("uuid match")
         player_id = latest_player_id
+        #Confirmation message with playerID + mac so backend knows which one it picked
+        client.publish(f"{TOPIC_PREFIX}message", json.dumps({"playerID" : {player_id}, "MAC" : uuid.getnode()}))
     
 def mqtt_listener(client):
     client.on_connect = on_connect

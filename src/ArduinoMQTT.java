@@ -10,6 +10,12 @@ import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 
 
+/* 
+TODO
+ * Listen for confirmation message before swapping
+ * Fix the rest of the logic after ID assignning
+ */
+
 
 public class ArduinoMQTT {
     private MqttClient client;
