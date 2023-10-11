@@ -61,7 +61,9 @@ public class GUISimple{
         "simple-pics/spritesheet-cPaper.png",
         "simple-pics/spritesheet-cScissor.png"
     };
-    
+
+    public static PlayerStatus player1;
+    public static PlayerStatus player2;
 
     public static void window(){
 
@@ -197,8 +199,11 @@ public class GUISimple{
             draw.setText(null);
             playerWin.setText(null);
             cpuWin.setText(null);
-            Handler.pressedButton(1);
-            Handler.scenario();
+
+            player1.setPlayerMove(1);
+            scenario();
+            // Handler.pressedButton(1);
+            // Handler.scenario();
         });
 
         paperButton.addActionListener((ActionEvent e) -> {
@@ -206,8 +211,11 @@ public class GUISimple{
             draw.setText(null);
             playerWin.setText(null);
             cpuWin.setText(null);
-            Handler.pressedButton(2);
-            Handler.scenario();
+
+            player1.setPlayerMove(2);
+            scenario();
+            // Handler.pressedButton(2);
+            // Handler.scenario();
         });
 
         scissorButton.addActionListener((ActionEvent e) -> {
@@ -215,8 +223,11 @@ public class GUISimple{
             draw.setText(null);
             playerWin.setText(null);
             cpuWin.setText(null);
-            Handler.pressedButton(3);
-            Handler.scenario();
+
+            player1.setPlayerMove(3);
+            scenario();
+            // Handler.pressedButton(3);
+            // Handler.scenario();
         });
     }
 
@@ -326,6 +337,12 @@ public class GUISimple{
                 System.exit(0);
             }
         }
+    }
+
+    public static void scenario() {
+        GameLogic gameLogic = new GameLogic(player1.getPlayerMove(), player2.getPlayerMove());
+        startDisplayAction(player1.getPlayerMove(), player2.getPlayerMove(), gameLogic.getWinner());
+
     }
 
     // public static void scenario(int option){
