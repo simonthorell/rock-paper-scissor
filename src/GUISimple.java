@@ -331,48 +331,8 @@ public class GUISimple{
     }
 
     public static void scenario() {
-        GameLogic gameLogic = new GameLogic(player1.getPlayerMove(), player2.getPlayerMove());
-        startDisplayAction(player1.getPlayerMove(), player2.getPlayerMove(), gameLogic.getWinner());
+        GameLogic gameLogic = new GameLogic(player1.getPlayerMove(), player2.getPlayerMove() - 3);
+        startDisplayAction(player1.getPlayerMove(), player2.getPlayerMove(), gameLogic.getWinnerSinglePlayer());
     }
 
-    // public static void scenario(int option){
-
-    //     if (option == 1){ // 1 - 1
-    //         rockButton.setEnabled(false);
-    //         startDisplayAction(0, 3, 1);     
-    //     }
-
-    //     if (option == 2){ // 1 - 2
-    //         startDisplayAction(0, 4, 3);
-    //     }
-        
-    //     if (option == 3){ // 1 - 3
-    //         startDisplayAction(0, 5, 2);
-    //     }
-        
-    //     if (option == 4){ // 2 - 1
-    //         startDisplayAction(1, 3, 2);
-    //     }
-        
-    //     if (option == 5){ // 2 - 2
-    //         startDisplayAction(1, 4, 1);
-    //     }
-        
-    //     if (option == 6){ // 2 - 3
-    //         startDisplayAction(1, 5, 3);
-    //     }
-        
-    //     if (option == 7){ // 3 - 1
-    //         startDisplayAction(2, 3, 3);
-    //     }
-        
-    //     if (option == 8){ // 3 - 2
-    //         startDisplayAction(2, 4, 2);
-    //     }
-
-    //     if (option == 9){ // 3 - 3
-    //         startDisplayAction(2, 5, 1);
-    //     }
-    
-    // }
 }
