@@ -1,5 +1,8 @@
 import javax.imageio.ImageIO;
 import javax.swing.*;
+
+import org.eclipse.paho.client.mqttv3.MqttException;
+
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -368,7 +371,8 @@ public class GUISimple{
     
 
     // main method is only here for testing!
-    public static void main (String[] args){
+    public static void main (String[] args) throws MqttException, InterruptedException{
+        new Handler();
         window();
     }
 }
