@@ -1,3 +1,5 @@
+import java.util.Random;
+
 import org.eclipse.paho.client.mqttv3.MqttException;
 
 public class PlayerStatus {
@@ -7,11 +9,17 @@ public class PlayerStatus {
     private int score;
     private MqttPlayer mqttPlayer;
 
-    public PlayerStatus(int playerID, boolean isMqttPlayer) throws MqttException {
+    public PlayerStatus(int playerID, boolean isMqttPlayer, boolean isComputer) throws MqttException {
         this.playerID = playerID;
 
         if (isMqttPlayer) {
             mqttPlayer = new MqttPlayer(playerID);
+        }
+
+        if (isComputer) {
+            Random random = new Random();
+            this.playerMove = random.nextInt(3) + 1;
+            this.name = "Computer";
         }
     }
 
