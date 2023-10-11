@@ -61,7 +61,9 @@ public class GUISimple{
         "simple-pics/spritesheet-cPaper.png",
         "simple-pics/spritesheet-cScissor.png"
     };
-    
+
+    public static PlayerStatus player1;
+    public static PlayerStatus player2;
 
     public static void window(){
 
@@ -86,7 +88,6 @@ public class GUISimple{
         topLeft.setVisible(true);
 
         playerHand = new JLabel();
-
 
         topMiddle = new JPanel(new GridLayout(2, 1));
         topMiddle.setSize(800/3, 300);
@@ -197,8 +198,9 @@ public class GUISimple{
             draw.setText(null);
             playerWin.setText(null);
             cpuWin.setText(null);
-            Handler.pressedButton(1);
-            Handler.scenario();
+            player1.setPlayerMove(0);
+            player2.setComputerMove();
+            scenario();
         });
 
         paperButton.addActionListener((ActionEvent e) -> {
@@ -206,8 +208,9 @@ public class GUISimple{
             draw.setText(null);
             playerWin.setText(null);
             cpuWin.setText(null);
-            Handler.pressedButton(2);
-            Handler.scenario();
+            player1.setPlayerMove(1);
+            player2.setComputerMove();
+            scenario();
         });
 
         scissorButton.addActionListener((ActionEvent e) -> {
@@ -215,12 +218,11 @@ public class GUISimple{
             draw.setText(null);
             playerWin.setText(null);
             cpuWin.setText(null);
-            Handler.pressedButton(3);
-            Handler.scenario();
+            player1.setPlayerMove(2);
+            player2.setComputerMove();
+            scenario();
         });
     }
-
-
 
     private static BufferedImage loadImage(String sheetPath) {
         try {
@@ -282,14 +284,14 @@ public class GUISimple{
     }
 
     private static void winLooseDraw(int wld){
-        if(wld == 1){
+        if(wld == 0){
             draw.setText("<html><h1>DRAW!</h1></html>");  
-        }else if(wld == 2){
+        }else if(wld == 1){
             playerWin.setText("<html><h1>WIN!</h1></html>");
             pScore++;
             playerScore.setText("<html><h1>"+pScore+"</h1></html>");
             gameFinnished();
-        }else if(wld == 3){
+        }else if(wld == 2){
             cpuWin.setText("<html><h1>WIN!</h1></html>");
             cScore++;
             cpuScore.setText("<html><h1>"+cScore+"</h1></html>");
@@ -326,6 +328,11 @@ public class GUISimple{
                 System.exit(0);
             }
         }
+    }
+
+    public static void scenario() {
+        GameLogic gameLogic = new GameLogic(player1.getPlayerMove(), player2.getPlayerMove());
+        startDisplayAction(player1.getPlayerMove(), player2.getPlayerMove(), gameLogic.getWinner());
     }
 
     // public static void scenario(int option){

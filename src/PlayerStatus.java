@@ -41,6 +41,12 @@ public class PlayerStatus {
         return playerMove;
     }
 
+    public int setComputerMove() {
+        Random random = new Random();
+        this.playerMove = random.nextInt(3) + 1;
+        return playerMove;
+    }
+
     public void setName(String name) {
         this.name = name;
     }

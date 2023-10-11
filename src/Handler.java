@@ -18,59 +18,16 @@ public class Handler {
             Thread.sleep(5000); // SLEEP FOR 5 SECONDS BEFORE RUNNING GAME AGAIN
         }
     }
-
-    static PlayerStatus player = new PlayerStatus(1);
-    static ComputerStatus computer = new ComputerStatus(2);
-
     
     // Additional methods for single player or other game modes...
-    public void singlePlayer() {
+    public void singlePlayer() throws MqttException {
         // Implement single player game mode
-        computer.getPlayerMove();
-    }    
+        PlayerStatus player1 = new PlayerStatus(1, false, false);
+        PlayerStatus player2 = new PlayerStatus(2, false, true);
 
-    public static void pressedButton(int buttonPressed){
-        if (buttonPressed == 1){
-            player.setPlayerMove(1);
-
-        } else if (buttonPressed == 2){
-            player.setPlayerMove(2);
-
-        } else if (buttonPressed == 3){
-            player.setPlayerMove(3);
-        }
+        GUISimple.player1 = player1;
+        GUISimple.player2 = player2;
     }
-
-    public void scenario(){
-        if (computer.getPlayerMove() == 1 && player.getPlayerMove() == 1){
-            GUISimple.startDisplayAction(0, 3, 1); 
-        } 
-        if (computer.getPlayerMove() == 1 && player.getPlayerMove() == 2){
-            GUISimple.startDisplayAction(0, 4, 3);
-        }
-        if (computer.getPlayerMove() == 1 && player.getPlayerMove() == 3){
-            GUISimple.startDisplayAction(0, 5, 2);
-        }
-        if (computer.getPlayerMove() == 2 && player.getPlayerMove() == 1){
-            GUISimple.startDisplayAction(1, 3, 2);
-        }
-        if (computer.getPlayerMove() == 2 && player.getPlayerMove() == 2){
-            GUISimple.startDisplayAction(1, 4, 1);
-        }
-        if (computer.getPlayerMove() == 2 && player.getPlayerMove() == 3){
-            GUISimple.startDisplayAction(1, 5, 3);
-        }
-        if (computer.getPlayerMove() == 3 && player.getPlayerMove() == 1){
-            GUISimple.startDisplayAction(2, 3, 3);
-        }
-        if (computer.getPlayerMove() == 3 && player.getPlayerMove() == 2){
-            GUISimple.startDisplayAction(2, 4, 2);
-        }
-        if (computer.getPlayerMove() == 3 && player.getPlayerMove() == 3){
-            GUISimple.startDisplayAction(2, 5, 1);
-        }
-    }
-
 
     public void multiPlayer() throws MqttException, InterruptedException {
         // [Adjustable] MAX_PLAYERS could be dynamic based on a GUI interaction or game setup stage
@@ -82,7 +39,7 @@ public class Handler {
 
         while (waitForPlayers && countPlayerID < MAX_PLAYERS) {
             countPlayerID++;
-            PlayerStatus currentPlayer = new PlayerStatus(countPlayerID, true);
+            PlayerStatus currentPlayer = new PlayerStatus(countPlayerID, true, false);
             players.add(currentPlayer);
             currentPlayer.mqttPlayer().askToPlay(displayMessage, countPlayerID);
             currentPlayer.mqttPlayer().getMove();
