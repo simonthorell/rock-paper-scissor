@@ -77,30 +77,32 @@ def user_input(client):
             ask_for_input = False
             
 def arduinoUSBDecode(incoming_byte, client, serial_bus):
-    global player_id
+    global player_id, latest_player_id
     match incoming_byte:
         
         case 49: #0b00110001 #Ascii 1
             print("Rock")
-            client.publish(f"{TOPIC_PREFIX}player{player_id}", json.dumps({"message": "Rock"}))
+            client.publish(f"{TOPIC_PREFIX}player{player_id}", json.dumps({"message": "1"}))
             
         case 50: #0b00110010 #Ascii 2
             print("Paper")
-            client.publish(f"{TOPIC_PREFIX}player{player_id}", json.dumps({"message": "Paper"}))
+            client.publish(f"{TOPIC_PREFIX}player{player_id}", json.dumps({"message": "2"}))
             
         case 52: #0b00110100 #Ascii 4
             print("Scissor")
-            client.publish(f"{TOPIC_PREFIX}player{player_id}", json.dumps({"message": "Scissor"}))
+            client.publish(f"{TOPIC_PREFIX}player{player_id}", json.dumps({"message": "3"}))
             
         case 68: #0b01000100: #Upper case D ascii
             print("requesting player ID")
-            player_id = None #temp shit
-            latest_player_id = 1 #temp shit
+            #player_id = None #temp shit
+            #latest_player_id = 2 #temp shit
             #just copied the structure from user_input()
             if player_id == None:
                 player_id = latest_player_id
+                print("playerID: " + str(player_id))
                 serial_bus.write(player_id.to_bytes(1, "big")) #Convert to 1 byte so arduino can read
-            
+                client.publish(f"{TOPIC_PREFIX}player{player_id}", json.dumps({"message": "test"}))
+                            
 def serial_listener(client):
     baud_rate = 9600
     usb_port = "COM3"
@@ -124,11 +126,16 @@ if __name__ == "__main__":
     sleep(2.2) # Give some time for the connection to establish
     waiting("Waiting for host to start game")
     
-    if(sys.argv[1] == "-A"):
-        serial_listen_thread.start()
-        serial_listen_thread.join()
-        print("ARDUINO MODE ENGAGED")
-    else:
+    arduino = False
+    for i in sys.argv:
+        if(i == "-A"):
+            print("Arduino Mode")
+            serial_listen_thread.start()
+            serial_listen_thread.join()
+            arduino = True
+            
+    if not arduino:
+        print("Default mode")
         user_input_thread.start()
         user_input_thread.join()
 
