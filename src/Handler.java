@@ -13,14 +13,75 @@ public class Handler {
             GUISimple.window();
             // Add GUI interactions and other pre-game setup here...
 
+            singlePlayer();
             multiPlayer();
             Thread.sleep(5000); // SLEEP FOR 5 SECONDS BEFORE RUNNING GAME AGAIN
         }
     }
 
+    static PlayerStatus player = new PlayerStatus(1);
+    static ComputerStatus computer = new ComputerStatus(2);
+
+    
     // Additional methods for single player or other game modes...
     public void singlePlayer() {
         // Implement single player game mode
+        computer.getPlayerMove();
+    }    
+
+    public static void pressedButton(int buttonPressed){
+        if (buttonPressed == 1){
+            player.setPlayerMove(1);
+
+        } else if (buttonPressed == 2){
+            player.setPlayerMove(2);
+
+        } else if (buttonPressed == 3){
+            player.setPlayerMove(3);
+        }
+    }
+
+    public void setOption(){
+        if (computer.getPlayerMove() == 1 && player.getPlayerMove() == 1){
+            GUISimple.startDisplayAction(0, 3, 1); 
+        } 
+        if (computer.getPlayerMove() == 1 && player.getPlayerMove() == 2){
+            GUISimple.startDisplayAction(0, 4, 3);
+        }
+        if (computer.getPlayerMove() == 1 && player.getPlayerMove() == 3){
+            GUISimple.startDisplayAction(0, 5, 2);
+        }
+        if (computer.getPlayerMove() == 2 && player.getPlayerMove() == 1){
+            GUISimple.startDisplayAction(1, 3, 2);
+        }
+    }
+
+    public static void scenario (int option){
+
+        
+        if (option == 4){ // 2 - 1
+            GUISimple.startDisplayAction(1, 3, 2);
+        }
+        
+        if (option == 5){ // 2 - 2
+            GUISimple.startDisplayAction(1, 4, 1);
+        }
+        
+        if (option == 6){ // 2 - 3
+            GUISimple.startDisplayAction(1, 5, 3);
+        }
+        
+        if (option == 7){ // 3 - 1
+            GUISimple.startDisplayAction(2, 3, 3);
+        }
+        
+        if (option == 8){ // 3 - 2
+            GUISimple.startDisplayAction(2, 4, 2);
+        }
+
+        if (option == 9){ // 3 - 3
+            GUISimple.startDisplayAction(2, 5, 1);
+        }
     }
 
     public void multiPlayer() throws MqttException, InterruptedException {
