@@ -15,7 +15,7 @@ public class MqttPlayer {
     private static String messageTopic = "sten-sax-pase/message";
     private BlockingQueue<String> messageQueue = new LinkedBlockingQueue<>();
 
-    // Constructor method - connecting to the MQTT broker
+    // Constructor method - connecting to the MQTT broker.
     public MqttPlayer(int playerID) throws MqttException {
         this.playerID = playerID;
         this.playerTopic = "sten-sax-pase/player" + playerID;
