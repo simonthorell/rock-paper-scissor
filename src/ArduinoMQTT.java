@@ -25,8 +25,10 @@ public class ArduinoMQTT {
     private boolean lockedInArduino = false;
     private int lastMove = -1;
     private boolean hasMoveReady = false;
+    private String name;
 
-    public ArduinoMQTT(int playerID) throws MqttException{
+    public ArduinoMQTT(int playerID, String name) throws MqttException{
+        this.name = name;
         this.playerID = playerID;
         playerTopic = "sten-sax-pase/player" + this.playerID;
         String brokerUrl = "ssl://1c87c890092b4b9aaa4e1ca5a02dfc9e.s1.eu.hivemq.cloud:8883";
@@ -149,5 +151,9 @@ public class ArduinoMQTT {
      */
     public void sendResult(int winOrLose) throws MqttException, InterruptedException{
         sendResultMQTT(winOrLose);
+    }
+
+    public String getName(){
+        return this.name;
     }
 }
