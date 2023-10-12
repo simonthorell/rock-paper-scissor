@@ -93,7 +93,7 @@ public class ArduinoMQTT {
                     if(jsonIncMsg.getInt("playerID") == this.playerID){
                         sentPlayerID = true;
                         client.subscribe(playerTopic);
-                        System.out.printf("Locked in player %d with mac %d\n", this.playerID, jsonIncMsg.getInt("MAC"));
+                        System.out.printf("Locked in player %d with mac %d\n", this.playerID, jsonIncMsg.getLong("MAC"));
                         return;
                     }
                 }

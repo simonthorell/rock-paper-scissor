@@ -6,6 +6,7 @@ import serial
 import threading
 import uuid
 import os
+from queue import Queue
 
 #USB stuff
 baud_rate = 9600
@@ -38,8 +39,8 @@ def on_message(client, userdata, message):
         print("uuid match")
         player_id = latest_player_id
         #Confirmation message with playerID + mac so backend knows which one it picked
-        testDict = {"playerID" : player_id, "MAC" : int(uuid.getnode())}
-        client.publish(f"{TOPIC_PREFIX}message", json.dumps(testDict))
+        payload_dict = {"playerID" : player_id, "MAC" : int(uuid.getnode())}
+        client.publish(f"{TOPIC_PREFIX}message", json.dumps(payload_dict))
     
 def mqtt_listener(client):
     client.on_connect = on_connect
@@ -90,8 +91,8 @@ if __name__ == "__main__":
     client = mqtt.Client()
     client.username_pw_set(username=USERNAME, password=PASSWORD)
     
-    serial_listen_thread = threading.Thread(target = serial_listen, args=(client,))
-    mqtt_listen_thread = threading.Thread(target = mqtt_listener, args=(client,))
+    serial_listen_thread = threading.Thread(target = serial_listen, args=(client, ))
+    mqtt_listen_thread = threading.Thread(target = mqtt_listener, args=(client, ))
     
     mqtt_listen_thread.start()
     time.sleep(2.2)
