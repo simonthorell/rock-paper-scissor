@@ -10,12 +10,9 @@ public class Handler {
 
     public Handler() throws MqttException, InterruptedException {
         while (runGame) {
-            GUISimple.window();
-            // Add GUI interactions and other pre-game setup here...
-
             singlePlayer();
             multiPlayer();
-            Thread.sleep(5000); // SLEEP FOR 5 SECONDS BEFORE RUNNING GAME AGAIN
+            GUISimple.window();
         }
     }
     
