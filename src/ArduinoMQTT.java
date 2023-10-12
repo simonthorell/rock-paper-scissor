@@ -2,7 +2,6 @@ import org.eclipse.paho.client.mqttv3.*;
 import org.eclipse.paho.client.mqttv3.persist.MemoryPersistence;
 import org.json.JSONObject;
 
-import javax.net.ssl.SSLServerSocketFactory;
 import javax.net.ssl.SSLSocketFactory;
 
 import java.util.Properties;
@@ -76,6 +75,7 @@ public class ArduinoMQTT {
             JSONObject jsonIncMsg = new JSONObject(jsonMessage);
             if(jsonIncMsg.has("move")){
                 this.lastMove = jsonIncMsg.getInt("move");
+                System.out.printf("GOT MOVE: %d\n", this.lastMove);
             }
 
         } catch (InterruptedException e) {
@@ -93,6 +93,7 @@ public class ArduinoMQTT {
                     if(jsonIncMsg.getInt("playerID") == this.playerID){
                         sentPlayerID = true;
                         client.subscribe(playerTopic);
+                        System.out.printf("Locked in player %d with mac %d\n", this.playerID, jsonIncMsg.getInt("MAC"));
                         return;
                     }
                 }
@@ -107,5 +108,9 @@ public class ArduinoMQTT {
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
         }
+    }
+
+    public int getLastMove(){
+        return this.lastMove;
     }
 }
