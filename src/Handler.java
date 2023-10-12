@@ -10,8 +10,6 @@ public class Handler {
 
     public Handler() throws MqttException, InterruptedException {
         while (runGame) {
-            PlayerStatus player1 = new PlayerStatus(1, false, false);
-            PlayerStatus player2 = new PlayerStatus(2, false, true);
             GUISimple.window();
             singlePlayer();
             multiPlayer();
