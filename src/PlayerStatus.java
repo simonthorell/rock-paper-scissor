@@ -42,7 +42,8 @@ public class PlayerStatus {
 
     public int setComputerMove() {
         Random random = new Random();
-        this.playerMove = random.nextInt(3) + 3;
+        this.playerMove = random.nextInt(3);
+        // this.playerMove = random.nextInt(3) + 3;
         return playerMove;
     }
 
