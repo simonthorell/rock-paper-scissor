@@ -19,6 +19,8 @@ public class PlayerStatus {
         if (isComputer) {
             setComputerMove();
             this.name = "Computer";
+        } else {
+            this.name = "Player " + playerID;
         }
     }
 
