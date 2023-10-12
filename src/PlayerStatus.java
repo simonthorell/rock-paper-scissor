@@ -17,9 +17,7 @@ public class PlayerStatus {
         }
 
         if (isComputer) {
-            Random random = new Random();
-            // this.playerMove = random.nextInt(3) + 1;
-            this.playerMove = random.nextInt(3) + 3;
+            setComputerMove();
             this.name = "Computer";
         }
     }
@@ -45,7 +43,6 @@ public class PlayerStatus {
     public int setComputerMove() {
         Random random = new Random();
         this.playerMove = random.nextInt(3) + 3;
-        // this.playerMove = random.nextInt(3) + 1;
         return playerMove;
     }
 
