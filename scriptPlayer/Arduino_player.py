@@ -56,13 +56,13 @@ def arduinoUSBDecode(incoming_byte, client, serial_bus):
     match incoming_byte:
         
         case 49: #ASCII 1 rock
-            client.publish(f"{TOPIC_PREFIX}player{player_id}", json.dumps({"message" : "ROCK"}))
+            client.publish(f"{TOPIC_PREFIX}player{player_id}", json.dumps({"move" : "1"}))
             
         case 50: #ASCII 2 paper
-            client.publish(f"{TOPIC_PREFIX}player{player_id}", json.dumps({"message" : "PAPER"}))
+            client.publish(f"{TOPIC_PREFIX}player{player_id}", json.dumps({"move" : "2"}))
             
         case 52: #ASCII 4 scissor
-            client.publish(f"{TOPIC_PREFIX}player{player_id}", json.dumps({"message" : "SCISSOR"}))
+            client.publish(f"{TOPIC_PREFIX}player{player_id}", json.dumps({"move" : "3"}))
 
         case 68: #ASCII D request ID
             print("Waiting for ID")
