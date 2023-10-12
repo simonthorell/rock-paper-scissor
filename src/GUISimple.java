@@ -288,7 +288,8 @@ public class GUISimple{
     }
 
     public static void startDisplayAction(int player, int cpu, int wld){
-        
+        cpu = cpu + 3;
+
         rockButton.setEnabled(false);
         paperButton.setEnabled(false);
         scissorButton.setEnabled(false);
@@ -367,8 +368,8 @@ public class GUISimple{
     }
 
     public static void scenario() {
-        GameLogic gameLogic = new GameLogic(player1.getPlayerMove(), player2.getPlayerMove() - 3);
-        startDisplayAction(player1.getPlayerMove(), player2.getPlayerMove(), gameLogic.getWinnerSinglePlayer());
+        GameLogic gameLogic = new GameLogic(player1.getPlayerMove() + 1, player2.getPlayerMove() + 1);
+        startDisplayAction(player1.getPlayerMove(), player2.getPlayerMove(), gameLogic.getWinner());
     }
 
 }
