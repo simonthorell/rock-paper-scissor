@@ -105,6 +105,12 @@ void serialEvent(){
             lcd.print("You lost!");
             waitForResult = false;
         }
+        else if(inCHar == 'T' && playerID != 0){
+            Serial.println("T");
+            lcd.clear();
+            lcd.print("Tie!");
+            waitForResult = false;
+        }
         else if(playerID == 0){
             lcd.clear();
             playerID = inChar;
