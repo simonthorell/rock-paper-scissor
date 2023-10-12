@@ -54,7 +54,11 @@ public class PlayerStatus {
     }
 
     public String getName() {
-        return name;
+        if (name != null) {
+            return name;
+        } else {
+            return "";
+        }
     }
 
     public void setScore(int score) {
