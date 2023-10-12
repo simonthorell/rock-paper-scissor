@@ -363,6 +363,8 @@ public class GUISimple{
                 cpuScore.setText("<html><h1>"+cScore+"</h1></html>");
                 playerHand.setIcon(null);
                 cpuHand.setIcon(null);
+                playerWin.setText(null);
+                cpuWin.setText(null);
             }else if(choice == JOptionPane.NO_OPTION){
                 System.exit(0);
             }
