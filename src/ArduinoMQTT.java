@@ -24,6 +24,7 @@ public class ArduinoMQTT {
     private BlockingQueue<String> messageQueue = new LinkedBlockingQueue<>();
     private int playerID = 0;
     private boolean sentPlayerID = false;
+    private int lastMove;
 
     public ArduinoMQTT(int playerID) throws MqttException{
         this.playerID = playerID;
@@ -56,7 +57,7 @@ public class ArduinoMQTT {
                 if(!sentPlayerID){ //If we've sent out player ID no need to listen to it anymore
                     getIDRequest();
                 }else if(sentPlayerID){
-                    
+                    decodeMove();
                 }
             }
         
@@ -67,6 +68,19 @@ public class ArduinoMQTT {
         });
 
         client.subscribe(messageTopic);
+    }
+
+    private void decodeMove() throws MqttException{
+        try {
+            String jsonMessage = messageQueue.take();
+            JSONObject jsonIncMsg = new JSONObject(jsonMessage);
+            if(jsonIncMsg.has("move")){
+                this.lastMove = jsonIncMsg.getInt("move");
+            }
+
+        } catch (InterruptedException e) {
+        Thread.currentThread().interrupt();
+        }
     }
 
     private void getIDRequest() throws MqttException{
