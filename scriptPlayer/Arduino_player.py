@@ -6,12 +6,14 @@ import serial
 import threading
 import uuid
 import os
+from queue import Queue
 
 #USB stuff
 baud_rate = 9600
 usb_port = "COM3"
 
 player_id = -1
+result = 5
 
 BROKER_URL = "1c87c890092b4b9aaa4e1ca5a02dfc9e.s1.eu.hivemq.cloud"
 PORT = 8883
@@ -25,21 +27,26 @@ def on_connect(client, userdata, flags, rc):
 
 def on_message(client, userdata, message):
     #global expect_return, player_id, latest_player_id, ask_for_input
-    global player_id
+    global player_id, result
     
     payload_str = message.payload.decode("utf-8")
     payload_json = json.loads(payload_str)
-    display_message = payload_json.get("message")
+    print(payload_json)
     latest_player_id = payload_json.get("playerID")
-    expect_return = payload_json.get("expectReturn")
     incoming_MAC = payload_json.get("MAC")
+    incoming_result = payload_json.get("result")
     
-    if(uuid.getnode() == incoming_MAC & player_id != -1):
-        print("uuid match")
-        player_id = latest_player_id
-        #Confirmation message with playerID + mac so backend knows which one it picked
-        testDict = {"playerID" : player_id, "MAC" : int(uuid.getnode())}
-        client.publish(f"{TOPIC_PREFIX}message", json.dumps(testDict))
+    if(incoming_MAC):
+        if(uuid.getnode() == incoming_MAC & player_id != -1):
+            print("uuid match")
+            player_id = latest_player_id
+            #Confirmation message with playerID + mac so backend knows which one it picked
+            payload_dict = {"playerID" : player_id, "MAC" : int(uuid.getnode())}
+            client.publish(f"{TOPIC_PREFIX}message", json.dumps(payload_dict))
+            client.subscribe(f"{TOPIC_PREFIX}player{player_id}")
+    
+    if(incoming_result):
+        result = payload_json.get("result")
     
 def mqtt_listener(client):
     client.on_connect = on_connect
@@ -72,6 +79,7 @@ def arduinoUSBDecode(incoming_byte, client, serial_bus):
                 serial_bus.write(player_id.to_bytes(1, "big"))
 
 def serial_listen(client):
+    global result
     try:
         serial_bus = serial.Serial(usb_port, baud_rate, timeout = 1)
         
@@ -85,13 +93,26 @@ def serial_listen(client):
             message = serial_bus.readline()
             for byte in message:
                 arduinoUSBDecode(byte, client, serial_bus)
+        elif result != 5:
+            match result:
+                case 1:
+                    serial_bus.write(b'W')
+                    result = 5
+                    
+                case 0:
+                    serial_bus.write(b'T') #NYI
+                    result = 5
+                    
+                case -1:
+                    serial_bus.write(b'L')
+                    result = 5
 
 if __name__ == "__main__":
     client = mqtt.Client()
     client.username_pw_set(username=USERNAME, password=PASSWORD)
     
-    serial_listen_thread = threading.Thread(target = serial_listen, args=(client,))
-    mqtt_listen_thread = threading.Thread(target = mqtt_listener, args=(client,))
+    serial_listen_thread = threading.Thread(target = serial_listen, args=(client, ))
+    mqtt_listen_thread = threading.Thread(target = mqtt_listener, args=(client, ))
     
     mqtt_listen_thread.start()
     time.sleep(2.2)
