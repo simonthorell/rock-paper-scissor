@@ -23,7 +23,7 @@ public class ArduinoMQTT {
     private BlockingQueue<String> messageQueue = new LinkedBlockingQueue<>();
     private int playerID = 0;
     private boolean sentPlayerID = false;
-    private int lastMove;
+    private int lastMove = -1;
 
     public ArduinoMQTT(int playerID) throws MqttException{
         this.playerID = playerID;
@@ -110,7 +110,30 @@ public class ArduinoMQTT {
         }
     }
 
+    //If its connected and active with a arduino
+    public boolean isActive(){
+        return sentPlayerID;
+    }
+
+    /* 
+     * Gets the last move sent
+     * 1 rock
+     * 2 paper
+     * 3 scissor
+     * -1 already read the value
+     * -2 never recieved a value
+     */
     public int getLastMove(){
-        return this.lastMove;
+        int temp = this.lastMove;
+        this.lastMove = -1; //reset to -1 after sending 
+        return temp;
+    }
+
+    /* TODO: IMPLEMENT
+     * Send a boolean for if the player won or lost
+     * this handles the MQTT sending to the arduino
+     */
+    public void sendResult(boolean winOrLose){
+
     }
 }
