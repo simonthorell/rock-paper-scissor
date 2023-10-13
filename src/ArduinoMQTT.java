@@ -19,14 +19,18 @@ TODO
 public class ArduinoMQTT {
     private MqttClient client;
     private final String messageTopic = "sten-sax-pase/#";
-    private final String playerTopic = "sten-sax-pase/player" + this.playerID;
+    private String playerTopic;
     private BlockingQueue<String> messageQueue = new LinkedBlockingQueue<>();
-    private int playerID = 0;
-    private boolean sentPlayerID = false;
-    private int lastMove;
+    private int playerID;
+    private boolean lockedInArduino = false;
+    private int lastMove = -1;
+    private boolean hasMoveReady = false;
+    private String name;
 
-    public ArduinoMQTT(int playerID) throws MqttException{
+    public ArduinoMQTT(int playerID, String name) throws MqttException{
+        this.name = name;
         this.playerID = playerID;
+        playerTopic = "sten-sax-pase/player" + this.playerID;
         String brokerUrl = "ssl://1c87c890092b4b9aaa4e1ca5a02dfc9e.s1.eu.hivemq.cloud:8883";
         String clientId = String.valueOf(playerID);
         client = new MqttClient(brokerUrl, clientId, new MemoryPersistence());
@@ -53,9 +57,9 @@ public class ArduinoMQTT {
             public void messageArrived(String topic, MqttMessage message) throws Exception {
                 // Parse and add to queue
                 messageQueue.put(new String(message.getPayload()));
-                if(!sentPlayerID){ //If we've sent out player ID no need to listen to it anymore
+                if(!lockedInArduino){ //if we need arduino still 
                     getIDRequest();
-                }else if(sentPlayerID){
+                }else if(lockedInArduino){ //we have one locked in
                     decodeMove();
                 }
             }
@@ -71,46 +75,85 @@ public class ArduinoMQTT {
 
     private void decodeMove() throws MqttException{
         try {
-            String jsonMessage = messageQueue.take();
+            String jsonMessage = messageQueue.take(); //get message
             JSONObject jsonIncMsg = new JSONObject(jsonMessage);
-            if(jsonIncMsg.has("move")){
-                this.lastMove = jsonIncMsg.getInt("move");
+            if(jsonIncMsg.has("move")){ //nullcheck for move
+                this.lastMove = jsonIncMsg.getInt("move"); //set as last move
                 System.out.printf("GOT MOVE: %d\n", this.lastMove);
+                hasMoveReady = true; //flip flag
             }
 
         } catch (InterruptedException e) {
-        Thread.currentThread().interrupt();
+            Thread.currentThread().interrupt();
         }
     }
 
     private void getIDRequest() throws MqttException{
         try {
-            String jsonMessage = messageQueue.take();
+            String jsonMessage = messageQueue.take(); //grab message
             JSONObject jsonIncMsg = new JSONObject(jsonMessage);
-            if(jsonIncMsg.has("MAC"))
+            if(jsonIncMsg.has("MAC")) //Look for MAC key
             {
-                if(jsonIncMsg.has("playerID")){
-                    if(jsonIncMsg.getInt("playerID") == this.playerID){
-                        sentPlayerID = true;
-                        client.subscribe(playerTopic);
-                        System.out.printf("Locked in player %d with mac %d\n", this.playerID, jsonIncMsg.getInt("MAC"));
-                        return;
+                if(jsonIncMsg.has("playerID")){ //null check
+                    if(jsonIncMsg.getInt("playerID") == this.playerID){ //If its our playerID
+                        lockedInArduino = true; //locked in our arduino confirmed
+                        client.subscribe(playerTopic); //change to a subtopic for the player
+                        System.out.printf("Locked in player %d with mac %d\n", this.playerID, jsonIncMsg.getLong("MAC"));
+                        return; //return and stop executing
                     }
                 }
-                System.out.println(jsonIncMsg.getLong("MAC"));
+
+                //Send out MAC recieved + our playerID to hopefully bind to a arduino
                 JSONObject jsonOutMsg = new JSONObject();
                 jsonOutMsg.put("MAC", jsonIncMsg.getLong("MAC"));
                 jsonOutMsg.put("playerID", this.playerID);
                 client.publish("sten-sax-pase/message", new MqttMessage(jsonOutMsg.toString().getBytes()));
-                //sentPlayerID = true;
-                //client.subscribe(playerTopic); //change to the appropriate player topic
             } 
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
         }
     }
 
+    //Just sends result over MQTT
+    private void sendResultMQTT(int result) throws MqttException, InterruptedException{
+        JSONObject jsonMsgOut = new JSONObject();
+        jsonMsgOut.put("result", result);
+        client.publish(playerTopic, new MqttMessage(jsonMsgOut.toString().getBytes()));
+    }
+
+    //If its connected and active with a arduino
+    public boolean isActive(){
+        return this.lockedInArduino;
+    }
+
+    //If its ready for you to read a move
+    public boolean hasMoveReady(){
+        return this.hasMoveReady;
+    }
+
+    /* 
+     * Gets the last move sent
+     * 0 rock
+     * 1 paper
+     * 2 scissor
+     */
     public int getLastMove(){
-        return this.lastMove;
+        hasMoveReady = false;
+        return this.lastMove - 1;
+    }
+
+    /* 
+     * Send a int for if the player won, lost or tie
+     * this handles the MQTT sending to the arduino
+     * -1 lost
+     *  0 tie
+     * +1 win
+     */
+    public void sendResult(int winOrLose) throws MqttException, InterruptedException{
+        sendResultMQTT(winOrLose);
+    }
+
+    public String getName(){
+        return this.name;
     }
 }

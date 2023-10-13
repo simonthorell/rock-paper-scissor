@@ -19,6 +19,8 @@ public class PlayerStatus {
         if (isComputer) {
             setComputerMove();
             this.name = "Computer";
+        } else {
+            this.name = "Player " + playerID;
         }
     }
 
@@ -42,7 +44,8 @@ public class PlayerStatus {
 
     public int setComputerMove() {
         Random random = new Random();
-        this.playerMove = random.nextInt(3) + 3;
+        this.playerMove = random.nextInt(3);
+        // this.playerMove = random.nextInt(3) + 3;
         return playerMove;
     }
 
@@ -51,7 +54,11 @@ public class PlayerStatus {
     }
 
     public String getName() {
-        return name;
+        if (name != null) {
+            return name;
+        } else {
+            return "";
+        }
     }
 
     public void setScore(int score) {

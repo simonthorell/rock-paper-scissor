@@ -288,7 +288,8 @@ public class GUISimple{
     }
 
     public static void startDisplayAction(int player, int cpu, int wld){
-        
+        cpu = cpu + 3;
+
         rockButton.setEnabled(false);
         paperButton.setEnabled(false);
         scissorButton.setEnabled(false);
@@ -348,6 +349,8 @@ public class GUISimple{
                 cpuScore.setText("<html><h1>"+cScore+"</h1></html>");
                 playerHand.setIcon(null);
                 cpuHand.setIcon(null);
+                playerWin.setText(null);
+                cpuWin.setText(null);
             }else if(choice == JOptionPane.NO_OPTION){
                 System.exit(0);
             }
@@ -360,6 +363,8 @@ public class GUISimple{
                 cpuScore.setText("<html><h1>"+cScore+"</h1></html>");
                 playerHand.setIcon(null);
                 cpuHand.setIcon(null);
+                playerWin.setText(null);
+                cpuWin.setText(null);
             }else if(choice == JOptionPane.NO_OPTION){
                 System.exit(0);
             }
@@ -367,8 +372,8 @@ public class GUISimple{
     }
 
     public static void scenario() {
-        GameLogic gameLogic = new GameLogic(player1.getPlayerMove(), player2.getPlayerMove() - 3);
-        startDisplayAction(player1.getPlayerMove(), player2.getPlayerMove(), gameLogic.getWinnerSinglePlayer());
+        GameLogic gameLogic = new GameLogic(player1.getPlayerMove() + 1, player2.getPlayerMove() + 1);
+        startDisplayAction(player1.getPlayerMove(), player2.getPlayerMove(), gameLogic.getWinner());
     }
 
 }
