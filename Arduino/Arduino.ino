@@ -16,6 +16,7 @@ Fix pressing star doesnt instantly resend the same after W/L
 #define rockBitFlag 0b001
 #define paperBitFlag 0b010
 #define scissorBitFlag 0b100
+#define screenWidth 16
 
 const int baud_rate = 9600;
 const char keys[4][4] = {
@@ -31,9 +32,11 @@ const char *scissor = "Scissor";
 
 uint8_t playerID = 0;
 uint8_t waiting = 0;
+uint8_t cursorLoc = 0;
 char pressedKey;
 byte selected;
 bool waitForResult = false;
+bool serialIncomingChars = false;
 
 Keypad myKeypad = Keypad(makeKeymap(keys), rowPins, colPins, 4, 4);
 LiquidCrystal_I2C lcd(0, 0, 0);
@@ -93,23 +96,41 @@ void serialEvent(){
         inChar = Serial.read();
         Serial.println("Recieved data");
 
-        if(inChar == 'W' && playerID != 0){
-            Serial.println("W");
+        if(serialIncomingChars == true){
+            if(inChar == NULL)
+            {
+                serialIncomingChars = false;
+            }
+            else
+            {
+                lcd.setCursor(cursorLoc % screenWidth, cursorLoc / screenWidth);
+                lcd.print(inChar);
+                cursorLoc++;
+            }
+        }
+        else if(inChar == 'W' && playerID != 0){
             lcd.clear();
+            Serial.println("W");
             lcd.print("You won!");
             waitForResult = false;
         }
         else if(inChar == 'L' && playerID != 0){
-            Serial.println("L");
             lcd.clear();
+            Serial.println("L");
             lcd.print("You lost!");
             waitForResult = false;
         }
-        else if(inCHar == 'T' && playerID != 0){
-            Serial.println("T");
+        else if(inChar == 'T' && playerID != 0){
             lcd.clear();
+            Serial.println("T");
             lcd.print("Tie!");
             waitForResult = false;
+        }
+        else if (inChar == 0b00000001 && playerID != 0){
+            serialIncomingChars = true;
+            cursorLoc = 0;
+            lcd.clear();
+            Serial.println("SOH");
         }
         else if(playerID == 0){
             lcd.clear();

@@ -5,6 +5,7 @@ import paho.mqtt.client as mqtt
 import serial
 import threading
 import uuid
+import re
 from os import _exit
 
 #USB stuff
@@ -45,6 +46,7 @@ def on_message(client, userdata, message):
     
     if(incoming_result):                                                            #If we have a result key in the json
         result = payload_json.get("result")                                         #Set the global result variable to it, will be used by the other thread
+        print(result)
     
 def mqtt_listener(client): #Setup the mqtt client
     client.on_connect = on_connect
@@ -76,6 +78,18 @@ def arduinoUSBDecode(incoming_byte, client, serial_bus):
             else: #We have gotten a player ID so send to arduino
                 serial_bus.write(player_id.to_bytes(1, "big"))
                 #Big is big endian
+                
+def arduinoWriteToScreen(serial_bus, message):
+    print("attempting to write")
+    if(len(message) > 32): #warning that string too long
+        print("String too long, will looked borked")
+        
+    if(re.search("^.{16}\s", message)): #If 17th character is a whitespace remove it
+        message = message[:16] + message[17:]
+    
+    serial_bus.write(b'\x01') #Enable flag for arduino
+    serial_bus.write(str.encode(message))
+    serial_bus.write(b'\x00') #Null-termination
 
 def serial_listen(client):
     global result
@@ -103,13 +117,18 @@ def serial_listen(client):
                     result = 5
                     
                 case 0:
-                    serial_bus.write(b'T') #NYI on arduino side
+                    serial_bus.write(b'T') #Write tie to arduino
                     result = 5
                     
                 case -1:
                     serial_bus.write(b'L') #Write loss to arduino
                     result = 5
-
+                    
+                case 2: #Write to screen
+                    arduinoWriteToScreen(serial_bus, "Testing a String Even more letters to type out!")
+                    result = 5
+                    
+                    
 #Making sure it only runs if its run as main and not imported
 if __name__ == "__main__":
     client = mqtt.Client()
