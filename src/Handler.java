@@ -6,16 +6,16 @@ import java.util.Collections;
 import java.util.List;
 
 public class Handler {
-    private boolean runGame = true;
+    //private boolean runGame = true;
     private int countPlayerID = 0;
     private List<PlayerStatus> players;
 
     public Handler() throws MqttException, InterruptedException {
-        while (runGame) {
+       // while (runGame) {
             GUI.window();
             singlePlayer();
-            multiPlayer();
-        }
+            //multiPlayer();
+        //}
     }
     
     // Additional methods for single player or other game modes...
