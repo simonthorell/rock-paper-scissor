@@ -8,7 +8,6 @@ the LCD is connected to A4 and A5
 
 /* 
 TODO: Fix not instantly resending on pressing * after getting a result
-TODO: Change startup behaviour to match config
  */
 
 #include <Keypad.h>
@@ -35,9 +34,8 @@ const char *rock = "Rock";
 const char *paper = "Paper";
 const char *scissor = "Scissor";
 const char *countdown[] = {
-    "3", "2", "1",
-    "Rock Paper Scissor!"
-};
+    "3", "2", "1", "Go!"
+}; 
 
 //global variables
 uint8_t playerID = 0;
@@ -46,6 +44,7 @@ uint8_t cursorLoc = 0;
 char pressedKey;
 byte selected;
 bool waitForResult = false;
+bool waitForCountdown = false;
 bool serialIncomingChars = false;
 
 //Keypad and LCD setup
@@ -58,26 +57,25 @@ void waitForID();
 void printSelection(const char* str);
 const char * getSelection(byte flags);
 void displayCountdown();
+void displayResultAndClear(char c);
 
+//runs once
 void setup(){
-    lcd = aLCD::startLCD();
-    Serial.begin(baud_rate);
+    lcd = aLCD::startLCD(); //init LCD
+    Serial.begin(baud_rate); //init serial port
 }
 
+//primary loop
 void loop(){
-    if(playerID == 0 ? false : true && waitForResult == false){
-        pressedKey = myKeypad.getKey();
-        if(pressedKey)
-            getKeypadPress(pressedKey);
+    if(playerID != 0){ //We have a ID
+        if(!waitForResult && !waitForCountdown){ //Not waiting for anything, button time!
+            pressedKey = myKeypad.getKey();
+            if(pressedKey)
+                getKeypadPress(pressedKey);
+        }
     }
-    else if(playerID == 0 ? false : true && waitForResult == true){
-        lcd.setCursor(0, 1);
-        lcd.print("Waiting for result");
-        delay(500);
-    }
-     else{
+    else //we dont have ID, wait until we get one
         waitForID();
-    } 
 }
 
 /* 
@@ -87,7 +85,8 @@ void waitForID(){
     Serial.println("NO PLAYER ID");
     lcd.clear();
     lcd.print("Connecting");
-    for(int i = 0; i <= waiting % 3; i++)
+    //Fancy loop for differing amounts of .
+    for(int i = 0; i <= waiting % 3; i++) 
         lcd.print(".");
     delay(1000);
     waiting++;
@@ -95,74 +94,61 @@ void waitForID(){
 
 /* 
 Interrupt for serialEvents to read data and process it before jumping back to the previous program state
-Char byte values
-87 = W
-76 = L
  */
 void serialEvent(){
     char inChar;
-    Serial.println("Serial event interrupt");
 
     if(Serial.available()){
         inChar = Serial.read();
-        Serial.println("Recieved data");
 
-        //TODO: Add \x05 for established USB bus
-
-        if(serialIncomingChars == true){
-            if(inChar == NULL)
+        if(serialIncomingChars == true){ //if we are in display mode
+            if(inChar == NULL)          //Null terminated
             {
-                serialIncomingChars = false;
+                serialIncomingChars = false; //leave display mode
             }
             else
             {
+                //logic for moving the print cursor to the correct location
+                //We lose the location on changing scope it seems like
                 lcd.setCursor(cursorLoc % screenWidth, cursorLoc / screenWidth);
                 lcd.print(inChar);
                 cursorLoc++;
             }
         }
-        else if(playerID != 0){
+        else if(playerID != 0){ //make sure we have playID before accepting any of these 
             switch (inChar){
-                case 'W':
-                    lcd.clear();
-                    Serial.println("W");
-                    lcd.print("You won!");
-                    waitForResult = false;
+                case 'W': //BIG W
+                    displayResultAndClear(inChar);
                 break;
 
-                case 'L':
-                    lcd.clear();
-                    lcd.print("You lost!");
-                    waitForResult = false;
+                case 'L': //loser loser
+                    displayResultAndClear(inChar);
                 break;
 
-                case 'T':
-                    lcd.clear();
-                    lcd.print("Tie!");
-                    waitForResult = false;
+                case 'T': //Tie
+                    displayResultAndClear(inChar);
                 break;
 
                 case 0b00000001: //Specific byte to raise flag that we are supposed to display incoming text
-                    serialIncomingChars = true;
+                    serialIncomingChars = true; //set flag that we are in display mode
                     cursorLoc = 0;
                     lcd.clear();
                 break;
 
-                case 0b00000010:
+                case 0b00000010: //Same as before except to start the countdown
                     displayCountdown();
-                break;
-            
-                default:
                 break;
             }
         }
+        //We dont have a playerID so accepting the first byte sent as our playerID!
         else if(playerID == 0){
             lcd.clear();
             playerID = inChar;
             lcd.print("PlayerID: ");
             lcd.print(playerID);
             lcd.setCursor(0, 1);
-            lcd.print("READY TO PLAY!");
+            lcd.print("Waiting for host");
+            waitForCountdown = true; //Waiting for host to start game
         }
     }
 }
@@ -177,11 +163,21 @@ Char byte values
 void getKeypadPress(char c){
     switch(c){
         case 42:
-            Serial.println(selected);
-            lcd.clear();
-            lcd.print("SENT: ");
-            lcd.print(getSelection(selected));
-            waitForResult = true;
+            if(selected != 0b00000000){
+                Serial.println(selected);
+                lcd.clear();
+                lcd.print("Sent: ");
+                lcd.print(getSelection(selected));
+                lcd.setCursor(0, 1);
+                lcd.print("Waiting");
+                waitForResult = true;
+            }
+            else{
+                lcd.clear();
+                lcd.print("Press 1,2,3 to");
+                lcd.setCursor(0, 1);
+                lcd.print("select something")
+            }
         break;
 
         case 49:
@@ -202,9 +198,6 @@ void getKeypadPress(char c){
         default:
             lcd.clear();
             lcd.print("Press 1, 2 or 3!");
-            lcd.setCursor(0, 1);
-            lcd.print(c);
-            lcd.print((int)c);
         break;
     }
 }
@@ -212,8 +205,8 @@ void getKeypadPress(char c){
 void printSelection(const char* str)
 {
     lcd.clear();
-    lcd.print("Selected: ");
-/*     int i = 0;
+    /*lcd.print("Selected: ");
+    int i = 0;
     while(*(str + i) != 0){
         lcd.print(*(str + i));
         i++;
@@ -234,9 +227,37 @@ const char * getSelection(byte flags){
 }
 
 void displayCountdown(){
-    for(int i = 0; i < sizeof(countdown); i++){
+    for(int i = 0; i < 4; i++){
         lcd.clear();
+        Serial.println(countdown[i]);
         lcd.print(countdown[i]);
         delay(1000);
     }
+    lcd.setCursor(0, 1);
+    lcd.print("Press 123");
+
+    waitForCountdown = false;
+}
+
+void displayResultAndClear(char c){
+    lcd.clear();
+    switch(c){
+        case 'W':
+            lcd.print("You won!");
+        break;
+
+        case 'L':
+            lcd.print("You lost!");
+        break;
+
+        case 'T':
+            lcd.print("Tie!");
+        break;
+    }
+    waitForResult = false;
+    waitForCountdown = true;
+    selected = NULL;
+    delay(1000);
+    lcd.setCursor(0, 1);
+    lcd.print("Waiting for host");
 }
