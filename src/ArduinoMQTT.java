@@ -25,10 +25,8 @@ public class ArduinoMQTT {
     private boolean lockedInArduino = false;
     private int lastMove = -1;
     private boolean hasMoveReady = false;
-    private String name;
 
-    public ArduinoMQTT(int playerID, String name) throws MqttException{
-        this.name = name;
+    public ArduinoMQTT(int playerID) throws MqttException{
         this.playerID = playerID;
         playerTopic = "sten-sax-pase/player" + this.playerID;
 
@@ -131,6 +129,17 @@ public class ArduinoMQTT {
         client.publish(playerTopic, new MqttMessage(jsonMsgOut.toString().getBytes()));
     }
 
+    public void disconnect(){
+        if(client != null && client.isConnected()){
+            try {
+                client.disconnect();
+                client.close();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
     //If its connected and active with a arduino
     public boolean isActive(){
         return this.lockedInArduino;
@@ -163,7 +172,5 @@ public class ArduinoMQTT {
         sendResultMQTT(winOrLose);
     }
 
-    public String getName(){
-        return this.name;
-    }
+
 }
