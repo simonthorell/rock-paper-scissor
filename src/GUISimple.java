@@ -1,6 +1,5 @@
 import javax.imageio.ImageIO;
 import javax.swing.*;
-
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -10,43 +9,22 @@ import java.io.IOException;
 
 public class GUISimple{
 
+
     private static JFrame frame;
-    private static JLayeredPane bottomContainer;
-    private static JPanel menuLayer;
-    private static JLabel singleMulti;
-    private static JButton singlePlayerButton;
-    private static JButton multiPlayerButton;
-    private static JPanel container;
-    private static JPanel top;
-    private static JPanel topLeft;
+
     private static JLabel playerHand;
-    private static JPanel topMiddle;
-    private static JPanel topMiddleTop;
-    private static JPanel topMiddleLeft;
-    private static JLabel playerScore;
-    private static JPanel topMiddleMiddle;
-    private static JLabel scoreName;
-    private static JPanel topMiddleRight;
-    private static JLabel cpuScore;
-    private static JPanel topMiddleBottom;
-    private static JLabel draw;
-    private static JPanel topRight;
     private static JLabel cpuHand;
-    private static JPanel bottom;
-    private static JPanel bottomLeft;
-    private static JPanel bottomLeftTop;
+    private static JLabel playerScore;
+    private static JLabel cpuScore;
+    private static JLabel draw;
     private static JLabel playerWin;
-    private static JPanel bottomLeftBottom;
+    private static JLabel cpuWin;
     private static JLabel playerName;
-    private static JPanel bottomMiddle;
+    private static JLabel cpuName;
+
     private static JButton rockButton;
     private static JButton paperButton;
     private static JButton scissorButton;
-    private static JPanel bottomRight;
-    private static JPanel bottomRightTop;
-    private static JLabel cpuWin;
-    private static JPanel bottomRightBottom;
-    private static JLabel cpuName;
 
     private static int pScore = 0;
     private static int cScore = 0;
@@ -58,6 +36,7 @@ public class GUISimple{
     private static int pictureIndex = 0;
     private static int totalFrames = 6;
     private static Timer slideTimer;
+
     private static String[] sheetPaths = {
         "simple-pics/spritesheet-pRock.png",
         "simple-pics/spritesheet-pPaper.png",
@@ -72,107 +51,110 @@ public class GUISimple{
 
     public static void window(){
 
+        // Displaying parts consisting of JFrame, JPanels, JLabels, JButtons.
         frame = new JFrame();
-        frame.setSize(800, 640);
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.setLocationRelativeTo(null);
-        frame.setResizable(false);
-        frame.setVisible(true);
+            frame.setSize(800, 640);
+            frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+            frame.setLocationRelativeTo(null);
+            frame.setResizable(false);
+            frame.setVisible(true);
 
-        bottomContainer = new JLayeredPane();
+            
+            JLayeredPane bottomContainer = new JLayeredPane();
 
-        menuLayer = new JPanel(new GridLayout(3, 1));
-        menuLayer.setBounds(250, 150, 200, 200);
-        menuLayer.setBackground(Color.GRAY);
-        menuLayer.setVisible(true);
+                JPanel menuLayer = new JPanel(new GridLayout(3, 1));
+                    menuLayer.setBounds(250, 150, 200, 200);
+                    menuLayer.setBackground(Color.GRAY);
+                    menuLayer.setVisible(true);
+
+                    JLabel singleMulti = new JLabel("<html><h3>Choose Game Setting!</h3></html>");
+                    JButton singlePlayerButton = new JButton("<html><h2>SINGLEPLAYER</h2></html>");
+                    JButton multiPlayerButton = new JButton("<html><h2>MULTIPLAYER</h2></html>");
+
+                
+                JPanel container = new JPanel(new GridLayout(2, 1));
+                    container.setSize(800, 600);
+
+                    JPanel top = new JPanel(new GridLayout(1,3));
+                        top.setBackground(Color.WHITE);
+                        top.setSize(800, 300);
+
+                        JPanel topLeft = new JPanel(new BorderLayout());
+                            topLeft.setSize(800/3, 300);
+                            topLeft.setAlignmentX(0);
+                            topLeft.setBackground(Color.WHITE);
+                            topLeft.setVisible(true);
+
+                            playerHand = new JLabel();
+
+                        JPanel topMiddle = new JPanel(new GridLayout(2, 1));
+                            topMiddle.setSize(800/3, 300);
+                            topMiddle.setAlignmentX(800/3);
+                            topMiddle.setBackground(Color.WHITE);
+                            topMiddle.setVisible(true);
+
+                            JPanel topMiddleTop = new JPanel(new GridLayout(1, 3));
+                                topMiddleTop.setBackground(Color.WHITE);
+
+                            JPanel topMiddleLeft = new JPanel();
+                                topMiddleLeft.setBackground(Color.WHITE);
+                                playerScore = new JLabel("<html><h1>"+pScore+"</h1></html>");
+
+                            JPanel topMiddleMiddle = new JPanel();
+                                topMiddleMiddle.setBackground(Color.WHITE);
+                                JLabel scoreName = new JLabel("<html><h2><u>SCORES</u></h2></html>");
+
+                            JPanel topMiddleRight = new JPanel();
+                                topMiddleRight.setBackground(Color.WHITE);
+                                cpuScore = new JLabel("<html><h1>"+cScore+"</h1></html>");
+
+                            JPanel topMiddleBottom = new JPanel();
+                                topMiddleBottom.setBackground(Color.WHITE);
+                                draw = new JLabel("");
         
-        singleMulti = new JLabel("<html><h3>Choose Game Setting!</h3></html>");
-        singlePlayerButton = new JButton("<html><h2>SINGLEPLAYER</h2></html>");
-        multiPlayerButton = new JButton("<html><h2>MULTIPLAYER</h2></html>");
+                        JPanel topRight = new JPanel(new BorderLayout());
+                            topRight.setSize(800/3, 300);
+                            topRight.setAlignmentX(800/3*2);
+                            topRight.setBackground(Color.WHITE);
+                            topRight.setVisible(true);
+                            cpuHand = new JLabel();
 
-        container = new JPanel(new GridLayout(2, 1));
-        container.setSize(800, 600);
+                    JPanel bottom = new JPanel(new GridLayout(1, 3));
+                        bottom.setSize(800,300);
+                        bottom.setVisible(true);
 
-        top = new JPanel(new GridLayout(1,3));
-        top.setBackground(Color.WHITE);
-        top.setSize(800, 300);
+                        JPanel bottomLeft = new JPanel(new GridLayout(2, 1));
+                            bottomLeft.setSize(300, 300);
+                            bottomLeft.setBackground(Color.GRAY);
+                            bottomLeft.setVisible(true);
 
-        topLeft = new JPanel(new BorderLayout());
-        topLeft.setSize(800/3, 300);
-        topLeft.setAlignmentX(0);
-        topLeft.setBackground(Color.WHITE);
-        topLeft.setVisible(true);
-
-        playerHand = new JLabel();
-
-        topMiddle = new JPanel(new GridLayout(2, 1));
-        topMiddle.setSize(800/3, 300);
-        topMiddle.setAlignmentX(800/3);
-        topMiddle.setBackground(Color.WHITE);
-        topMiddle.setVisible(true);
-
-        topMiddleTop = new JPanel(new GridLayout(1, 3));
-        topMiddleTop.setBackground(Color.WHITE);
-
-        topMiddleLeft = new JPanel();
-        topMiddleLeft.setBackground(Color.WHITE);
-        playerScore = new JLabel("<html><h1>"+pScore+"</h1></html>");
-
-        topMiddleMiddle = new JPanel();
-        topMiddleMiddle.setBackground(Color.WHITE);
-        scoreName = new JLabel("<html><h2><u>SCORES</u></h2></html>");
-
-        topMiddleRight = new JPanel();
-        topMiddleRight.setBackground(Color.WHITE);
-        cpuScore = new JLabel("<html><h1>"+cScore+"</h1></html>");
-
-        topMiddleBottom = new JPanel();
-        topMiddleBottom.setBackground(Color.WHITE);
-        draw = new JLabel("");
+                            JPanel bottomLeftTop = new JPanel();
+                                playerWin = new JLabel(" "); 
         
-        topRight = new JPanel(new BorderLayout());
-        topRight.setSize(800/3, 300);
-        topRight.setAlignmentX(800/3*2);
-        topRight.setBackground(Color.WHITE);
-        topRight.setVisible(true);
+                            JPanel bottomLeftBottom = new JPanel();
+                                playerName = new JLabel("<html><h1>PLAYER</h1></html>");
 
-        cpuHand = new JLabel();
+                        JPanel bottomMiddle = new JPanel(new GridLayout(3, 1));
+                            rockButton = new JButton("<html><h1>ROCK</h1></html>");
+                                rockButton.setEnabled(false);
+                            paperButton = new JButton("<html><h1>PAPER</h1></html>");
+                                paperButton.setEnabled(false);
+                            scissorButton = new JButton("<html><h1>SCISSOR</h1></html>");
+                                scissorButton.setEnabled(false);
 
-        bottom = new JPanel(new GridLayout(1, 3));
-        bottom.setSize(800,300);
-        bottom.setVisible(true);
+                        JPanel bottomRight = new JPanel(new GridLayout(2, 1));
+                            bottomRight.setSize(300, 300);
+                            bottomRight.setBackground(Color.GRAY);
+                            bottomRight.setVisible(true);
 
-        bottomLeft = new JPanel(new GridLayout(2, 1));
-        bottomLeft.setSize(300, 300);
-        bottomLeft.setBackground(Color.GRAY);
-        bottomLeft.setVisible(true);
+                            JPanel bottomRightTop = new JPanel();
+                                cpuWin = new JLabel(""); 
 
-        bottomLeftTop = new JPanel();
-        playerWin = new JLabel(" "); 
-        
+                            JPanel bottomRightBottom = new JPanel();
+                                cpuName = new JLabel("<html><h1>COMPUTER</h1></html>");
 
-        bottomLeftBottom = new JPanel();
-        playerName = new JLabel("<html><h1>PLAYER</h1></html>");
 
-        bottomMiddle = new JPanel(new GridLayout(3, 1));
-        rockButton = new JButton("<html><h1>ROCK</h1></html>");
-        rockButton.setEnabled(false);
-        paperButton = new JButton("<html><h1>PAPER</h1></html>");
-        paperButton.setEnabled(false);
-        scissorButton = new JButton("<html><h1>SCISSOR</h1></html>");
-        scissorButton.setEnabled(false);
-
-        bottomRight = new JPanel(new GridLayout(2, 1));
-        bottomRight.setSize(300, 300);
-        bottomRight.setBackground(Color.GRAY);
-        bottomRight.setVisible(true);
-
-        bottomRightTop = new JPanel();
-        cpuWin = new JLabel(""); 
-
-        bottomRightBottom = new JPanel();
-        cpuName = new JLabel("<html><h1>COMPUTER</h1></html>");
-
+        // This is where comopnents is added to eachother.         
         frame.add(bottomContainer);
 
         bottomContainer.add(container, JLayeredPane.DEFAULT_LAYER);
@@ -220,6 +202,7 @@ public class GUISimple{
         bottomRight.add(bottomRightBottom);
         bottomRightBottom.add(cpuName);
 
+        // actionlisteners for the Buttons
         rockButton.addActionListener((ActionEvent e) -> {
             // choosenButton(1);
             draw.setText(null);
@@ -255,11 +238,12 @@ public class GUISimple{
             paperButton.setEnabled(true);
             scissorButton.setEnabled(true);
          });
-         singlePlayerButton.addActionListener((ActionEvent e) -> {
+         multiPlayerButton.addActionListener((ActionEvent e) -> {
             menuLayer.setVisible(false);
          });
     }
 
+    // method that checks if the image file exists
     private static BufferedImage loadImage(String sheetPath) {
         try {
             return ImageIO.read(new File(sheetPath));
@@ -269,6 +253,7 @@ public class GUISimple{
         }
     }
 
+    // method that devides the spritesheets into 6 parts and displays a choosen part.
     private static void displayPictures() {
 
         if (pictureIndex < totalFrames) {
@@ -287,6 +272,7 @@ public class GUISimple{
         }
     }
 
+    // method that tells displayPictures() what to display and how fast/slow it should be diplayed
     public static void startDisplayAction(int player, int cpu, int wld){
         cpu = cpu + 3;
 
@@ -320,6 +306,7 @@ public class GUISimple{
             slideTimer.start();
     }
 
+    //method that decides what text to send in win/loose/draw scenarios
     private static void winLooseDraw(int wld){
         if(wld == 0){
             draw.setText("<html><h1>DRAW!</h1></html>");  
@@ -336,6 +323,7 @@ public class GUISimple{
         }
     }
 
+    // method that nulls/resets all varibles after a game is finnishes 
     private static void gameFinnished(){
 
         int choice;
@@ -371,6 +359,7 @@ public class GUISimple{
         }
     }
 
+    
     public static void scenario() {
         GameLogic gameLogic = new GameLogic(player1.getPlayerMove() + 1, player2.getPlayerMove() + 1);
         startDisplayAction(player1.getPlayerMove(), player2.getPlayerMove(), gameLogic.getWinner());
