@@ -70,7 +70,7 @@ public class GUI{
                     menuLayer.setBounds(250, 150, 200, 200);
                     menuLayer.setBackground(Color.GRAY);
                     menuLayer.setVisible(true);
-
+                /* 
                 JPanel highscore = new JPanel(new GridLayout());
                     highscore.setBounds(0, 0, 800, 300);
                     highscore.setBackground(Color.GRAY);
@@ -79,7 +79,7 @@ public class GUI{
                     highscoreButton.setEnabled(true);
                     highscoreButton.setSize(400, 150);
 
-
+                    */
 
                     JLabel singleMulti = new JLabel("<html><h3>Choose Game Setting!</h3></html>");
                     JButton singlePlayerButton = new JButton("<html><h2>SINGLEPLAYER</h2></html>");
@@ -146,7 +146,7 @@ public class GUI{
                                 playerWin = new JLabel(" "); 
         
                             JPanel bottomLeftBottom = new JPanel();
-                                playerName = new JLabel("<html><h1>PLAYER</h1></html>");
+                                playerName = new JLabel();
 
                         JPanel bottomMiddle = new JPanel(new GridLayout(3, 1));
                             rockButton = new JButton("<html><h1>ROCK</h1></html>");
@@ -165,7 +165,7 @@ public class GUI{
                                 cpuWin = new JLabel(""); 
 
                             JPanel bottomRightBottom = new JPanel();
-                                cpuName = new JLabel("<html><h1>COMPUTER</h1></html>");
+                                cpuName = new JLabel();
 
 
         // This is where comoponents are added to eachother.         
@@ -249,11 +249,14 @@ public class GUI{
             rockButton.setEnabled(true);
             paperButton.setEnabled(true);
             scissorButton.setEnabled(true);
+            currentPlayers();
+
          });
          multiPlayerButton.addActionListener((ActionEvent e) -> {
             menuLayer.setVisible(false);
+            currentPlayers();
          });
-
+         /* 
          highscoreButton.addActionListener(new ActionListener() {
             HighScore hs = new HighScore();
 
@@ -263,7 +266,7 @@ public class GUI{
                     hs.displayRankOrder();
                 } catch
             }
-        });
+        }); */
     }
          
      
@@ -388,6 +391,11 @@ public class GUI{
     public static void scenario() {
         GameLogic gameLogic = new GameLogic(player1.getPlayerMove(), player2.getPlayerMove());
         startDisplayAction(player1.getPlayerMove(), player2.getPlayerMove(), gameLogic.getWinner());
+    }
+
+    public static void currentPlayers(){
+        playerName.setText("<html><h1>"+player1.getName()+"</h1></html>");
+        cpuName.setText("<html><h1>"+player2.getName()+"</h1></html>");
     }
 
 }
