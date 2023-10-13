@@ -5,9 +5,11 @@ import org.eclipse.paho.client.mqttv3.MqttException;
 public class ArduinoPlayerStatus {
 
     //Dirty hack because I cant use #define in java, costs us 3 bytes of memory
-    private final byte iscomputer = 1;
-    private final byte ismqttPlayer = 2;
-    private final byte isarduinoPlayer = 3;
+    private final static byte isComputer = 1;
+    private final static byte isMqttPlayer = 2;
+    private final static byte isArduinoPlayer = 3;
+    //Lets us do this
+    //ArduinoPlayerStatus player1 = new PlayerStatus(1, ArduinoPlayerStatus.isComputer);
 
 
     private int playerID;
@@ -23,22 +25,27 @@ public class ArduinoPlayerStatus {
         this.playerID = playerID;
         switch(playerType)
         {
-            case iscomputer:
+            case isComputer:
                 this.playerType = playerType;
                 this.name = "Computer";
                 rnd = new Random();
                 this.playerType = playerType;
                 break;
 
-            case ismqttPlayer:
+            case isMqttPlayer:
                 mqttPlayer = new MqttPlayer(playerID);
                 this.playerType = playerType;
                 break;
             
-            case isarduinoPlayer:
+            case isArduinoPlayer:
                 arduinoPlayer = new ArduinoMQTT(playerID, "ArduinoPlayer");
                 this.playerType = playerType;
                 break;
+
+            default:
+                this.name = "Player " + playerID;
+                break;
+
         }       
     }
 
