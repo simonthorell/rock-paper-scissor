@@ -7,7 +7,8 @@ the LCD is connected to A4 and A5
  */
 
 /* 
-Fix pressing star doesnt instantly resend the same after W/L
+TODO: Fix not instantly resending on pressing * after getting a result
+TODO: Change startup behaviour to match config
  */
 
 #include <Keypad.h>
@@ -96,6 +97,8 @@ void serialEvent(){
         inChar = Serial.read();
         Serial.println("Recieved data");
 
+        //TODO: Add \x05 for established USB bus
+
         if(serialIncomingChars == true){
             if(inChar == NULL)
             {
@@ -108,29 +111,36 @@ void serialEvent(){
                 cursorLoc++;
             }
         }
-        else if(inChar == 'W' && playerID != 0){
-            lcd.clear();
-            Serial.println("W");
-            lcd.print("You won!");
-            waitForResult = false;
-        }
-        else if(inChar == 'L' && playerID != 0){
-            lcd.clear();
-            Serial.println("L");
-            lcd.print("You lost!");
-            waitForResult = false;
-        }
-        else if(inChar == 'T' && playerID != 0){
-            lcd.clear();
-            Serial.println("T");
-            lcd.print("Tie!");
-            waitForResult = false;
-        }
-        else if (inChar == 0b00000001 && playerID != 0){
-            serialIncomingChars = true;
-            cursorLoc = 0;
-            lcd.clear();
-            Serial.println("SOH");
+        else if(playerID != 0){
+            switch (inChar){
+                case 'W':
+                    lcd.clear();
+                    Serial.println("W");
+                    lcd.print("You won!");
+                    waitForResult = false;
+                break;
+
+                case 'L':
+                    lcd.clear();
+                    lcd.print("You lost!");
+                    waitForResult = false;
+                break;
+
+                case 'T':
+                    lcd.clear();
+                    lcd.print("Tie!");
+                    waitForResult = false;
+                break;
+
+                case 0b00000001:
+                    serialIncomingChars = true;
+                    cursorLoc = 0;
+                    lcd.clear();
+                break;
+            
+                default:
+                break;
+            }
         }
         else if(playerID == 0){
             lcd.clear();
