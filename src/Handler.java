@@ -30,13 +30,14 @@ public class Handler {
 
     public void multiPlayer() throws MqttException, InterruptedException {
         // [Adjustable] MAX_PLAYERS could be dynamic based on a GUI interaction or game setup stage
-        final int MAX_PLAYERS = 4; 
-        String displayMessage = "Push any button to play!";
-        String[] countDownMsg = {"3", "2", "1", "Rock, Paper, Scissors!"};
+        final int MAX_PLAYERS = 2; 
+        final String displayMessage = "Push any button to play!";
+        final String[] countDownMsg = {"3", "2", "1", "Rock, Paper, Scissors!"};
         boolean waitForPlayers = true;
         players = new ArrayList<>();
 
-        while (waitForPlayers && countPlayerID < MAX_PLAYERS) {
+        // while (waitForPlayers && countPlayerID < MAX_PLAYERS) {
+        while (countPlayerID < MAX_PLAYERS) {
             countPlayerID++;
             PlayerStatus currentPlayer = new PlayerStatus(countPlayerID, true, false);
             players.add(currentPlayer);
@@ -59,10 +60,18 @@ public class Handler {
             PlayerStatus player1 = nextMatch.player1;
             PlayerStatus player2 = nextMatch.player2;
 
+            GUI.player1 = player1;
+            GUI.player2 = player2;
+
             MqttPlayer.countDownAndThrow(countDownMsg);
 
             player1.setPlayerMove(player1.mqttPlayer().getMove());
             player2.setPlayerMove(player2.mqttPlayer().getMove());
+
+            GUI.player1 = player1;
+            GUI.player2 = player2;
+
+            GUI.scenario();
 
             GameLogic gameLogic = new GameLogic(player1.getPlayerMove(), player2.getPlayerMove());
             int winner = gameLogic.getWinner();
@@ -87,7 +96,7 @@ public class Handler {
         }
     }
 
-       public List<PlayerStatus> getRankedPlayers() {
+    public List<PlayerStatus> getRankedPlayers() {
         Collections.sort(players, (player1, player2) -> {
             return Integer.compare(player2.getScore(), player1.getScore());
          });
@@ -100,4 +109,5 @@ public class Handler {
         List<PlayerStatus> rankedPlayers = handler.getRankedPlayers();
         HighScore.displayRankOrder(rankedPlayers);
     }
-    }
+
+}
