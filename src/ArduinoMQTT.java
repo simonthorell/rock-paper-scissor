@@ -31,32 +31,40 @@ public class ArduinoMQTT {
         this.name = name;
         this.playerID = playerID;
         playerTopic = "sten-sax-pase/player" + this.playerID;
+
+        //Basic connection stuff
         String brokerUrl = "ssl://1c87c890092b4b9aaa4e1ca5a02dfc9e.s1.eu.hivemq.cloud:8883";
         String clientId = String.valueOf(playerID);
         client = new MqttClient(brokerUrl, clientId, new MemoryPersistence());
 
+        //Connection options, username, password and SSL
         MqttConnectOptions options = new MqttConnectOptions();
         options.setUserName("W-bot");
         options.setPassword("W-bot123!".toCharArray());
         options.setCleanSession(true);
         options.setSocketFactory(SSLSocketFactory.getDefault());
 
+        //SSL setup
         Properties sslProps = new Properties();
         sslProps.setProperty("com.ibm.ssl.protocol", "TLSv1.2");
         options.setSSLProperties(sslProps);
 
+        //Connect
         client.connect(options);
 
+        //Callback function to intercept messages and dispatch
         client.setCallback(new MqttCallback() {
             @Override
             public void connectionLost(Throwable cause) {
                 // Handle connection lost
+                //We dont care about it atm
             }
         
             @Override
             public void messageArrived(String topic, MqttMessage message) throws Exception {
                 // Parse and add to queue
                 messageQueue.put(new String(message.getPayload()));
+
                 if(!lockedInArduino){ //if we need arduino still 
                     getIDRequest();
                 }else if(lockedInArduino){ //we have one locked in
@@ -67,16 +75,18 @@ public class ArduinoMQTT {
             @Override
             public void deliveryComplete(IMqttDeliveryToken token) {
                 // Handle delivery complete
+                //We dont care about this
             }
         });
 
+        //Start listening to a topic
         client.subscribe(messageTopic);
     }
 
     private void decodeMove() throws MqttException{
         try {
             String jsonMessage = messageQueue.take(); //get message
-            JSONObject jsonIncMsg = new JSONObject(jsonMessage);
+            JSONObject jsonIncMsg = new JSONObject(jsonMessage); //make into json format
             if(jsonIncMsg.has("move")){ //nullcheck for move
                 this.lastMove = jsonIncMsg.getInt("move"); //set as last move
                 System.out.printf("GOT MOVE: %d\n", this.lastMove);
@@ -91,7 +101,7 @@ public class ArduinoMQTT {
     private void getIDRequest() throws MqttException{
         try {
             String jsonMessage = messageQueue.take(); //grab message
-            JSONObject jsonIncMsg = new JSONObject(jsonMessage);
+            JSONObject jsonIncMsg = new JSONObject(jsonMessage); //make into json format
             if(jsonIncMsg.has("MAC")) //Look for MAC key
             {
                 if(jsonIncMsg.has("playerID")){ //null check
@@ -105,9 +115,9 @@ public class ArduinoMQTT {
 
                 //Send out MAC recieved + our playerID to hopefully bind to a arduino
                 JSONObject jsonOutMsg = new JSONObject();
-                jsonOutMsg.put("MAC", jsonIncMsg.getLong("MAC"));
-                jsonOutMsg.put("playerID", this.playerID);
-                client.publish("sten-sax-pase/message", new MqttMessage(jsonOutMsg.toString().getBytes()));
+                jsonOutMsg.put("MAC", jsonIncMsg.getLong("MAC")); //Add the incoming MAC adress under the key "MAC"
+                jsonOutMsg.put("playerID", this.playerID); //Add our player ID under the key "playerID"
+                client.publish("sten-sax-pase/message", new MqttMessage(jsonOutMsg.toString().getBytes())); //send the message
             } 
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
