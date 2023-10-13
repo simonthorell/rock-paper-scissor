@@ -14,11 +14,13 @@ TODO: Change startup behaviour to match config
 #include <Keypad.h>
 #include "aLCD.h"
 
+//Some defines
 #define rockBitFlag 0b001
 #define paperBitFlag 0b010
 #define scissorBitFlag 0b100
 #define screenWidth 16
 
+//Keypad setup thingies
 const int baud_rate = 9600;
 const char keys[4][4] = {
     { '1', '2', '3', 'A'},
@@ -27,10 +29,17 @@ const char keys[4][4] = {
     { '*', '0', '#', 'D'}};
 byte rowPins[4] = {11, 10, 9, 8};
 byte colPins[4] = {7, 6, 5, 4};
+
+//const strings
 const char *rock = "Rock";
 const char *paper = "Paper";
 const char *scissor = "Scissor";
+const char *countdown[] = {
+    "3", "2", "1",
+    "Rock Paper Scissor!"
+};
 
+//global variables
 uint8_t playerID = 0;
 uint8_t waiting = 0;
 uint8_t cursorLoc = 0;
@@ -39,15 +48,16 @@ byte selected;
 bool waitForResult = false;
 bool serialIncomingChars = false;
 
+//Keypad and LCD setup
 Keypad myKeypad = Keypad(makeKeymap(keys), rowPins, colPins, 4, 4);
 LiquidCrystal_I2C lcd(0, 0, 0);
 
-//forward declarations, do you even need these for the compiler here?
+//forward declarations
 void getKeypadPress(char c);
 void waitForID();
 void printSelection(const char* str);
 const char * getSelection(byte flags);
-
+void displayCountdown();
 
 void setup(){
     lcd = aLCD::startLCD();
@@ -65,9 +75,9 @@ void loop(){
         lcd.print("Waiting for result");
         delay(500);
     }
-    else{
+     else{
         waitForID();
-    }
+    } 
 }
 
 /* 
@@ -132,10 +142,14 @@ void serialEvent(){
                     waitForResult = false;
                 break;
 
-                case 0b00000001:
+                case 0b00000001: //Specific byte to raise flag that we are supposed to display incoming text
                     serialIncomingChars = true;
                     cursorLoc = 0;
                     lcd.clear();
+                break;
+
+                case 0b00000010:
+                    displayCountdown();
                 break;
             
                 default:
@@ -217,4 +231,12 @@ const char * getSelection(byte flags){
     if(flags & scissorBitFlag)
         return scissor;
     return NULL;
+}
+
+void displayCountdown(){
+    for(int i = 0; i < sizeof(countdown); i++){
+        lcd.clear();
+        lcd.print(countdown[i]);
+        delay(1000);
+    }
 }
