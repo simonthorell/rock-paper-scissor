@@ -321,7 +321,7 @@ public class GUI{
         }
     }
 
-    // method that nulls/resets all varibles after a game is finnishes 
+    // method that nulls/resets all varibles after a game is finnished
     private static void gameFinnished(){
 
         int choice;
