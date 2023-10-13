@@ -30,8 +30,7 @@ const char *rock = "Rock";
 const char *paper = "Paper";
 const char *scissor = "Scissor";
 
-//uint8_t playerID = 0;
-uint8_t playerID = 1; //temp for testing
+uint8_t playerID = 0;
 uint8_t waiting = 0;
 uint8_t cursorLoc = 0;
 char pressedKey;
