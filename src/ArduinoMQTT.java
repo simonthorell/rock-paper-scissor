@@ -121,11 +121,6 @@ public class ArduinoMQTT {
         client.publish(playerTopic, new MqttMessage(jsonMsgOut.toString().getBytes()));
     }
 
-    //If its connected and active with a arduino
-    public boolean isActive(){
-        return this.lockedInArduino;
-    }
-
     //If its ready for you to read a move
     private boolean hasMoveReady(){
         return this.hasMoveReady;
@@ -140,6 +135,11 @@ public class ArduinoMQTT {
     private int getLastMove(){
         hasMoveReady = false;
         return this.lastMove - 1;
+    }
+
+    //If its connected and active with a arduino
+    public boolean isActive(){
+        return this.lockedInArduino;
     }
 
     /* 
@@ -159,6 +159,7 @@ public class ArduinoMQTT {
     //Since we might need to wait this can take a while to responde
     public int getMove(){
         while(!hasMoveReady()){
+            //TODO: This will spam the shit out of console, make it actually useful :)
             System.out.println("DEBUG: Waiting for response " + this.playerID);
         }
         return getLastMove();
@@ -170,7 +171,7 @@ public class ArduinoMQTT {
      * a ArduinoMQTT object to bind to and the object itself is
      * created listening to those calls, could refactor code so this object
      * isnt listening when created but instead starts listening when this is called
-     * and I mgiht be able to get a string to be displayed on the arduino
+     * and I might be able to get a string to be displayed on the arduino
      */
     public void askToPlay(String displayMsg, int countPlayerID) throws MqttException{
 
@@ -198,7 +199,10 @@ public class ArduinoMQTT {
     /* 
      * TODO: Implement askToPlayAgain()
      * Changed to a no arg, easier to keep the play again isolated on arduino
-     * and triggered when needed
+     * and triggered when needed since we dont need a dynamic message.
+     * Currently its setup to just keep playing and never stop so
+     * unsure if its needed, but I can add that the arduino waits
+     * for this to tell it to ask to play again
      */
     public void askToPlayAgain() throws MqttException, InterruptedException{
 
