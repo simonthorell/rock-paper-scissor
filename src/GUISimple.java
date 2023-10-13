@@ -7,6 +7,8 @@ import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.awt.List;
 
 public class GUISimple{
 
@@ -78,20 +80,26 @@ public class GUISimple{
         frame.setLocationRelativeTo(null);
         frame.setResizable(false);
         frame.setVisible(true);
-
+   
         bottomContainer = new JLayeredPane();
 
-        menuLayer = new JPanel(new GridLayout(3, 1));
+        menuLayer = new JPanel(new GridLayout(1, 1));
         menuLayer.setBounds(250, 150, 200, 200);
         menuLayer.setBackground(Color.GRAY);
         menuLayer.setVisible(true);
+
+        
         
         singleMulti = new JLabel("<html><h3>Choose Game Setting!</h3></html>");
         singlePlayerButton = new JButton("<html><h2>SINGLEPLAYER</h2></html>");
         multiPlayerButton = new JButton("<html><h2>MULTIPLAYER</h2></html>");
+        
 
+        // bottom window
         container = new JPanel(new GridLayout(2, 1));
         container.setSize(800, 600);
+
+
 
         top = new JPanel(new GridLayout(1,3));
         top.setBackground(Color.WHITE);
@@ -177,6 +185,7 @@ public class GUISimple{
 
         bottomContainer.add(container, JLayeredPane.DEFAULT_LAYER);
         bottomContainer.add(menuLayer, JLayeredPane.PALETTE_LAYER);
+        
 
         menuLayer.add(singleMulti);
         menuLayer.add(singlePlayerButton);
@@ -258,7 +267,11 @@ public class GUISimple{
          singlePlayerButton.addActionListener((ActionEvent e) -> {
             menuLayer.setVisible(false);
          });
+
+         
     }
+
+    
 
     private static BufferedImage loadImage(String sheetPath) {
         try {

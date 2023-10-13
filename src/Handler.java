@@ -1,6 +1,7 @@
 import org.eclipse.paho.client.mqttv3.MqttException;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class Handler {
@@ -86,5 +87,35 @@ public class Handler {
         for (PlayerStatus currentPlayer : players) {
             currentPlayer.mqttPlayer().disconnect();
         }
+
+            
     }
+/* 
+    public List<PlayerStatus> getPlayers(){
+        return players;
+    }
+*/
+
+    public List<PlayerStatus> getRankedPlayers() {
+        Collections.sort(players, (player1, player2) -> {
+            return Integer.compare(player2.getScore(), player1.getScore());
+         });
+        return players;
+    }
+
+    public void updatedScoreBoard() throws MqttException, InterruptedException{
+       Handler handler = new Handler();
+       
+        List<PlayerStatus> rankedPlayers = handler.getRankedPlayers();
+        HighScore.displayRankOrder(rankedPlayers);
+    }
+
+    
+
 }
+
+    
+       
+
+
+
