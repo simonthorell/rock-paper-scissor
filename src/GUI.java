@@ -6,6 +6,7 @@ import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.util.List;
 
 public class GUI{
 
@@ -74,6 +75,9 @@ public class GUI{
                     highscore.setBounds(0, 0, 800, 300);
                     highscore.setBackground(Color.GRAY);
                     highscore.setVisible(false);
+
+                    highscoreButton.setEnabled(true);
+                    highscoreButton.setSize(400, 150);
 
 
 
@@ -249,7 +253,20 @@ public class GUI{
          multiPlayerButton.addActionListener((ActionEvent e) -> {
             menuLayer.setVisible(false);
          });
+
+         highscoreButton.addActionListener(new ActionListener() {
+            HighScore hs = new HighScore();
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                try {
+                    hs.displayRankOrder();
+                } catch
+            }
+        });
     }
+         
+     
 
     // method that checks if the image file exists
     private static BufferedImage loadImage(String sheetPath) {
