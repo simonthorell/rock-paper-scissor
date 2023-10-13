@@ -154,7 +154,7 @@ public class GUI{
                                 cpuName = new JLabel("<html><h1>COMPUTER</h1></html>");
 
 
-        // This is where comopnents is added to eachother.         
+        // This is where comoponents is added to eachother.         
         frame.add(bottomContainer);
 
             bottomContainer.add(container, JLayeredPane.DEFAULT_LAYER);
