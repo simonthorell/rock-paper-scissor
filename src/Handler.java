@@ -12,7 +12,7 @@ public class Handler {
 
     public Handler() throws MqttException, InterruptedException {
         while (runGame) {
-            GUISimple.window();
+            GUI.window();
             singlePlayer();
             multiPlayer();
         }
@@ -24,8 +24,8 @@ public class Handler {
         PlayerStatus player1 = new PlayerStatus(1, false, false);
         PlayerStatus player2 = new PlayerStatus(2, false, true);
 
-        GUISimple.player1 = player1;
-        GUISimple.player2 = player2;
+        GUI.player1 = player1;
+        GUI.player2 = player2;
     }
 
     public void multiPlayer() throws MqttException, InterruptedException {
