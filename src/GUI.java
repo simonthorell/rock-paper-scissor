@@ -6,7 +6,6 @@ import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
-import java.util.List;
 
 public class GUI{
 
@@ -55,6 +54,7 @@ public class GUI{
 
     public static void window(){
 
+
         // Displaying parts consisting of JFrame, JPanels, JLabels, JButtons.
         frame = new JFrame();
             frame.setSize(800, 640);
@@ -66,10 +66,17 @@ public class GUI{
             
             JLayeredPane bottomContainer = new JLayeredPane();
 
-                JPanel menuLayer = new JPanel(new GridLayout(3, 1));
-                    menuLayer.setBounds(250, 150, 200, 200);
-                    menuLayer.setBackground(Color.GRAY);
+                JPanel menuLayer = new JPanel(new GridLayout(3, 3));
+                    menuLayer.setBounds(200, 80, 400, 200);
+                    menuLayer.setBackground(new Color(82,78,80,90));
                     menuLayer.setVisible(true);
+
+                    JLabel singleMulti = new JLabel("<html><h1>Choose Game Option!</h1></html>");
+                    singleMulti.setHorizontalAlignment(SwingConstants.CENTER);
+                    JButton singlePlayerButton = new JButton("<html><h2>SINGLEPLAYER</h2></html>");
+                    JButton multiPlayerButton = new JButton("<html><h2>MULTIPLAYER</h2></html>");
+                  
+
                 /* 
                 JPanel highscore = new JPanel(new GridLayout());
                     highscore.setBounds(0, 0, 800, 300);
@@ -81,9 +88,7 @@ public class GUI{
 
                     */
 
-                    JLabel singleMulti = new JLabel("<html><h3>Choose Game Setting!</h3></html>");
-                    JButton singlePlayerButton = new JButton("<html><h2>SINGLEPLAYER</h2></html>");
-                    JButton multiPlayerButton = new JButton("<html><h2>MULTIPLAYER</h2></html>");
+                   
 
                 
                 JPanel container = new JPanel(new GridLayout(2, 1));
@@ -174,9 +179,9 @@ public class GUI{
             bottomContainer.add(container, JLayeredPane.DEFAULT_LAYER);
             bottomContainer.add(menuLayer, JLayeredPane.PALETTE_LAYER);
 
-                menuLayer.add(singleMulti);
-                menuLayer.add(singlePlayerButton);
-                menuLayer.add(multiPlayerButton);
+                    menuLayer.add(singleMulti);
+                    menuLayer.add(singlePlayerButton);
+                    menuLayer.add(multiPlayerButton);
 
                 container.add(top);
                     top.add(topLeft);
