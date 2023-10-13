@@ -8,14 +8,6 @@ import java.util.Properties;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 
-
-/* 
-TODO
- * Listen for confirmation message before swapping
- * Fix the rest of the logic after ID assignning
- */
-
-
 public class ArduinoMQTT {
     private MqttClient client;
     private final String messageTopic = "sten-sax-pase/#";
@@ -129,24 +121,13 @@ public class ArduinoMQTT {
         client.publish(playerTopic, new MqttMessage(jsonMsgOut.toString().getBytes()));
     }
 
-    public void disconnect(){
-        if(client != null && client.isConnected()){
-            try {
-                client.disconnect();
-                client.close();
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
-    }
-
     //If its connected and active with a arduino
     public boolean isActive(){
         return this.lockedInArduino;
     }
 
     //If its ready for you to read a move
-    public boolean hasMoveReady(){
+    private boolean hasMoveReady(){
         return this.hasMoveReady;
     }
 
@@ -156,12 +137,15 @@ public class ArduinoMQTT {
      * 1 paper
      * 2 scissor
      */
-    public int getLastMove(){
+    private int getLastMove(){
         hasMoveReady = false;
         return this.lastMove - 1;
     }
 
     /* 
+     * Replaces displayGameResult from MqttPlayer.java
+     * TODO: See if I can get a string displayed on arduino as well
+     * 
      * Send a int for if the player won, lost or tie
      * this handles the MQTT sending to the arduino
      * -1 lost
@@ -172,5 +156,62 @@ public class ArduinoMQTT {
         sendResultMQTT(winOrLose);
     }
 
+    //Since we might need to wait this can take a while to responde
+    public int getMove(){
+        while(!hasMoveReady()){
+            System.out.println("DEBUG: Waiting for response " + this.playerID);
+        }
+        return getLastMove();
+    }
 
+    /* 
+     * TODO: Implement askToPlay()
+     * Might not be needed since the python script is actively looking for
+     * a ArduinoMQTT object to bind to and the object itself is
+     * created listening to those calls, could refactor code so this object
+     * isnt listening when created but instead starts listening when this is called
+     * and I mgiht be able to get a string to be displayed on the arduino
+     */
+    public void askToPlay(String displayMsg, int countPlayerID) throws MqttException{
+
+    }
+
+    /* 
+     * TODO: Implement countDownAndThrow()
+     * Might be hard to implement with how string work or rather dont in c++
+     * Could be easier to have a predefined message and just have that trigger
+     * on the arduino instead of sending a string but we could probably make it work
+     */
+    public void countDownAndThrow(String[] messages) throws MqttException, InterruptedException{
+
+    }
+
+    /* 
+     * TODO: Implement displayNextMatch()
+     * This needs implementing in arduino and Arduino_player.py aswell
+     * Goal is to display who you are playing against?
+     */
+    public void displayNextMatch(TournamentTree.Node nextMatch) throws MqttException, InterruptedException{
+
+    }
+
+    /* 
+     * TODO: Implement askToPlayAgain()
+     * Changed to a no arg, easier to keep the play again isolated on arduino
+     * and triggered when needed
+     */
+    public void askToPlayAgain() throws MqttException, InterruptedException{
+
+    }
+
+    public void disconnect(){
+        if(client != null && client.isConnected()){
+            try {
+                client.disconnect();
+                client.close();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+    }
 }
