@@ -154,7 +154,7 @@ public class GUI{
                                 cpuName = new JLabel("<html><h1>COMPUTER</h1></html>");
 
 
-        // This is where comopnents is added to eachother.         
+        // This is where comoponents are added to eachother.         
         frame.add(bottomContainer);
 
             bottomContainer.add(container, JLayeredPane.DEFAULT_LAYER);
@@ -321,7 +321,7 @@ public class GUI{
         }
     }
 
-    // method that nulls/resets all varibles after a game is finnishes 
+    // method that nulls/resets all varibles after a game is finnished
     private static void gameFinnished(){
 
         int choice;
