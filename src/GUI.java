@@ -21,10 +21,13 @@ public class GUI{
     private static JLabel cpuWin;
     private static JLabel playerName;
     private static JLabel cpuName;
+    private static JLabel highscoreLabel;
+    
 
     private static JButton rockButton;
     private static JButton paperButton;
     private static JButton scissorButton;
+    private static JButton highscoreButton;
 
     private static int pScore = 0;
     private static int cScore = 0;
@@ -66,6 +69,13 @@ public class GUI{
                     menuLayer.setBounds(250, 150, 200, 200);
                     menuLayer.setBackground(Color.GRAY);
                     menuLayer.setVisible(true);
+
+                JPanel highscore = new JPanel(new GridLayout());
+                    highscore.setBounds(0, 0, 800, 300);
+                    highscore.setBackground(Color.GRAY);
+                    highscore.setVisible(false);
+
+
 
                     JLabel singleMulti = new JLabel("<html><h3>Choose Game Setting!</h3></html>");
                     JButton singlePlayerButton = new JButton("<html><h2>SINGLEPLAYER</h2></html>");

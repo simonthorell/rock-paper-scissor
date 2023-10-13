@@ -12,6 +12,7 @@ public class HighScore {
         for(PlayerStatus player : rankedPlayers){
             ranked.add ("Rank " + rank + ": " + player.getPlayerID() + " - Score: " + player.getScore());
             System.out.println("Rank " + rank + ": " + player.getPlayerID() + " - Score: " + player.getScore());
+            rank++;
         }
 
 
