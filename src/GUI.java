@@ -157,50 +157,48 @@ public class GUI{
         // This is where comopnents is added to eachother.         
         frame.add(bottomContainer);
 
-        bottomContainer.add(container, JLayeredPane.DEFAULT_LAYER);
-        bottomContainer.add(menuLayer, JLayeredPane.PALETTE_LAYER);
+            bottomContainer.add(container, JLayeredPane.DEFAULT_LAYER);
+            bottomContainer.add(menuLayer, JLayeredPane.PALETTE_LAYER);
 
-        menuLayer.add(singleMulti);
-        menuLayer.add(singlePlayerButton);
-        menuLayer.add(multiPlayerButton);
+                menuLayer.add(singleMulti);
+                menuLayer.add(singlePlayerButton);
+                menuLayer.add(multiPlayerButton);
 
-        container.add(top);
-        container.add(bottom);
-        top.add(topLeft);
+                container.add(top);
+                    top.add(topLeft);
+                        topLeft.add(playerHand, BorderLayout.WEST);
 
-        topLeft.add(bottomLeftTop);
-        topLeft.add(playerHand, BorderLayout.WEST);
+                    top.add(topMiddle);
+                        topMiddle.add(topMiddleTop);
+                            topMiddleTop.add(topMiddleLeft);
+                                topMiddleLeft.add(playerScore);
+                            topMiddleTop.add(topMiddleMiddle);
+                                topMiddleMiddle.add(scoreName);
+                            topMiddleTop.add(topMiddleRight);
+                                topMiddleRight.add(cpuScore);
+                        topMiddle.add(topMiddleBottom);
+                            topMiddleBottom.add(draw);
 
-        top.add(topMiddle);
-        topMiddle.add(topMiddleTop);
-        topMiddleTop.add(topMiddleLeft);
-        topMiddleLeft.add(playerScore);
-        topMiddleTop.add(topMiddleMiddle);
-        topMiddleMiddle.add(scoreName);
-        topMiddleTop.add(topMiddleRight);
-        topMiddleRight.add(cpuScore);
-        topMiddle.add(topMiddleBottom);
-        topMiddleBottom.add(draw);
+                    top.add(topRight);
+                        topRight.add(cpuHand, BorderLayout.EAST);
 
-        top.add(topRight);
-        topRight.add(cpuHand, BorderLayout.EAST);
+                container.add(bottom);
+                    bottom.add(bottomLeft);
+                        bottomLeft.add(bottomLeftTop);
+                            bottomLeftTop.add(playerWin);
+                        bottomLeft.add(bottomLeftBottom);
+                            bottomLeftBottom.add(playerName);
 
-        bottom.add(bottomLeft);
-        bottomLeft.add(bottomLeftTop);
-        bottomLeftTop.add(playerWin);
-        bottomLeft.add(bottomLeftBottom);
-        bottomLeftBottom.add(playerName);
+                    bottom.add(bottomMiddle);
+                        bottomMiddle.add(rockButton);
+                        bottomMiddle.add(paperButton);
+                        bottomMiddle.add(scissorButton);
 
-        bottom.add(bottomMiddle);
-        bottomMiddle.add(rockButton);
-        bottomMiddle.add(paperButton);
-        bottomMiddle.add(scissorButton);
-
-        bottom.add(bottomRight);
-        bottomRight.add(bottomRightTop);
-        bottomRightTop.add(cpuWin);
-        bottomRight.add(bottomRightBottom);
-        bottomRightBottom.add(cpuName);
+                    bottom.add(bottomRight);
+                        bottomRight.add(bottomRightTop);
+                            bottomRightTop.add(cpuWin);
+                        bottomRight.add(bottomRightBottom);
+                            bottomRightBottom.add(cpuName);
 
         // actionlisteners for the Buttons
         rockButton.addActionListener((ActionEvent e) -> {
