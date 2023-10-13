@@ -4,7 +4,6 @@ import json
 import paho.mqtt.client as mqtt
 import serial
 import threading
-import uuid
 import re
 from os import _exit
 
@@ -41,6 +40,7 @@ def on_message(client, userdata, message):
         
         if (msgPayload == "Push any button to play!"):
             player_id = payload_json.get("playerID")
+            client.publish(f"{TOPIC_PREFIX}playerID{player_id}", json.dumps({ "message" : player_id}))
             
         #TODO fix med so it actually works
         elif (msgPayload == "player x won"):
@@ -60,9 +60,6 @@ def mqtt_listener(client): #Setup the mqtt client
     client.connect(BROKER_URL, PORT)
     client.tls_set_context(context = ssl.SSLContext(ssl.PROTOCOL_TLSv1_2))
     client.loop_forever()
-    
-def request_player_id(client): #Request a player ID over MQTT under the request topic with our mac adress
-    client.publish(f"{TOPIC_PREFIX}Request", json.dumps({"message" : "NEED PLAYER ID", "MAC" : uuid.getnode()}))
 
 def arduinoUSBDecode(incoming_byte, client, serial_bus):
     global player_id
