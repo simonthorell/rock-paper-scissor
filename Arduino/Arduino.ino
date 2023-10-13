@@ -6,10 +6,6 @@ The Keypad is connected to pin 11 through 4
 the LCD is connected to A4 and A5
  */
 
-/* 
-TODO: Fix not instantly resending on pressing * after getting a result
- */
-
 #include <Keypad.h>
 #include "aLCD.h"
 
@@ -42,7 +38,7 @@ uint8_t playerID = 0;
 uint8_t waiting = 0;
 uint8_t cursorLoc = 0;
 char pressedKey;
-byte selected;
+byte selected = 0b00000000;
 bool waitForResult = false;
 bool waitForCountdown = false;
 bool serialIncomingChars = false;
@@ -163,7 +159,7 @@ Char byte values
 void getKeypadPress(char c){
     switch(c){
         case 42:
-            if(selected != 0b00000000){
+            if(selected != 0b00000000){ //if something is selected
                 Serial.println(selected);
                 lcd.clear();
                 lcd.print("Sent: ");
@@ -172,11 +168,11 @@ void getKeypadPress(char c){
                 lcd.print("Waiting");
                 waitForResult = true;
             }
-            else{
+            else{ //nothing is selected
                 lcd.clear();
                 lcd.print("Press 1,2,3 to");
                 lcd.setCursor(0, 1);
-                lcd.print("select something")
+                lcd.print("select something");
             }
         break;
 
@@ -202,6 +198,7 @@ void getKeypadPress(char c){
     }
 }
 
+//Just a function to display to remove repeating code
 void printSelection(const char* str)
 {
     lcd.clear();
@@ -216,6 +213,7 @@ void printSelection(const char* str)
     lcd.print("* to confirm");
 }
 
+//return the correct string based on selection
 const char * getSelection(byte flags){
     if(flags & rockBitFlag)
         return rock;
@@ -226,19 +224,21 @@ const char * getSelection(byte flags){
     return NULL;
 }
 
+//the countdown before game beings
 void displayCountdown(){
     for(int i = 0; i < 4; i++){
         lcd.clear();
         Serial.println(countdown[i]);
         lcd.print(countdown[i]);
-        delay(1000);
+        delay(1000); 
     }
     lcd.setCursor(0, 1);
     lcd.print("Press 123");
 
-    waitForCountdown = false;
+    waitForCountdown = false; //remove waiting flag
 }
 
+//resetting most variables and stuff
 void displayResultAndClear(char c){
     lcd.clear();
     switch(c){
@@ -256,8 +256,8 @@ void displayResultAndClear(char c){
     }
     waitForResult = false;
     waitForCountdown = true;
-    selected = NULL;
-    delay(1000);
+    selected = 0b00000000;
+    delay(1000); //wait 1 second before displaying last part
     lcd.setCursor(0, 1);
     lcd.print("Waiting for host");
 }
