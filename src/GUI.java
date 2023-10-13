@@ -7,7 +7,7 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 
-public class GUISimple{
+public class GUI{
 
 
     private static JFrame frame;
@@ -359,7 +359,7 @@ public class GUISimple{
         }
     }
 
-    
+
     public static void scenario() {
         GameLogic gameLogic = new GameLogic(player1.getPlayerMove() + 1, player2.getPlayerMove() + 1);
         startDisplayAction(player1.getPlayerMove(), player2.getPlayerMove(), gameLogic.getWinner());
