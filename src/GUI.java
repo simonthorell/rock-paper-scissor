@@ -359,7 +359,7 @@ public class GUI{
 
 
     public static void scenario() {
-        GameLogic gameLogic = new GameLogic(player1.getPlayerMove() + 1, player2.getPlayerMove() + 1);
+        GameLogic gameLogic = new GameLogic(player1.getPlayerMove(), player2.getPlayerMove());
         startDisplayAction(player1.getPlayerMove(), player2.getPlayerMove(), gameLogic.getWinner());
     }
 
