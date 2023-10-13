@@ -5,7 +5,7 @@ import paho.mqtt.client as mqtt
 import serial
 import threading
 import uuid
-import os
+from os import _exit
 
 #USB stuff
 baud_rate = 9600
@@ -87,7 +87,7 @@ def serial_listen(client):
     #If we cant open the serial bus terminate the entire python script
     except:
         print(f"Unable to open serial port {usb_port} terminating")
-        os._exit(1)
+        _exit(1)
         
     
     while True:
