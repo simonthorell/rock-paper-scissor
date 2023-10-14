@@ -28,30 +28,46 @@ def on_connect(client, userdata, flags, rc):
 def on_message(client, userdata, message):
     global player_id, result, displayMessage
     
-    payload_str = message.payload.decode("utf-8")       #Decode the incoming message as a utf-8 string
-    payload_json = json.loads(payload_str)              #make a json object of it
-    print(payload_json)                                 #debug print for my sanity
-    incoming_message = payload_json.get("message")      #Get the message
+    #TODO
+    #Player \d won!
+    #For some reason this cant be converted by json.loads
     
-    if(incoming_message):                               #If we have a message key in the json
-        msgPayload = payload_json.get("message")       
-        print(result)
-        #TODO Decode result for different actions
+    payload_str = message.payload.decode("utf-8")       #Decode the incoming message as a utf-8 string
+    try:
+        payload_json = json.loads(payload_str)              #make a json object of it
+        print(payload_json)                                 #debug print for my sanity
+        incoming_message = payload_json.get("message")      #Get the message
         
-        if (msgPayload == "Push any button to play!"):
-            player_id = payload_json.get("playerID")
-            client.publish(f"{TOPIC_PREFIX}playerID{player_id}", json.dumps({ "message" : player_id}))
+        if(incoming_message):                               #If we have a message key in the json
+            msgPayload = payload_json.get("message")       
             
-        #TODO fix med so it actually works
-        elif (msgPayload == "player x won"):
-            result = 1 
+            if (msgPayload == "Push any button to play!" and player_id == -1):
+                player_id = payload_json.get("playerID")
+                time.sleep(1)
+                msg = { "message" : str(player_id)}
+                client.publish(f"{TOPIC_PREFIX}player{player_id}", json.dumps(msg))
+                
+            elif (re.search("^Player\s\d\swon!$",msgPayload)):
+                getWinner(msgPayload)
+                
+            elif (msgPayload == "Tie!"):
+                result = 0
+                
+            elif (msgPayload == "3"):
+                result = 3
+                
+            elif (msgPayload == "write"):
+                displayMessage = payload_json.get("write")
+                result = 2
+    except ValueError as e:
+        print(e)
+        print("Invalid json")
             
-        elif (msgPayload == "3"):
-            result = 3
-            
-        elif (msgPayload == "write"):
-            displayMessage = payload_json.get("write")
-            result = 2
+def getWinner(msgPayload):
+    global result 
+    winnerID = int(msgPayload[8])
+    result = 1 if winnerID == player_id else -1
+    print("Debug winner")
                 
     
 def mqtt_listener(client): #Setup the mqtt client
@@ -109,6 +125,7 @@ def serial_listen(client):
     while True:
         if serial_bus.in_waiting > 0: #Serial bus has some data
             message = serial_bus.readline() #Read the data
+            print(f"INCOMING USB: {message}")
             for byte in message: #Step through the bytes
                 arduinoUSBDecode(byte, client, serial_bus)
                 
@@ -131,8 +148,9 @@ def serial_listen(client):
                     displayMessage = "" #Reset the global string
                     result = 5
                     
-                case 3: #Display the countdown
-                    serial_bus.write("\x02")
+                case 3: #Start countdown on arduino
+                    serial_bus.write(b'\x02')
+                    result = 5
                     
                     
 #Making sure it only runs if its run as main and not imported
