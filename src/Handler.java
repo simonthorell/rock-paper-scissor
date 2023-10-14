@@ -31,6 +31,7 @@ public class Handler {
 
             PlayerStatus player1 = players.get(0);
             PlayerStatus player2 = players.get(1);
+            System.out.println(player1.getName());
             setPlayersGUI(player1, player2);
 
             MqttPlayer.countDownAndThrow(countDownMsg);
