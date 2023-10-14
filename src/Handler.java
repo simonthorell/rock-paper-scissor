@@ -1,9 +1,8 @@
 import org.eclipse.paho.client.mqttv3.MqttException;
 
 import java.util.ArrayList;
-import java.util.Collections;
-
 import java.util.List;
+import java.util.Collections;
 
 public class Handler {
     private int countPlayerID = 0;
@@ -11,10 +10,6 @@ public class Handler {
 
     public Handler() {
         players = new ArrayList<>();
-        GUI.window();
-
-        singlePlayer();
-        multiPlayer();
     }
     
     // Additional methods for single player or other game modes...
@@ -47,7 +42,7 @@ public class Handler {
             GameLogic gameLogic = new GameLogic(player1.getPlayerMove(), player2.getPlayerMove());
             MqttPlayer.displayGameResult(gameLogic.printMultiplayerWinner(gameLogic.getWinner()));
 
-            disconnectMultiplayers();
+            disconnectMultiPlayers();
 
         } catch (MqttException e) {
             System.out.println("MQTT Error: " + e.getMessage());
@@ -72,7 +67,7 @@ public class Handler {
         }
     }
 
-    private void disconnectMultiplayers() {
+    private void disconnectMultiPlayers() {
         for (PlayerStatus currentPlayer : players) {
             currentPlayer.mqttPlayer().disconnect();
         }

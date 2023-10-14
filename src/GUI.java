@@ -9,7 +9,6 @@ import java.io.IOException;
 
 public class GUI{
 
-
     private static JFrame frame;
 
     private static JLabel playerHand;
@@ -57,8 +56,19 @@ public class GUI{
 
     private static boolean singleplayer = true;
 
-    public static void window(){
+    private static void gameOption() {
+        Handler gameOption = new Handler();
 
+        if(singleplayer){
+            // Start single player game
+            gameOption.singlePlayer();
+        } else if(!singleplayer){
+            // Start multi player game
+            gameOption.multiPlayer();
+        }
+    }
+
+    public static void window(){
 
         // Displaying parts consisting of JFrame, JPanels, JLabels, JButtons.
         frame = new JFrame();
@@ -341,6 +351,7 @@ public class GUI{
             rockButton.setEnabled(true);
             paperButton.setEnabled(true);
             scissorButton.setEnabled(true);
+            gameOption();
             currentPlayers();
          });
 
@@ -354,10 +365,12 @@ public class GUI{
             waiting4players.setVisible(true);
             int x = JOptionPane.showConfirmDialog(frame, "Do you want to play from your Arduino?", "Arduino or not!", JOptionPane.YES_NO_OPTION);
             if(x == JOptionPane.YES_OPTION){
-               currentPlayers(); 
+                gameOption();
+                currentPlayers(); 
             }else{
                 player1.setName("Robban"); // something to implement?
                 singleplayer = false;
+                gameOption();
                 currentPlayers();
                 //player1Connected.setText("KOMIGEN!");
             }
@@ -408,8 +421,6 @@ public class GUI{
             }
         }); */
     }
-         
-     
 
     // method that checks if the image file exists
     private static BufferedImage loadImage(String sheetPath) {
@@ -526,7 +537,6 @@ public class GUI{
             }
         }
     }
-
 
     public static void scenario() {
         GameLogic gameLogic = new GameLogic(player1.getPlayerMove(), player2.getPlayerMove());
