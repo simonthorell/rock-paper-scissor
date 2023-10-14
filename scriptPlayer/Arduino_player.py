@@ -65,9 +65,12 @@ def on_message(client, userdata, message):
 def getWinner(msgPayload):
     global result 
 
-    winner = re.search("\d", msgPayload)            #Find the first number in the string
-    winnerID = int(winner.group())                  #Convert from string to int
-    result = 1 if winnerID == player_id else -1     #Ternary to set the flag for win/lose
+    try:
+        winner = re.search("\d", msgPayload)            #Find the first number in the string
+        winnerID = int(winner.group())                  #Convert from string to int
+        result = 1 if winnerID == player_id else -1     #Ternary to set the flag for win/lose
+    except:
+        print("Error in getting winner")
     
 def mqtt_listener(client): #Setup the mqtt client
     client.on_connect = on_connect
@@ -112,7 +115,6 @@ def serial_listen(client):
     #Try to open the serial bus
     try:
         serial_bus = serial.Serial(usb_port, baud_rate, timeout = 1)
-        #serial_bus.write(b'\x05') #Acknowledge to raise flag in arduino that connection is made
         
     #If we cant open the serial bus terminate the entire python script
     except:
