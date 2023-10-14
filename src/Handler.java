@@ -14,7 +14,7 @@ public class Handler {
        // while (runGame) {
             GUI.window();
             singlePlayer();
-            //multiPlayer();
+            multiPlayer();
         //}
     }
     

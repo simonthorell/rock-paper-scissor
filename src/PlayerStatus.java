@@ -57,7 +57,7 @@ public class PlayerStatus {
         if (name != null) {
             return name;
         } else {
-            return "player1";
+            return "";
         }
     }
 

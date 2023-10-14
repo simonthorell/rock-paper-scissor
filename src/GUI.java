@@ -21,13 +21,16 @@ public class GUI{
     private static JLabel cpuWin;
     private static JLabel playerName;
     private static JLabel cpuName;
-    private static JLabel highscoreLabel;
+    private static JPanel waiting4players;
+    private static JLabel player1Connected;
+    private static JLabel player2Connected;
+    //private static JLabel highscoreLabel;
     
 
     private static JButton rockButton;
     private static JButton paperButton;
     private static JButton scissorButton;
-    private static JButton highscoreButton;
+    //private static JButton highscoreButton;
 
     private static int pScore = 0;
     private static int cScore = 0;
@@ -52,6 +55,8 @@ public class GUI{
     public static PlayerStatus player1;
     public static PlayerStatus player2;
 
+    private static boolean singleplayer = true;
+
     public static void window(){
 
 
@@ -65,18 +70,75 @@ public class GUI{
 
             
             JLayeredPane bottomContainer = new JLayeredPane();
+            //final int CUSTOM_LAYER_1 = JLayeredPane.POPUP_LAYER + 2;
+            final int CUSTOM_LAYER_2 = JLayeredPane.DEFAULT_LAYER + 2;
+            //final int CUSTOM_LAYER_3 = JLayeredPane.PALETTE_LAYER + 4;
 
-                JPanel menuLayer = new JPanel(new GridLayout(3, 3));
-                    menuLayer.setBounds(200, 80, 400, 200);
-                    menuLayer.setBackground(new Color(82,78,80,90));
-                    menuLayer.setVisible(true);
+                JPanel singleMulti = new JPanel(new GridLayout(3, 3));
+                    singleMulti.setBounds(200, 80, 400, 200);
+                    singleMulti.setBackground(new Color(82,78,80,90));
+                    singleMulti.setVisible(true);
 
-                    JLabel singleMulti = new JLabel("<html><h1>Choose Game Option!</h1></html>");
-                    singleMulti.setHorizontalAlignment(SwingConstants.CENTER);
+                    JLabel gameopt = new JLabel("<html><h1>Choose Game Option!</h1></html>");
+                    gameopt.setHorizontalAlignment(SwingConstants.CENTER);
                     JButton singlePlayerButton = new JButton("<html><h2>SINGLEPLAYER</h2></html>");
                     JButton multiPlayerButton = new JButton("<html><h2>MULTIPLAYER</h2></html>");
                   
+                JPanel multiMenu = new JPanel(new GridLayout(4, 1));
+                    multiMenu.setBounds(200, 80, 400, 200);
+                    multiMenu.setBackground(new Color(82,78,80,90));
+                    multiMenu.setVisible(false);
 
+                    JLabel spectHeader = new JLabel("<html><h1>ARE YOU</h1></html>");
+                    spectHeader.setHorizontalAlignment(SwingConstants.CENTER);
+                    JButton playing = new JButton("<html><h2>PLAYING</h2></html>");
+                    JLabel spectMid = new JLabel("<html><h1>OR</h1></html>");
+                    spectMid.setHorizontalAlignment(SwingConstants.CENTER);
+                    JButton spectating = new JButton("<html><h2>SPECTATING</h2></html>");
+
+                JPanel menuButton = new JPanel();
+                    menuButton.setBounds(0, 0, 100, 50);
+                    menuButton.setOpaque(true);
+                    Font customFont = new Font("Arial", Font.BOLD, 24);
+
+                    JButton menu = new JButton("MENU");
+                    menu.setSize(100, 50);
+                    menu.setFont(customFont);
+
+                JPanel menuLayer = new JPanel(new GridLayout(4, 1));
+                    menuLayer.setBounds(200, 80, 400, 200);
+                    menuLayer.setBackground(new Color(82,78,80,90));
+                    menuLayer.setVisible(false);
+
+                    JLabel menuText = new JLabel("<html><h1>MENU</h1></html>");
+                    menuText.setHorizontalAlignment(SwingConstants.CENTER);
+                    gameopt.setHorizontalAlignment(SwingConstants.CENTER);
+                    JButton gameOptions = new JButton("<html><h2>GAME OPTIONS</h2></html>");
+                    JButton scoreBoard = new JButton("<html><h2>HIGHSCORES</h2></html>");
+                    JButton exit = new JButton("<html><h2>EXIT</h2></html>");
+
+                waiting4players = new JPanel(new GridLayout(2, 1));
+                    waiting4players.setBounds(0,0 , 800, 600);
+                    waiting4players.setVisible(false);
+
+                    JPanel waiting4playersTop = new JPanel(new GridLayout(1, 1));
+                        waiting4playersTop.setSize(800,300);
+                        waiting4playersTop.setBackground(Color.WHITE);
+
+                        JLabel waitingGif = new JLabel();
+                        waitingGif.setHorizontalAlignment(SwingConstants.CENTER);
+                        ImageIcon loadGif = new ImageIcon("simple-pics/loading.gif");
+                        waitingGif.setIcon(loadGif);
+
+                    JPanel waiting4playersBottom = new JPanel(new GridLayout(1, 3));
+                        waiting4playersBottom.setSize(800,300);
+
+                        JLabel waitingText = new JLabel("<html><h2>WAITING FOR PLAYERS...</h2></html>");
+                        waitingText.setHorizontalAlignment(SwingConstants.CENTER);
+                        player1Connected = new JLabel("test1"); // player1.getName()+"\n CONNECTED!
+                        player1Connected.setHorizontalAlignment(SwingConstants.CENTER);
+                        player2Connected = new JLabel("test2"); // player2.getName()+"\n CONNECTED!"
+                        player2Connected.setHorizontalAlignment(SwingConstants.CENTER);
                 /* 
                 JPanel highscore = new JPanel(new GridLayout());
                     highscore.setBounds(0, 0, 800, 300);
@@ -88,11 +150,9 @@ public class GUI{
 
                     */
 
-                   
-
-                
                 JPanel container = new JPanel(new GridLayout(2, 1));
                     container.setSize(800, 600);
+                    container.setVisible(false);
 
                     JPanel top = new JPanel(new GridLayout(1,3));
                         top.setBackground(Color.WHITE);
@@ -177,11 +237,36 @@ public class GUI{
         frame.add(bottomContainer);
 
             bottomContainer.add(container, JLayeredPane.DEFAULT_LAYER);
-            bottomContainer.add(menuLayer, JLayeredPane.PALETTE_LAYER);
+            bottomContainer.add(waiting4players, CUSTOM_LAYER_2);
+            bottomContainer.add(singleMulti, JLayeredPane.PALETTE_LAYER);
+            bottomContainer.add(menuLayer, JLayeredPane.DRAG_LAYER);
+            bottomContainer.add(multiMenu, JLayeredPane.MODAL_LAYER);
+            bottomContainer.add(menuButton, JLayeredPane.POPUP_LAYER);
 
-                    menuLayer.add(singleMulti);
-                    menuLayer.add(singlePlayerButton);
-                    menuLayer.add(multiPlayerButton);
+                    singleMulti.add(gameopt);
+                    singleMulti.add(singlePlayerButton);
+                    singleMulti.add(multiPlayerButton);
+
+                    multiMenu.add(spectHeader);
+                    multiMenu.add(playing);
+                    multiMenu.add(spectMid);
+                    multiMenu.add(spectating);
+
+                    menuButton.add(menu);
+
+                    menuLayer.add(menuText);
+                    menuLayer.add(gameOptions);
+                    menuLayer.add(scoreBoard);
+                    menuLayer.add(exit);
+
+                    waiting4players.add(waiting4playersTop);
+                        waiting4playersTop.add(waitingGif);
+
+                    waiting4players.add(waiting4playersBottom);
+                        waiting4playersBottom.add(player1Connected);
+                        waiting4playersBottom.add(waitingText);
+                        waiting4playersBottom.add(player2Connected);
+                    
 
                 container.add(top);
                     top.add(topLeft);
@@ -249,19 +334,69 @@ public class GUI{
             player2.setComputerMove();
             scenario();
         });
+
         singlePlayerButton.addActionListener((ActionEvent e) -> {
-            menuLayer.setVisible(false);
+            singleMulti.setVisible(false);
+            container.setVisible(true);
             rockButton.setEnabled(true);
             paperButton.setEnabled(true);
             scissorButton.setEnabled(true);
             currentPlayers();
+         });
 
+        multiPlayerButton.addActionListener((ActionEvent e) -> {
+            singleMulti.setVisible(false);
+            multiMenu.setVisible(true);
          });
-         multiPlayerButton.addActionListener((ActionEvent e) -> {
+
+        playing.addActionListener((ActionEvent e) -> {
+            multiMenu.setVisible(false);
+            waiting4players.setVisible(true);
+            int x = JOptionPane.showConfirmDialog(frame, "Do you want to play from your Arduino?", "Arduino or not!", JOptionPane.YES_NO_OPTION);
+            if(x == JOptionPane.YES_OPTION){
+               currentPlayers(); 
+            }else{
+                player1.setName("Robban"); // something to implement?
+                singleplayer = false;
+                currentPlayers();
+                //player1Connected.setText("KOMIGEN!");
+            }
+            
+            
+        });
+
+        spectating.addActionListener((ActionEvent e) -> {
+            multiMenu.setVisible(false);
             menuLayer.setVisible(false);
+            waiting4players.setVisible(true);
             currentPlayers();
-         });
-         /* 
+        });
+
+        menu.addActionListener((ActionEvent e) -> {
+            if(menuLayer.isVisible()){
+               menuLayer.setVisible(false); 
+            } else {
+                menuLayer.setVisible(true); 
+            }
+            
+        });
+
+        gameOptions.addActionListener((ActionEvent e) -> {
+            menuLayer.setVisible(false);
+            singleMulti.setVisible(true);
+        });
+
+        scoreBoard.addActionListener((ActionEvent e) -> {
+            waiting4players.setVisible(false);
+            container.setVisible(true);
+            menuLayer.setVisible(false);
+        });
+
+        exit.addActionListener((ActionEvent e) -> {
+            System.exit(0); 
+        });
+
+         /*  scoreBoard button and the button below is for the same thing!
          highscoreButton.addActionListener(new ActionListener() {
             HighScore hs = new HighScore();
 
@@ -399,8 +534,25 @@ public class GUI{
     }
 
     public static void currentPlayers(){
-        playerName.setText("<html><h1>"+player1.getName()+"</h1></html>");
-        cpuName.setText("<html><h1>"+player2.getName()+"</h1></html>");
+        if(singleplayer){
+            playerName.setText("<html><h1>"+player1.getName()+"</h1></html>");
+            cpuName.setText("<html><h1>"+player2.getName()+"</h1></html>");
+        }else if(!singleplayer){
+            
+                if(player1.getName() != null){
+                    player1Connected.setText("<html><h2>"+ player1.getName()+"<br>IS CONNECTED!</h2></html>");
+                    playerName.setText("<html><h1>"+player1.getName()+"</h1></html>");
+                } else if(player2.getName() != null){
+                    player2Connected.setText("<html><h2>" + player2.getName() + "<br>IS CONNECTED!</h2></html>");
+                    cpuName.setText("<html><h1>"+player2.getName()+"</h1></html>");
+                } else if(player1.getName() != null && player2.getName() != null){
+                    waiting4players.setVisible(false);
+                    
+                }
+            
+        }
+        
+        
     }
 
 }
