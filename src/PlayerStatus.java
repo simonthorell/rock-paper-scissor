@@ -1,5 +1,4 @@
 import java.util.Random;
-
 import org.eclipse.paho.client.mqttv3.MqttException;
 
 public class PlayerStatus {
@@ -9,11 +8,15 @@ public class PlayerStatus {
     private int score;
     private MqttPlayer mqttPlayer;
 
-    public PlayerStatus(int playerID, boolean isMqttPlayer, boolean isComputer) throws MqttException {
+    public PlayerStatus(int playerID, boolean isMqttPlayer, boolean isComputer) {
         this.playerID = playerID;
 
         if (isMqttPlayer) {
-            mqttPlayer = new MqttPlayer(playerID);
+            try {
+                mqttPlayer = new MqttPlayer(playerID);
+            } catch (MqttException e) {
+                System.out.println("MQTT Error: " + e.getMessage());
+            }
         }
 
         if (isComputer) {
@@ -33,19 +36,18 @@ public class PlayerStatus {
     }
 
     public void setPlayerMove(int playerMove) {
-        // 1 = rock, 2 = paper, 3 = scissor
+        // 0 = rock, 1 = paper, 2 = scissor
         this.playerMove = playerMove;
     }
 
     public int getPlayerMove() {
-        // 1 = rock, 2 = paper, 3 = scissor
+        // 0 = rock, 1 = paper, 2 = scissor
         return playerMove;
     }
 
     public int setComputerMove() {
         Random random = new Random();
         this.playerMove = random.nextInt(3);
-        // this.playerMove = random.nextInt(3) + 3;
         return playerMove;
     }
 

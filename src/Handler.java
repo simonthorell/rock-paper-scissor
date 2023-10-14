@@ -13,47 +13,47 @@ public class Handler {
         players = new ArrayList<>();
         GUI.window();
 
-        try {
-            singlePlayer();
-            multiPlayer();
-        } catch (MqttException e) {
-            System.out.println("MQTT Error: " + e.getMessage());
-        } catch (InterruptedException e) {
-            System.out.println("Interupted Error: " + e.getMessage());
-        }
-        
+        singlePlayer();
+        multiPlayer();
     }
     
     // Additional methods for single player or other game modes...
-    public void singlePlayer() throws MqttException, InterruptedException {
+    public void singlePlayer() {
         // Creating objects for 1 player & 1 computer - passing them to GUI
         PlayerStatus player1 = new PlayerStatus(1, false, false);
         PlayerStatus player2 = new PlayerStatus(2, false, true);
         setPlayersGUI(player1, player2);
     }
 
-    public void multiPlayer() throws MqttException, InterruptedException {
+    public void multiPlayer() {
         // [Adjustable] MAX_PLAYERS could be dynamic based on a GUI interaction or game setup stage
         final int MAX_PLAYERS = 2; 
         final String displayMessage = "Push any button to play!";
         final String[] countDownMsg = {"3", "2", "1", "Rock, Paper, Scissors!"};
 
-        waitForMultiPlayers(MAX_PLAYERS, displayMessage);
+        try {
+            waitForMultiPlayers(MAX_PLAYERS, displayMessage);
 
-        PlayerStatus player1 = players.get(0);
-        PlayerStatus player2 = players.get(1);
-        setPlayersGUI(player1, player2);
+            PlayerStatus player1 = players.get(0);
+            PlayerStatus player2 = players.get(1);
+            setPlayersGUI(player1, player2);
 
-        MqttPlayer.countDownAndThrow(countDownMsg);
-        
-        player1.setPlayerMove(player1.mqttPlayer().getMove());
-        player2.setPlayerMove(player2.mqttPlayer().getMove());
+            MqttPlayer.countDownAndThrow(countDownMsg);
+            
+            player1.setPlayerMove(player1.mqttPlayer().getMove());
+            player2.setPlayerMove(player2.mqttPlayer().getMove());
 
-        GUI.scenario();
-        GameLogic gameLogic = new GameLogic(player1.getPlayerMove(), player2.getPlayerMove());
-        MqttPlayer.displayGameResult(gameLogic.printMultiplayerWinner(gameLogic.getWinner()));
+            GUI.scenario();
+            GameLogic gameLogic = new GameLogic(player1.getPlayerMove(), player2.getPlayerMove());
+            MqttPlayer.displayGameResult(gameLogic.printMultiplayerWinner(gameLogic.getWinner()));
 
-        disconnectMultiplayers();
+            disconnectMultiplayers();
+
+        } catch (MqttException e) {
+            System.out.println("MQTT Error: " + e.getMessage());
+        } catch (InterruptedException e) {
+            System.out.println("Interupted Error: " + e.getMessage());
+        }
     }
 
     private void setPlayersGUI(PlayerStatus player1, PlayerStatus player2) {
