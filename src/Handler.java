@@ -9,20 +9,27 @@ public class Handler {
     private int countPlayerID = 0;
     private List<PlayerStatus> players;
 
-    public Handler() throws MqttException, InterruptedException {
+    public Handler() {
+        players = new ArrayList<>();
         GUI.window();
-        singlePlayer();
-        multiPlayer();
+
+        try {
+            singlePlayer();
+            multiPlayer();
+        } catch (MqttException e) {
+            System.out.println("MQTT Error: " + e.getMessage());
+        } catch (InterruptedException e) {
+            System.out.println("Interupted Error: " + e.getMessage());
+        }
+        
     }
     
     // Additional methods for single player or other game modes...
-    public void singlePlayer() throws MqttException {
-        // Implement single player game mode
-        players = new ArrayList<>();
+    public void singlePlayer() throws MqttException, InterruptedException {
+        // Creating objects for 1 player & 1 computer - passing them to GUI
         PlayerStatus player1 = new PlayerStatus(1, false, false);
         PlayerStatus player2 = new PlayerStatus(2, false, true);
-        GUI.player1 = player1; // Passing player 1 object to GUI
-        GUI.player2 = player2; // Passing player 2 object to GUI
+        setPlayersGUI(player1, player2);
     }
 
     public void multiPlayer() throws MqttException, InterruptedException {
@@ -30,8 +37,31 @@ public class Handler {
         final int MAX_PLAYERS = 2; 
         final String displayMessage = "Push any button to play!";
         final String[] countDownMsg = {"3", "2", "1", "Rock, Paper, Scissors!"};
-        players = new ArrayList<>();
 
+        waitForMultiPlayers(MAX_PLAYERS, displayMessage);
+
+        PlayerStatus player1 = players.get(0);
+        PlayerStatus player2 = players.get(1);
+        setPlayersGUI(player1, player2);
+
+        MqttPlayer.countDownAndThrow(countDownMsg);
+        
+        player1.setPlayerMove(player1.mqttPlayer().getMove());
+        player2.setPlayerMove(player2.mqttPlayer().getMove());
+
+        GUI.scenario();
+        GameLogic gameLogic = new GameLogic(player1.getPlayerMove(), player2.getPlayerMove());
+        MqttPlayer.displayGameResult(gameLogic.printMultiplayerWinner(gameLogic.getWinner()));
+
+        disconnectMultiplayers();
+    }
+
+    private void setPlayersGUI(PlayerStatus player1, PlayerStatus player2) {
+        GUI.player1 = player1;
+        GUI.player2 = player2;
+    }
+
+    private void waitForMultiPlayers(int MAX_PLAYERS, String displayMessage) throws MqttException, InterruptedException {
         // This could be used in order to play tournament. For only 2 multiplayers this can be rewritten.
         while (countPlayerID < MAX_PLAYERS) {
             countPlayerID++;
@@ -40,25 +70,13 @@ public class Handler {
             currentPlayer.mqttPlayer().askToPlay(displayMessage, countPlayerID);
             currentPlayer.mqttPlayer().getMove();
         }
+    }
 
-        PlayerStatus player1 = players.get(0);
-        PlayerStatus player2 = players.get(1);
-        GUI.player1 = player1; // Passing player 1 object to GUI
-        GUI.player2 = player2; // Passing player 2 object to GUI
-
-        MqttPlayer.countDownAndThrow(countDownMsg);
-        player1.setPlayerMove(player1.mqttPlayer().getMove());
-        player2.setPlayerMove(player2.mqttPlayer().getMove());
-
-        GUI.scenario();
-
-        GameLogic gameLogic = new GameLogic(player1.getPlayerMove(), player2.getPlayerMove());
-        MqttPlayer.displayGameResult(gameLogic.printMultiplayerWinner(gameLogic.getWinner()));
-
+    private void disconnectMultiplayers() {
         for (PlayerStatus currentPlayer : players) {
             currentPlayer.mqttPlayer().disconnect();
         }
-    }
+    }   
 
     public List<PlayerStatus> getRankedPlayers() {
         Collections.sort(players, (player1, player2) -> {
@@ -67,7 +85,7 @@ public class Handler {
         return players;
     }
 
-    public void updatedScoreBoard() throws MqttException, InterruptedException{
+    public void updatedScoreBoard() throws InterruptedException{
        Handler handler = new Handler();
        
         List<PlayerStatus> rankedPlayers = handler.getRankedPlayers();
