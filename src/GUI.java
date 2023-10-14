@@ -56,13 +56,13 @@ public class GUI{
 
     private static boolean singleplayer = true;
 
-    private static void gameOption() {
+    private static void gameOption(boolean isSinglePlayer) {
         Handler gameOption = new Handler();
 
-        if(singleplayer){
+        if(isSinglePlayer){
             // Start single player game
             gameOption.singlePlayer();
-        } else if(!singleplayer){
+        } else if(!isSinglePlayer){
             // Start multi player game
             gameOption.multiPlayer();
         }
@@ -351,7 +351,7 @@ public class GUI{
             rockButton.setEnabled(true);
             paperButton.setEnabled(true);
             scissorButton.setEnabled(true);
-            gameOption();
+            gameOption(true);
             currentPlayers();
          });
 
@@ -365,12 +365,12 @@ public class GUI{
             waiting4players.setVisible(true);
             int x = JOptionPane.showConfirmDialog(frame, "Do you want to play from your Arduino?", "Arduino or not!", JOptionPane.YES_NO_OPTION);
             if(x == JOptionPane.YES_OPTION){
-                gameOption();
+                gameOption(false);
                 currentPlayers(); 
             }else{
                 player1.setName("Robban"); // something to implement?
                 singleplayer = false;
-                gameOption();
+                gameOption(false);
                 currentPlayers();
                 //player1Connected.setText("KOMIGEN!");
             }
