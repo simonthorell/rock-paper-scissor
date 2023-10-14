@@ -11,10 +11,12 @@ from os import _exit
 baud_rate = 9600
 usb_port = "COM3"
 
+#Globals
 player_id = -1
 result = 5
 displayMessage = ""
 
+#MQTT
 BROKER_URL = "1c87c890092b4b9aaa4e1ca5a02dfc9e.s1.eu.hivemq.cloud"
 PORT = 8883
 USERNAME = "W-bot"
@@ -28,11 +30,8 @@ def on_connect(client, userdata, flags, rc):
 def on_message(client, userdata, message):
     global player_id, result, displayMessage
     
-    #TODO
-    #Player \d won!
-    #For some reason this cant be converted by json.loads
+    payload_str = message.payload.decode("utf-8")           #Decode the incoming message as a utf-8 string
     
-    payload_str = message.payload.decode("utf-8")       #Decode the incoming message as a utf-8 string
     try:
         payload_json = json.loads(payload_str)              #make a json object of it
         print(payload_json)                                 #debug print for my sanity
@@ -41,34 +40,34 @@ def on_message(client, userdata, message):
         if(incoming_message):                               #If we have a message key in the json
             msgPayload = payload_json.get("message")       
             
-            if (msgPayload == "Push any button to play!" and player_id == -1):
+            if (msgPayload == "Push any button to play!" and player_id == -1):          #We need a player ID and intercept the MQTT message to assign
                 player_id = payload_json.get("playerID")
-                time.sleep(1)
-                msg = { "message" : str(player_id)}
-                client.publish(f"{TOPIC_PREFIX}player{player_id}", json.dumps(msg))
+                time.sleep(1)                                                           #Sleep because program is too fast otherwise
+                msg = { "message" : str(player_id)}                                     #Need to send playerID back as string
+                client.publish(f"{TOPIC_PREFIX}player{player_id}", json.dumps(msg))     #Send to confirm
                 
-            elif (re.search("^Player\s\d\swon!$",msgPayload)):
-                getWinner(msgPayload)
+            elif (re.search("^Player\s\d\swon!$",msgPayload)):                          #Regex to match player x won
+                getWinner(msgPayload)                                                   #Decode if it was us or someone else winning
                 
-            elif (msgPayload == "Tie!"):
-                result = 0
+            elif (msgPayload == "Tie!"):                                                #Tie
+                result = 0                                                              #Flag for other thread to write tie to arduino
                 
-            elif (msgPayload == "3"):
-                result = 3
+            elif (msgPayload == "3"):                                                   #First message of the countdown
+                result = 3                                                              #Flag to write to arudino, countdown is handled by arduino code, this just triggers it
                 
-            elif (msgPayload == "write"):
-                displayMessage = payload_json.get("write")
+            elif (msgPayload == "write"):                                               #Special write for arudino to write a custom string to LCD screen
+                displayMessage = payload_json.get("write")                              #Needs a Write Payload for it to work
                 result = 2
+                
     except ValueError as e:
         print(e)
-        print("Invalid json")
             
 def getWinner(msgPayload):
     global result 
-    winnerID = int(msgPayload[8])
-    result = 1 if winnerID == player_id else -1
-    print("Debug winner")
-                
+
+    winner = re.search("\d", msgPayload)            #Find the first number in the string
+    winnerID = int(winner.group())                  #Convert from string to int
+    result = 1 if winnerID == player_id else -1     #Ternary to set the flag for win/lose
     
 def mqtt_listener(client): #Setup the mqtt client
     client.on_connect = on_connect
@@ -81,13 +80,13 @@ def arduinoUSBDecode(incoming_byte, client, serial_bus):
     global player_id
     match incoming_byte: #Runs for each byte thats sent
         
-        case 49: #ASCII 1 rock
+        case 49: #ASCII 1 for rock
             client.publish(f"{TOPIC_PREFIX}player{player_id}", json.dumps({"message" : "0"}))
             
-        case 50: #ASCII 2 paper
+        case 50: #ASCII 2 for paper
             client.publish(f"{TOPIC_PREFIX}player{player_id}", json.dumps({"message" : "1"}))
             
-        case 52: #ASCII 4 scissor
+        case 52: #ASCII 4 for scissor
             client.publish(f"{TOPIC_PREFIX}player{player_id}", json.dumps({"message" : "2"}))
 
         case 68: #ASCII D request ID
@@ -97,16 +96,15 @@ def arduinoUSBDecode(incoming_byte, client, serial_bus):
                 #Big is big endian
                 
 def arduinoWriteToScreen(serial_bus, message):
-    print("attempting to write")
     if(len(message) > 32): #warning that string too long
-        print("String too long, will looked borked")
+        print("String too long, will be cut off")
         
     if(re.search("^.{16}\s", message)): #If 17th character is a whitespace remove it
         message = message[:16] + message[17:]
     
-    serial_bus.write(b'\x01') #Enable flag for arduino
-    serial_bus.write(str.encode(message))
-    serial_bus.write(b'\x00') #Null-termination
+    serial_bus.write(b'\x01')               #Enable flag for arduino
+    serial_bus.write(str.encode(message))   #write to arduino
+    serial_bus.write(b'\x00')               #Null-termination to disable write mode
 
 def serial_listen(client):
     global result, displayMessage
@@ -125,11 +123,11 @@ def serial_listen(client):
     while True:
         if serial_bus.in_waiting > 0: #Serial bus has some data
             message = serial_bus.readline() #Read the data
-            print(f"INCOMING USB: {message}")
             for byte in message: #Step through the bytes
                 arduinoUSBDecode(byte, client, serial_bus)
                 
-        elif result != 5: #Just chose a arbitrary value, 5 means we have intercepted a W/L/T over MQTT
+        #Only run if we have player ID and result isnt reset to its default value of 5
+        elif result != 5 and player_id != -1:
             match result: #Simple switch to get the actual value
                 case 1: #Write win to arduino
                     serial_bus.write(b'W') 
