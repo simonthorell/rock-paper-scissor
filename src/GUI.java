@@ -9,40 +9,40 @@ import java.io.IOException;
 
 public class GUI{
 
-    private static JFrame frame;
+    private JFrame frame;
 
-    private static JLabel playerHand;
-    private static JLabel cpuHand;
-    private static JLabel playerScore;
-    private static JLabel cpuScore;
-    private static JLabel draw;
-    private static JLabel playerWin;
-    private static JLabel cpuWin;
-    private static JLabel playerName;
-    private static JLabel cpuName;
-    private static JPanel waiting4players;
-    private static JLabel player1Connected;
-    private static JLabel player2Connected;
-    //private static JLabel highscoreLabel;
+    private JLabel playerHand;
+    private JLabel cpuHand;
+    private JLabel playerScore;
+    private JLabel cpuScore;
+    private JLabel draw;
+    private JLabel playerWin;
+    private JLabel cpuWin;
+    private JLabel playerName;
+    private JLabel cpuName;
+    private JPanel waiting4players;
+    private JLabel player1Connected;
+    private JLabel player2Connected;
+    //private JLabel highscoreLabel;
     
 
-    private static JButton rockButton;
-    private static JButton paperButton;
-    private static JButton scissorButton;
-    //private static JButton highscoreButton;
+    private  JButton rockButton;
+    private  JButton paperButton;
+    private  JButton scissorButton;
+    //private JButton highscoreButton;
 
-    private static int pScore = 0;
-    private static int cScore = 0;
+    private  int pScore = 0;
+    private  int cScore = 0;
 
-    private static BufferedImage playerSheet;
-    private static BufferedImage cpuSheet;
-    private static int frameWidth;
-    private static int frameHeight; 
-    private static int pictureIndex = 0;
-    private static int totalFrames = 6;
-    private static Timer slideTimer;
+    private  BufferedImage playerSheet;
+    private BufferedImage cpuSheet;
+    private int frameWidth;
+    private int frameHeight; 
+    private int pictureIndex = 0;
+    private int totalFrames = 6;
+    private Timer slideTimer;
 
-    private static String[] sheetPaths = {
+    private String[] sheetPaths = {
         "simple-pics/spritesheet-pRock.png",
         "simple-pics/spritesheet-pPaper.png",
         "simple-pics/spritesheet-pScissor.png",
@@ -51,12 +51,12 @@ public class GUI{
         "simple-pics/spritesheet-cScissor.png"
     };
 
-    public static PlayerStatus player1;
-    public static PlayerStatus player2;
+    public PlayerStatus player1;
+    public PlayerStatus player2;
 
-    private static boolean singleplayer = true;
+    private boolean singleplayer = true;
 
-    private static void gameOption(boolean isSinglePlayer) {
+    private void gameOption(boolean isSinglePlayer) {
         Handler gameOption = new Handler();
 
         if(isSinglePlayer){
@@ -68,7 +68,7 @@ public class GUI{
         }
     }
 
-    public static void window(){
+    public void window(){
 
         // Displaying parts consisting of JFrame, JPanels, JLabels, JButtons.
         frame = new JFrame();
@@ -80,10 +80,8 @@ public class GUI{
 
             
             JLayeredPane bottomContainer = new JLayeredPane();
-            //final int CUSTOM_LAYER_1 = JLayeredPane.POPUP_LAYER + 2;
-            final int CUSTOM_LAYER_2 = JLayeredPane.DEFAULT_LAYER + 2;
-            //final int CUSTOM_LAYER_3 = JLayeredPane.PALETTE_LAYER + 4;
 
+                // Menu Panels + wait for multiplayer Panel ----->
                 JPanel singleMulti = new JPanel(new GridLayout(3, 3));
                     singleMulti.setBounds(200, 80, 400, 200);
                     singleMulti.setBackground(new Color(82,78,80,90));
@@ -149,6 +147,18 @@ public class GUI{
                         player1Connected.setHorizontalAlignment(SwingConstants.CENTER);
                         player2Connected = new JLabel("test2"); // player2.getName()+"\n CONNECTED!"
                         player2Connected.setHorizontalAlignment(SwingConstants.CENTER);
+
+                JPanel setName = new JPanel(new GridLayout(3, 1));
+                        setName.setBounds(200, 80, 400, 200);
+                        setName.setBackground(new Color(82,78,80,90));
+                        setName.setVisible(false);
+
+                        JLabel setNameText = new JLabel("<html><h1>ENTER YOUR NAME</h1></html>");
+                            setNameText.setHorizontalAlignment(SwingConstants.CENTER);
+                        JTextField userName = new JTextField();
+                            Font font = new Font("Arial", Font.BOLD, 32);
+                            userName.setFont(font);
+                        JButton submitName = new JButton("<html><h2>SUBMIT</h2></html>");
                 /* 
                 JPanel highscore = new JPanel(new GridLayout());
                     highscore.setBounds(0, 0, 800, 300);
@@ -160,6 +170,7 @@ public class GUI{
 
                     */
 
+                // Main Content/game Panel ---->
                 JPanel container = new JPanel(new GridLayout(2, 1));
                     container.setSize(800, 600);
                     container.setVisible(false);
@@ -247,11 +258,12 @@ public class GUI{
         frame.add(bottomContainer);
 
             bottomContainer.add(container, JLayeredPane.DEFAULT_LAYER);
-            bottomContainer.add(waiting4players, CUSTOM_LAYER_2);
+            bottomContainer.add(waiting4players, JLayeredPane.DEFAULT_LAYER + 2);
             bottomContainer.add(singleMulti, JLayeredPane.PALETTE_LAYER);
             bottomContainer.add(menuLayer, JLayeredPane.DRAG_LAYER);
-            bottomContainer.add(multiMenu, JLayeredPane.MODAL_LAYER);
-            bottomContainer.add(menuButton, JLayeredPane.POPUP_LAYER);
+            bottomContainer.add(setName,JLayeredPane.PALETTE_LAYER + 4);
+            bottomContainer.add(multiMenu, JLayeredPane.PALETTE_LAYER + 2);
+            bottomContainer.add(menuButton, JLayeredPane.PALETTE_LAYER + 3);
 
                     singleMulti.add(gameopt);
                     singleMulti.add(singlePlayerButton);
@@ -276,6 +288,10 @@ public class GUI{
                         waiting4playersBottom.add(player1Connected);
                         waiting4playersBottom.add(waitingText);
                         waiting4playersBottom.add(player2Connected);
+
+                    setName.add(setNameText);
+                    setName.add(userName);
+                    setName.add(submitName);
                     
 
                 container.add(top);
@@ -347,35 +363,51 @@ public class GUI{
 
         singlePlayerButton.addActionListener((ActionEvent e) -> {
             singleMulti.setVisible(false);
-            container.setVisible(true);
-            rockButton.setEnabled(true);
-            paperButton.setEnabled(true);
-            scissorButton.setEnabled(true);
-            gameOption(true);
-            currentPlayers();
          });
 
         multiPlayerButton.addActionListener((ActionEvent e) -> {
             singleMulti.setVisible(false);
             multiMenu.setVisible(true);
-         });
+        });
+
+        submitName.addActionListener((ActionEvent e) -> {
+            String nameInput = userName.getText();
+            if(singleplayer){
+                if(nameInput.matches("^[a-zA-ZåäöÅÄÖ]+$")){
+                    
+                    gameOption(true);
+                    //player1.setName(nameInput); does not work? gui.player1 = null
+                    System.out.print(nameInput);
+                    setName.setVisible(false);
+                    container.setVisible(true);
+                    rockButton.setEnabled(true);
+                    paperButton.setEnabled(true);
+                    scissorButton.setEnabled(true);
+                    currentPlayers();
+                } else {
+                    JOptionPane.showMessageDialog(null, "Your name can only contain letters! \n \n Please try again!", "Invalid Name", JOptionPane.ERROR_MESSAGE);
+                }
+            } else {
+                if(nameInput.matches("^[a-zA-ZåäöÅÄÖ]+$")){
+                    setName.setVisible(false);
+                    //player1.setName(nameInput); || player2.setName(nameInput);  does not work? gui.player1/2 = null
+                    waiting4players.setVisible(true);
+                    int x = JOptionPane.showConfirmDialog(frame, "Do you want to play from your Arduino?", "Arduino or not!", JOptionPane.YES_NO_OPTION);
+                    if(x == JOptionPane.YES_OPTION){
+                        gameOption(false);
+                        currentPlayers(); 
+                    }else{
+                        gameOption(false);
+                        singleplayer = false;
+                        currentPlayers();
+                    }
+                }
+            }
+        });
 
         playing.addActionListener((ActionEvent e) -> {
             multiMenu.setVisible(false);
-            waiting4players.setVisible(true);
-            int x = JOptionPane.showConfirmDialog(frame, "Do you want to play from your Arduino?", "Arduino or not!", JOptionPane.YES_NO_OPTION);
-            if(x == JOptionPane.YES_OPTION){
-                gameOption(false);
-                currentPlayers(); 
-            }else{
-                gameOption(false);
-                player1.setName("Robban"); // something to implement?
-                singleplayer = false;
-                currentPlayers();
-                //player1Connected.setText("KOMIGEN!");
-            }
-            
-            
+            setName.setVisible(true);   
         });
 
         spectating.addActionListener((ActionEvent e) -> {
@@ -423,7 +455,7 @@ public class GUI{
     }
 
     // method that checks if the image file exists
-    private static BufferedImage loadImage(String sheetPath) {
+    private BufferedImage loadImage(String sheetPath) {
         try {
             return ImageIO.read(new File(sheetPath));
         } catch (IOException e) {
@@ -433,7 +465,7 @@ public class GUI{
     }
 
     // method that devides the spritesheets into 6 parts and displays a choosen part.
-    private static void displayPictures() {
+    private void displayPictures() {
 
         if (pictureIndex < totalFrames) {
             // Calculate the x-coordinate to select the current frame from the sprite sheet
@@ -452,7 +484,7 @@ public class GUI{
     }
 
     // method that tells displayPictures() what to display and how fast/slow it should be diplayed
-    public static void startDisplayAction(int player, int cpu, int wld){
+    public void startDisplayAction(int player, int cpu, int wld){
         cpu = cpu + 3;
 
         rockButton.setEnabled(false);
@@ -486,7 +518,7 @@ public class GUI{
     }
 
     //method that decides what text to send in win/loose/draw scenarios
-    private static void winLooseDraw(int wld){
+    private void winLooseDraw(int wld){
         if(wld == 0){
             draw.setText("<html><h1>DRAW!</h1></html>");  
         }else if(wld == 1){
@@ -503,7 +535,7 @@ public class GUI{
     }
 
     // method that nulls/resets all varibles after a game is finnished
-    private static void gameFinnished(){
+    private void gameFinnished(){
 
         int choice;
 
@@ -538,12 +570,12 @@ public class GUI{
         }
     }
 
-    public static void scenario() {
+    public void scenario() {
         GameLogic gameLogic = new GameLogic(player1.getPlayerMove(), player2.getPlayerMove());
         startDisplayAction(player1.getPlayerMove(), player2.getPlayerMove(), gameLogic.getWinner());
     }
 
-    public static void currentPlayers(){
+    public void currentPlayers(){
         if(singleplayer){
             playerName.setText("<html><h1>"+player1.getName()+"</h1></html>");
             cpuName.setText("<html><h1>"+player2.getName()+"</h1></html>");
@@ -556,7 +588,8 @@ public class GUI{
                     player2Connected.setText("<html><h2>" + player2.getName() + "<br>IS CONNECTED!</h2></html>");
                     cpuName.setText("<html><h1>"+player2.getName()+"</h1></html>");
                 } else if(player1.getName() != null && player2.getName() != null){
-                    waiting4players.setVisible(false);
+                    // add delay here maybe? so the panel wont just disappear as soon as player 2 is connected...
+                    waiting4players.setVisible(false); 
                     
                 }
             
@@ -564,5 +597,7 @@ public class GUI{
         
         
     }
+
+
 
 }

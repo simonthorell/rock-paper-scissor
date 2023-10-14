@@ -7,6 +7,7 @@ import java.util.Collections;
 public class Handler {
     private int countPlayerID = 0;
     private List<PlayerStatus> players;
+    private GUI gui;
 
     public Handler() {
         players = new ArrayList<>();
@@ -39,7 +40,7 @@ public class Handler {
             player1.setPlayerMove(player1.mqttPlayer().getMove());
             player2.setPlayerMove(player2.mqttPlayer().getMove());
 
-            GUI.scenario();
+            gui.scenario();
             GameLogic gameLogic = new GameLogic(player1.getPlayerMove(), player2.getPlayerMove());
             MqttPlayer.displayGameResult(gameLogic.printMultiplayerWinner(gameLogic.getWinner()));
 
@@ -53,8 +54,8 @@ public class Handler {
     }
 
     private void setPlayersGUI(PlayerStatus player1, PlayerStatus player2) {
-        GUI.player1 = player1;
-        GUI.player2 = player2;
+        gui.player1 = player1;
+        gui.player2 = player2;
     }
 
     private void waitForMultiPlayers(int MAX_PLAYERS, String displayMessage) throws MqttException, InterruptedException {
