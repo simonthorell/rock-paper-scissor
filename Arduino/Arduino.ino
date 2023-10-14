@@ -228,7 +228,6 @@ const char * getSelection(byte flags){
 void displayCountdown(){
     for(int i = 0; i < 4; i++){
         lcd.clear();
-        Serial.println(countdown[i]);
         lcd.print(countdown[i]);
         delay(1000); 
     }
