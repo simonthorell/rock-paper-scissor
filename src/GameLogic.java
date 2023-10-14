@@ -28,4 +28,14 @@ public class GameLogic {
         }
     }
 
+    public String printMultiplayerWinner(int winner) {
+        if (winner == 1) {
+            return "Player 1 won!";
+        } else if (winner == 2) {
+            return "Player 2 won!";
+        } else {
+            return "Tie!";
+        }
+    }   
+
 }
