@@ -368,9 +368,9 @@ public class GUI{
                 gameOption(false);
                 currentPlayers(); 
             }else{
+                gameOption(false);
                 player1.setName("Robban"); // something to implement?
                 singleplayer = false;
-                gameOption(false);
                 currentPlayers();
                 //player1Connected.setText("KOMIGEN!");
             }
