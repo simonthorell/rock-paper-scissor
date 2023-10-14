@@ -30,7 +30,7 @@ const char *rock = "Rock";
 const char *paper = "Paper";
 const char *scissor = "Scissor";
 const char *countdown[] = {
-    "3", "2", "1", "Go!"
+    "3", "2", "1", "Go!" //3,2,1, rock paper sisscors was too long and cba to fix newline
 }; 
 
 //global variables
@@ -95,7 +95,7 @@ void serialEvent(){
     char inChar;
 
     if(Serial.available()){
-        inChar = Serial.read();
+        inChar = Serial.read(); //read the incoming value
 
         if(serialIncomingChars == true){ //if we are in display mode
             if(inChar == NULL)          //Null terminated
@@ -136,10 +136,13 @@ void serialEvent(){
                 break;
             }
         }
-        //We dont have a playerID so accepting the first byte sent as our playerID!
+        //We dont have a playerID so accepting the first byte sent as our playerID
+        //Make sure on the python script side that we are aware of this
         else if(playerID == 0){
+            playerID = inChar; //Set playerID to the incoming byte
+
+            //Some confirmation messages on the LCD
             lcd.clear();
-            playerID = inChar;
             lcd.print("PlayerID: ");
             lcd.print(playerID);
             lcd.setCursor(0, 1);
@@ -160,15 +163,17 @@ void getKeypadPress(char c){
     switch(c){
         case 42:
             if(selected != 0b00000000){ //if something is selected
+                //send the data over USB and display what it sent
                 Serial.println(selected);
                 lcd.clear();
                 lcd.print("Sent: ");
                 lcd.print(getSelection(selected));
                 lcd.setCursor(0, 1);
                 lcd.print("Waiting");
-                waitForResult = true;
+                waitForResult = true; //flag that we are waiting for result
             }
             else{ //nothing is selected
+                //Cant send nothing so promot to press 1,2,3
                 lcd.clear();
                 lcd.print("Press 1,2,3 to");
                 lcd.setCursor(0, 1);
@@ -192,6 +197,7 @@ void getKeypadPress(char c){
         break;
 
         default:
+            //Didnt press 1,2,3, prompt to press one of those
             lcd.clear();
             lcd.print("Press 1, 2 or 3!");
         break;
@@ -226,13 +232,13 @@ const char * getSelection(byte flags){
 
 //the countdown before game beings
 void displayCountdown(){
-    for(int i = 0; i < 4; i++){
+    for(int i = 0; i < 4; i++){ //Iterate over the countdown char array
         lcd.clear();
         lcd.print(countdown[i]);
         delay(1000); 
     }
     lcd.setCursor(0, 1);
-    lcd.print("Press 123");
+    lcd.print("Press 123!");
 
     waitForCountdown = false; //remove waiting flag
 }
@@ -253,9 +259,11 @@ void displayResultAndClear(char c){
             lcd.print("Tie!");
         break;
     }
+    //reset some variables and await the countdown to begin again
     waitForResult = false;
     waitForCountdown = true;
     selected = 0b00000000;
+
     delay(1000); //wait 1 second before displaying last part
     lcd.setCursor(0, 1);
     lcd.print("Waiting for host");
