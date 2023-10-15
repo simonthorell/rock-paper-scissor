@@ -12,6 +12,10 @@ public class Handler {
     public Handler() {
         players = new ArrayList<>();
     }
+
+    public void setGUI(GUI gui){
+        this.gui = gui;
+    }
     
     // Additional methods for single player or other game modes...
     public void singlePlayer() {
