@@ -9,11 +9,13 @@ the LCD is connected to A4 and A5
 #include <Keypad.h>
 #include "aLCD.h"
 
-//Some defines
-#define rockBitFlag 0b001
-#define paperBitFlag 0b010
-#define scissorBitFlag 0b100
+//Some defines, could probably change these to const but I like the readability
+#define rockFlag 1
+#define paperFlag 2
+#define scissorFlag 4
 #define screenWidth 16
+#define writeToDisplayBitFlag 0x01
+#define countdownBitFlag 0x02
 
 //Keypad setup thingies
 const int baud_rate = 9600;
@@ -35,10 +37,14 @@ const char *countdown[] = {
 
 //global variables
 uint8_t playerID = 0;
-uint8_t waiting = 0;
+uint8_t waitingDots = 0;
 uint8_t cursorLoc = 0;
-char pressedKey;
-byte selected = 0b00000000;
+//Will overflow after 255 wins/losses/ties but who cares
+uint8_t wins = 0;
+uint8_t losses = 0;
+uint8_t ties = 0;
+char pressedKey = 0;
+byte selected = 0;
 bool waitForResult = false;
 bool waitForCountdown = false;
 bool serialIncomingChars = false;
@@ -56,6 +62,7 @@ void displayCountdown();
 void displayResultAndClear(char c);
 
 //runs once
+//Move initialization to here?
 void setup(){
     lcd = aLCD::startLCD(); //init LCD
     Serial.begin(baud_rate); //init serial port
@@ -81,11 +88,11 @@ void waitForID(){
     Serial.println("NO PLAYER ID");
     lcd.clear();
     lcd.print("Connecting");
-    //Fancy loop for differing amounts of .
-    for(int i = 0; i <= waiting % 3; i++) 
+    //Fancy loop for differing amounts of dots
+    for(int i = 0; i <= waitingDots % 3; i++) 
         lcd.print(".");
     delay(1000);
-    waiting++;
+    waitingDots++;
 }
 
 /* 
@@ -125,13 +132,13 @@ void serialEvent(){
                     displayResultAndClear(inChar);
                 break;
 
-                case 0b00000001: //Specific byte to raise flag that we are supposed to display incoming text
+                case writeToDisplayBitFlag: //Specific byte to raise flag that we are supposed to display incoming text
                     serialIncomingChars = true; //set flag that we are in display mode
                     cursorLoc = 0;
                     lcd.clear();
                 break;
 
-                case 0b00000010: //Same as before except to start the countdown
+                case countdownBitFlag: //Same as before except to start the countdown
                     displayCountdown();
                 break;
             }
@@ -143,8 +150,11 @@ void serialEvent(){
 
             //Some confirmation messages on the LCD
             lcd.clear();
-            lcd.print("PlayerID: ");
-            lcd.print(playerID);
+            char buffer[16];
+            sprintf(buffer, "PlayerID: %d", playerID);
+            lcd.print(buffer);
+            /* lcd.print("PlayerID: ");
+            lcd.print(playerID); */
             lcd.setCursor(0, 1);
             lcd.print("Waiting for host");
             waitForCountdown = true; //Waiting for host to start game
@@ -162,18 +172,21 @@ Char byte values
 void getKeypadPress(char c){
     switch(c){
         case 42:
-            if(selected != 0b00000000){ //if something is selected
+            if(selected != 0){ //if something is selected
                 //send the data over USB and display what it sent
                 Serial.println(selected);
                 lcd.clear();
-                lcd.print("Sent: ");
-                lcd.print(getSelection(selected));
+                char buffer[16];
+                sprintf(buffer, "Sent: %s", getSelection(selected));
+                lcd.print(buffer);
+                /* lcd.print("Sent: ");
+                lcd.print(getSelection(selected)); */
                 lcd.setCursor(0, 1);
                 lcd.print("Waiting");
                 waitForResult = true; //flag that we are waiting for result
             }
             else{ //nothing is selected
-                //Cant send nothing so promot to press 1,2,3
+                //Cant send nothing so prompt to press 1,2,3
                 lcd.clear();
                 lcd.print("Press 1,2,3 to");
                 lcd.setCursor(0, 1);
@@ -182,17 +195,17 @@ void getKeypadPress(char c){
         break;
 
         case 49:
-            selected = rockBitFlag;
+            selected = rockFlag;
             printSelection(rock);
         break;
         
         case 50:
-            selected = paperBitFlag;
+            selected = paperFlag;
             printSelection(paper);
         break;
 
         case 51:
-            selected = scissorBitFlag;
+            selected = scissorFlag;
             printSelection(scissor);
         break;
 
@@ -221,18 +234,18 @@ void printSelection(const char* str)
 
 //return the correct string based on selection
 const char * getSelection(byte flags){
-    if(flags & rockBitFlag)
+    if(flags & rockFlag)
         return rock;
-    if(flags & paperBitFlag)
+    if(flags & paperFlag)
         return paper;
-    if(flags & scissorBitFlag)
+    if(flags & scissorFlag)
         return scissor;
     return NULL;
 }
 
 //the countdown before game beings
 void displayCountdown(){
-    for(int i = 0; i < 4; i++){ //Iterate over the countdown char array
+    for(int i = 0; i < 4; i++){ //Iterate over the countdown char ptr array
         lcd.clear();
         lcd.print(countdown[i]);
         delay(1000); 
@@ -249,20 +262,28 @@ void displayResultAndClear(char c){
     switch(c){
         case 'W':
             lcd.print("You won!");
+            wins++;
         break;
 
         case 'L':
             lcd.print("You lost!");
+            losses++;
         break;
 
         case 'T':
             lcd.print("Tie!");
+            ties++;
         break;
     }
+    delay(2000);
+    char buffer[16];
+    sprintf(buffer, "%dW %dL %dT", wins, losses, ties);
+    lcd.clear();
+    lcd.print(buffer);
     //reset some variables and await the countdown to begin again
     waitForResult = false;
     waitForCountdown = true;
-    selected = 0b00000000;
+    selected = 0;
 
     delay(1000); //wait 1 second before displaying last part
     lcd.setCursor(0, 1);
