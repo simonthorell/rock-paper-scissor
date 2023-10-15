@@ -68,14 +68,13 @@ const char * getSelection(byte flags);
 void displayCountdown();
 void displayResultAndClear(char c);
 
-//runs once
-//Move initialization to here?
+//Runs once on startup
 void setup(){
     lcd = aLCD::startLCD(); //init LCD
     Serial.begin(baud_rate); //init serial port
 }
 
-//primary loop
+//Primary loop, arduinos keep calling this loop so the main logic is here
 void loop(){
     if(playerID != 0){ //We have a ID
         if(!waitForResult && !waitForCountdown){ //Not waiting for anything, button time!
@@ -88,22 +87,21 @@ void loop(){
         waitForID();
 }
 
-/* 
-Get stuck in loop while we wait for a playerID over USB, we escape the loop by the interrupt function
+/*  Shows some basic things on display and sends over USB that we need playerID before continuing
+    Has a fancy loop and some globals only for the differing amounts of dots to show program hasnt halted
 */
 void waitForID(){
     Serial.println("NO PLAYER ID");
     lcd.clear();
     lcd.print("Connecting");
-    //Fancy loop for differing amounts of dots
     for(int i = 0; i <= waitingDots % 3; i++) 
         lcd.print(".");
     delay(1000);
     waitingDots++;
 }
 
-/* 
-Interrupt for serialEvents to read data and process it before jumping back to the previous program state
+/*  Interrupt for serialEvents to read data and process it before jumping back to the previous program state
+    Handles all incoming data over USB and processes it
  */
 void serialEvent(){
     char inChar;
@@ -111,8 +109,8 @@ void serialEvent(){
     if(Serial.available()){
         inChar = Serial.read(); //read the incoming value
 
-        if(serialIncomingChars == true){ //if we are in display mode
-            if(inChar == NULL)          //Null terminated
+        if(serialIncomingChars == true){    //if we are in display mode
+            if(inChar == NULL)              //Null terminated
             {
                 serialIncomingChars = false; //leave display mode
             }
@@ -127,7 +125,9 @@ void serialEvent(){
         }
         else if(playerID != 0){ //make sure we have playID before accepting any of these 
             switch (inChar){
-                case winChar:
+
+                //
+/*                 case winChar:
                     displayResultAndClear(inChar);
                 break;
 
@@ -137,16 +137,20 @@ void serialEvent(){
 
                 case tieChar:
                     displayResultAndClear(inChar);
-                break;
+                break; */
 
-                case writeToDisplayBitFlag: //Specific byte to raise flag that we are supposed to display incoming text
+                case writeToDisplayBitFlag:     //Specific byte to raise flag that we are supposed to display incoming text
                     serialIncomingChars = true; //set flag that we are in display mode
-                    cursorLoc = 0;
-                    lcd.clear();
+                    cursorLoc = 0;              //reset cursorLoc to start writing from to left
+                    lcd.clear();                //clear anything left on screen
                 break;
 
                 case countdownBitFlag: //Same as before except to start the countdown
                     displayCountdown();
+                break;
+
+                default:
+                    displayResultAndClear(inChar);
                 break;
             }
         }
@@ -167,12 +171,8 @@ void serialEvent(){
     }
 }
 
-/* 
-Char byte values
-* = 42
-1 = 49
-2 = 50
-3 = 51
+/*  Runs on keyPress, we have playerID and game has started
+    Has logic for sending what you pressed over USB
  */
 void getKeypadPress(char c){
     switch(c){
@@ -224,22 +224,20 @@ void getKeypadPress(char c){
     }
 }
 
-//Just a function to display to remove repeating code
+/* 
+Runs when you press 1, 2 or 3 to display a confirmation message
+ */
 void printSelection(const char* str)
 {
     lcd.clear();
-    /*lcd.print("Selected: ");
-    int i = 0;
-    while(*(str + i) != 0){
-        lcd.print(*(str + i));
-        i++;
-    }  */      
     lcd.print(str);
     lcd.setCursor(0, 1);
     lcd.print("* to confirm");
 }
 
-//return the correct string based on selection
+/*  return the correct string based on selection
+    just so I dont have to repeat code in the sending function
+*/
 const char * getSelection(byte flags){
     if(flags & rockFlag)
         return rock;
@@ -250,7 +248,7 @@ const char * getSelection(byte flags){
     return NULL;
 }
 
-//the countdown before game beings
+//The countdown for the game starting, triggers when sent over USB
 void displayCountdown(){
     for(int i = 0; i < 4; i++){ //Iterate over the countdown char ptr array
         lcd.clear();
@@ -263,24 +261,33 @@ void displayCountdown(){
     waitForCountdown = false; //remove waiting flag
 }
 
-//resetting most variables and stuff
+/*  Runs when you get a value over USB after sending a rock/paper/scissor
+    Checks if the value is for W/L/T otherwise returns
+    Resets some variables to setup for a new round
+    Also displays wins/losses/ties 
+*/
 void displayResultAndClear(char c){
-    lcd.clear();
-    //I do the same switch twice which probably isnt very smart
     switch(c){
         case winChar:
+            lcd.clear();
             lcd.print("You won!");
             wins++;
         break;
 
         case loseChar:
+            lcd.clear();
             lcd.print("You lost!");
             losses++;
         break;
 
         case tieChar:
+            lcd.clear();
             lcd.print("Tie!");
             ties++;
+        break;
+
+        default:
+            return;
         break;
     }
     delay(2000);
