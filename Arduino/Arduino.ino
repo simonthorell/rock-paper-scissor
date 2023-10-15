@@ -16,6 +16,13 @@ the LCD is connected to A4 and A5
 #define screenWidth 16
 #define writeToDisplayBitFlag 0x01
 #define countdownBitFlag 0x02
+#define starKey 42
+#define rockKey 49
+#define paperKey 50
+#define scissorKey 51
+#define winChar 87
+#define loseChar 76
+#define tieChar 84
 
 //Keypad setup thingies
 const int baud_rate = 9600;
@@ -120,15 +127,15 @@ void serialEvent(){
         }
         else if(playerID != 0){ //make sure we have playID before accepting any of these 
             switch (inChar){
-                case 'W': //BIG W
+                case winChar:
                     displayResultAndClear(inChar);
                 break;
 
-                case 'L': //loser loser
+                case loseChar:
                     displayResultAndClear(inChar);
                 break;
 
-                case 'T': //Tie
+                case tieChar:
                     displayResultAndClear(inChar);
                 break;
 
@@ -149,12 +156,10 @@ void serialEvent(){
             playerID = inChar; //Set playerID to the incoming byte
 
             //Some confirmation messages on the LCD
+            char buffer[screenWidth];
+            snprintf(buffer, screenWidth, "PlayerID: %d", playerID);
             lcd.clear();
-            char buffer[16];
-            sprintf(buffer, "PlayerID: %d", playerID);
             lcd.print(buffer);
-            /* lcd.print("PlayerID: ");
-            lcd.print(playerID); */
             lcd.setCursor(0, 1);
             lcd.print("Waiting for host");
             waitForCountdown = true; //Waiting for host to start game
@@ -171,16 +176,18 @@ Char byte values
  */
 void getKeypadPress(char c){
     switch(c){
-        case 42:
+        case starKey:
             if(selected != 0){ //if something is selected
                 //send the data over USB and display what it sent
                 Serial.println(selected);
+                //Make a char buffer with the length screenWidth
+                char buffer[screenWidth];
+                //format the text into buffer with max length screenWidth
+                snprintf(buffer, screenWidth, "Sent: %s", getSelection(selected));
+                //Clear the screen
                 lcd.clear();
-                char buffer[16];
-                sprintf(buffer, "Sent: %s", getSelection(selected));
+                //print the textbuffer
                 lcd.print(buffer);
-                /* lcd.print("Sent: ");
-                lcd.print(getSelection(selected)); */
                 lcd.setCursor(0, 1);
                 lcd.print("Waiting");
                 waitForResult = true; //flag that we are waiting for result
@@ -194,17 +201,17 @@ void getKeypadPress(char c){
             }
         break;
 
-        case 49:
+        case rockKey:
             selected = rockFlag;
             printSelection(rock);
         break;
         
-        case 50:
+        case paperKey:
             selected = paperFlag;
             printSelection(paper);
         break;
 
-        case 51:
+        case scissorKey:
             selected = scissorFlag;
             printSelection(scissor);
         break;
@@ -259,25 +266,26 @@ void displayCountdown(){
 //resetting most variables and stuff
 void displayResultAndClear(char c){
     lcd.clear();
+    //I do the same switch twice which probably isnt very smart
     switch(c){
-        case 'W':
+        case winChar:
             lcd.print("You won!");
             wins++;
         break;
 
-        case 'L':
+        case loseChar:
             lcd.print("You lost!");
             losses++;
         break;
 
-        case 'T':
+        case tieChar:
             lcd.print("Tie!");
             ties++;
         break;
     }
     delay(2000);
-    char buffer[16];
-    sprintf(buffer, "%dW %dL %dT", wins, losses, ties);
+    char buffer[screenWidth];
+    snprintf(buffer, screenWidth, "%dW %dL %dT", wins, losses, ties);
     lcd.clear();
     lcd.print(buffer);
     //reset some variables and await the countdown to begin again
