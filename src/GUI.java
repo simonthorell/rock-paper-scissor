@@ -437,7 +437,7 @@ public class GUI{
             container.setVisible(true);
             menuLayer.setVisible(false);
 
-            Handler handler = new Handler();
+            //Handler handler = new Handler();
         
                 List<PlayerStatus> rankedPlayers = handler.getRankedPlayers();
         
