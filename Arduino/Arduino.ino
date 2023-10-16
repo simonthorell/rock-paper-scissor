@@ -16,6 +16,7 @@ the LCD is connected to A4 and A5
 #define screenWidth 16
 #define writeToDisplayBitFlag 0x01
 #define countdownBitFlag 0x02
+#define playAgainBitFlag 0x04
 #define starKey 42
 #define rockKey 49
 #define paperKey 50
@@ -55,6 +56,7 @@ byte selected = 0;
 bool waitForResult = false;
 bool waitForCountdown = false;
 bool serialIncomingChars = false;
+bool awaitPlayAgain = false;
 
 //Keypad and LCD setup
 Keypad myKeypad = Keypad(makeKeymap(keys), rowPins, colPins, 4, 4);
@@ -136,6 +138,10 @@ void serialEvent(){
                     displayCountdown();
                 break;
 
+                case playAgainBitFlag:
+                    playAgain();
+                break;
+
                 default:
                     displayResultAndClear(inChar);
                 break;
@@ -164,49 +170,63 @@ void serialEvent(){
 void getKeypadPress(char c){
     switch(c){
         case starKey:
-            if(selected != 0){ //if something is selected
-                //send the data over USB and display what it sent
-                Serial.println(selected);
-                //Make a char buffer with the length screenWidth
-                char buffer[screenWidth];
-                //format the text into buffer with max length screenWidth
-                snprintf(buffer, screenWidth, "Sent: %s", getSelection(selected));
-                //Clear the screen
-                lcd.clear();
-                //print the textbuffer
-                lcd.print(buffer);
-                lcd.setCursor(0, 1);
-                lcd.print("Waiting");
-                waitForResult = true; //flag that we are waiting for result
-            }
-            else{ //nothing is selected
-                //Cant send nothing so prompt to press 1,2,3
-                lcd.clear();
-                lcd.print("Press 1,2,3 to");
-                lcd.setCursor(0, 1);
-                lcd.print("select something");
+            if(!awaitPlayAgain){
+                if(selected != 0){ //if something is selected
+                    //send the data over USB and display what it sent
+                    Serial.println(selected);
+                    //Make a char buffer with the length screenWidth
+                    char buffer[screenWidth];
+                    //format the text into buffer with max length screenWidth
+                    snprintf(buffer, screenWidth, "Sent: %s", getSelection(selected));
+                    //Clear the screen
+                    lcd.clear();
+                    //print the textbuffer
+                    lcd.print(buffer);
+                    lcd.setCursor(0, 1);
+                    lcd.print("Waiting");
+                    waitForResult = true; //flag that we are waiting for result
+                }
+                else{ //nothing is selected
+                    //Cant send nothing so prompt to press 1,2,3
+                    lcd.clear();
+                    lcd.print("Press 1,2,3 to");
+                    lcd.setCursor(0, 1);
+                    lcd.print("select something");
+                }
             }
         break;
 
         case rockKey:
-            selected = rockFlag;
-            printSelection(rock);
+            if(awaitPlayAgain){
+                Serial.println(0xff);
+                awaitPlayAgain = false;
+                waitForCountdown = true;
+            }else{
+                selected = rockFlag;
+                printSelection(rock);
+            }
         break;
         
         case paperKey:
-            selected = paperFlag;
-            printSelection(paper);
+            if(!awaitPlayAgain){
+                selected = paperFlag;
+                printSelection(paper);
+            }
         break;
 
         case scissorKey:
-            selected = scissorFlag;
-            printSelection(scissor);
+            if(!awaitPlayAgain){
+                selected = scissorFlag;
+                printSelection(scissor);
+            }
         break;
 
         default:
             //Didnt press 1,2,3, prompt to press one of those
-            lcd.clear();
-            lcd.print("Press 1, 2 or 3!");
+            if(!awaitPlayAgain){
+                lcd.clear();
+                lcd.print("Press 1, 2 or 3!");
+            } 
         break;
     }
 }
@@ -290,4 +310,14 @@ void displayResultAndClear(char c){
     delay(1000); //wait 1 second before displaying last part
     lcd.setCursor(0, 1);
     lcd.print("Waiting for host");
+}
+
+void playAgain(){
+    lcd.clear();
+    lcd.print("Press 1 to play");
+    lcd.setCursor(0, 1);
+    lcd.print("again!");
+    awaitPlayAgain = true;
+    waitForResult = false;
+    waitForCountdown = false;
 }
