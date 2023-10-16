@@ -168,16 +168,7 @@ public class GUI{
                             Font font = new Font("Arial", Font.BOLD, 32);
                             userName.setFont(font);
                         JButton submitName = new JButton("<html><h2>SUBMIT</h2></html>");
-                /* 
-                JPanel highscore = new JPanel(new GridLayout());
-                    highscore.setBounds(0, 0, 800, 300);
-                    highscore.setBackground(Color.GRAY);
-                    highscore.setVisible(false);
-
-                    highscoreButton.setEnabled(true);
-                    highscoreButton.setSize(400, 150);
-
-                    */
+                        
 
                 // Main Content/game Panel ---->
                 container = new JPanel(new GridLayout(2, 1));
@@ -451,18 +442,6 @@ public class GUI{
         exit.addActionListener((ActionEvent e) -> {
             System.exit(0); 
         });
-
-         /*  scoreBoard button and the button below is for the same thing!
-         highscoreButton.addActionListener(new ActionListener() {
-            HighScore hs = new HighScore();
-
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                try {
-                    hs.displayRankOrder();
-                } catch
-            }
-        }); */
     }
 
     // method that checks if the image file exists
@@ -479,14 +458,14 @@ public class GUI{
     private void displayPictures() {
 
         if (pictureIndex < totalFrames) {
-            // Calculate the x-coordinate to select the current frame from the sprite sheet
+            // Calculates the x-coordinate to select the current frame from the sprite sheet
             int x = pictureIndex * frameWidth;
 
-            // Select the current frame from the sprite sheet
+            // Selects the current frame from the sprite sheet
             BufferedImage currentPlayerFrame = playerSheet.getSubimage(x, 0, frameWidth, frameHeight);
             BufferedImage currentCpuFrame = cpuSheet.getSubimage(x, 0, frameWidth, frameHeight);
 
-            // Update the pictureLabel with the current frame
+            // Updates the pictureLabel with the current frame
             ImageIcon iconPlayer = new ImageIcon(currentPlayerFrame);
             ImageIcon iconCpu = new ImageIcon(currentCpuFrame);
             playerHand.setIcon(iconPlayer);
