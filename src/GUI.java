@@ -502,9 +502,11 @@ public class GUI{
                     slideTimer.stop();
                     pictureIndex = 0;
                     winLooseDraw(wld);
-                    rockButton.setEnabled(true);
-                    paperButton.setEnabled(true);
-                    scissorButton.setEnabled(true);
+                    if(singleplayer){
+                        rockButton.setEnabled(true);
+                        paperButton.setEnabled(true);
+                        scissorButton.setEnabled(true);
+                    }
                 }
             }
         });
