@@ -33,8 +33,8 @@ public class GUI{
     private  JButton scissorButton;
     //private JButton highscoreButton;
 
-    private  int pScore = 0;
-    private  int cScore = 0;
+    public  int pScore = 0;
+    public  int cScore = 0;
 
     private  BufferedImage playerSheet;
     private BufferedImage cpuSheet;
