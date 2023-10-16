@@ -6,6 +6,7 @@ import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.util.List;
 
 public class GUI{
 
@@ -435,6 +436,16 @@ public class GUI{
             waiting4players.setVisible(false);
             container.setVisible(true);
             menuLayer.setVisible(false);
+
+            Handler handler = new Handler();
+        
+                List<PlayerStatus> rankedPlayers = handler.getRankedPlayers();
+        
+                List<String> rankStrings = HighScore.displayRankOrder(rankedPlayers);
+        
+                String scoreMessage = String.join("\n", rankStrings);
+        
+                JOptionPane.showMessageDialog(null, scoreMessage, "High Scores", JOptionPane.PLAIN_MESSAGE);
         });
 
         exit.addActionListener((ActionEvent e) -> {
