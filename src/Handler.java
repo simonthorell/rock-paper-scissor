@@ -11,6 +11,10 @@ public class Handler {
 
     public Handler() {
         players = new ArrayList<>();
+        this.gui = new GUI();
+        setGUI(this.gui);
+        this.gui.setHandler(this);
+        this.gui.window();
     }
 
     public void setGUI(GUI gui){
