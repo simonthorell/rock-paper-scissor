@@ -77,19 +77,7 @@ public class Handler {
 
                     gui.scenario();
                     GameLogic gameLogic = new GameLogic(player1, player2);
-                    int winner = gameLogic.getWinner();
-
-                    switch (winner) {
-                        case 1:
-                            gui.pScore++;
-                            break;
-                        case 2:
-                            gui.cScore++;
-                            break;
-                        default:
-                            break;
-                    }
-                    MqttPlayer.displayGameResult(gameLogic.printMultiplayerWinner(winner));
+                    MqttPlayer.displayGameResult(gameLogic.printMultiplayerWinner(gameLogic.getWinner()));
 
                     // ADD SLEEP HERE? 
                 }
