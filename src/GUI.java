@@ -396,7 +396,8 @@ public class GUI{
 
         playing.addActionListener((ActionEvent e) -> {
             multiMenu.setVisible(false);
-            waiting4players.setVisible(true);  
+            waiting4players.setVisible(true); 
+            gameOption(false); 
         });
 
         spectating.addActionListener((ActionEvent e) -> {
