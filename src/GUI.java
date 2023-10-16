@@ -52,13 +52,11 @@ public class GUI{
         "simple-pics/spritesheet-cScissor.png"
     };
 
-    public PlayerStatus player1;// = new PlayerStatus(1, false, false);
-    public PlayerStatus player2;// = new PlayerStatus(2, false, true);
+    public PlayerStatus player1;
+    public PlayerStatus player2;
 
     private boolean singleplayer = true;
-
     private Handler handler;
-
     public void setHandler(Handler handler){
         this.handler = handler;
     }
@@ -374,6 +372,13 @@ public class GUI{
         singlePlayerButton.addActionListener((ActionEvent e) -> {
             singleMulti.setVisible(false);
             setName.setVisible(true);
+            /* 
+            Moved gameOption() from subitName.addActionListener 
+            so we setup the player1 object in Handler.java 
+            before we get to submitName and get a 
+            nullpointer error because its not init yet
+            */
+            gameOption(true);
          });
 
         multiPlayerButton.addActionListener((ActionEvent e) -> {
@@ -385,7 +390,7 @@ public class GUI{
         submitName.addActionListener((ActionEvent e) -> {
             String nameInput = userName.getText();
             if(nameInput.matches("^[a-zA-ZåäöÅÄÖ]+$")){                
-                gameOption(true);
+                //gameOption(true);
                 player1.setName(nameInput);
                 System.out.print(nameInput);
                 setName.setVisible(false);

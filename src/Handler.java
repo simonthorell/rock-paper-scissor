@@ -26,15 +26,25 @@ public class Handler {
     }
 
     private void mutliPlayerWait(){
-        while(gui.gameHandlerTesting == 0){
-            System.out.println("gamehandlertesting 0");
+        /* 
+         * This throws errors that you dont own the thread
+         * if you dont do this sync thingies
+         * Legit no clue what it does but it removes the error
+         */
+        synchronized (this){
+            try{
+                do{
+                    wait(100);
+                }while(gui.gameHandlerTesting == 0);
+            } catch (InterruptedException e){
+                System.out.println(e);
+            }   
         }
 
         if (gui.gameHandlerTesting == 1){
             singlePlayer();
         }
         else if(gui.gameHandlerTesting == 2){
-            System.out.println("WOWIE");
             multiPlayer();
         }
 
@@ -52,8 +62,6 @@ public class Handler {
 
             PlayerStatus player1 = players.get(0);
             PlayerStatus player2 = players.get(1);
-            System.out.println(player1.getName());
-            /* setPlayersGUI(player1, player2); */
 
             gui.gotBothPlayersRobbanFix();
 
