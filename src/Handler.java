@@ -12,13 +12,8 @@ public class Handler {
     public Handler() {
         players = new ArrayList<>();
         this.gui = new GUI();
-        setGUI(this.gui);
         this.gui.setHandler(this);
         this.gui.window();
-    }
-
-    public void setGUI(GUI gui){
-        this.gui = gui;
     }
     
     // Additional methods for single player or other game modes...
