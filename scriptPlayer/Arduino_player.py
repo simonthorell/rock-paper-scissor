@@ -12,7 +12,7 @@ baud_rate = 9600
 usb_port = "COM3"
 
 #Globals
-player_id = 1
+player_id = -1
 result = 5
 displayMessage = ""
 
