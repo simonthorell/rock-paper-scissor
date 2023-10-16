@@ -115,7 +115,8 @@ public class GUI{
 
                 JPanel menuButton = new JPanel();
                     menuButton.setBounds(0, 0, 100, 50);
-                    menuButton.setOpaque(true);
+                    menuButton.setOpaque(false);
+                    menuButton.setVisible(true);
                     Font customFont = new Font("Arial", Font.BOLD, 24);
 
                     JButton menu = new JButton("MENU");
@@ -257,13 +258,13 @@ public class GUI{
         // This is where comoponents are added to eachother.         
         frame.add(bottomContainer);
 
-            bottomContainer.add(container, JLayeredPane.DEFAULT_LAYER);
-            bottomContainer.add(waiting4players, JLayeredPane.DEFAULT_LAYER + 2);
-            bottomContainer.add(singleMulti, JLayeredPane.PALETTE_LAYER);
-            bottomContainer.add(menuLayer, JLayeredPane.DRAG_LAYER);
-            bottomContainer.add(setName,JLayeredPane.PALETTE_LAYER + 4);
-            bottomContainer.add(multiMenu, JLayeredPane.PALETTE_LAYER + 2);
-            bottomContainer.add(menuButton, JLayeredPane.PALETTE_LAYER + 3);
+            bottomContainer.add(container, JLayeredPane.PALETTE_LAYER);
+            bottomContainer.add(waiting4players, JLayeredPane.PALETTE_LAYER);
+            bottomContainer.add(menuLayer, JLayeredPane.MODAL_LAYER);
+            bottomContainer.add(setName,JLayeredPane.MODAL_LAYER);
+            bottomContainer.add(singleMulti, JLayeredPane.POPUP_LAYER);
+            bottomContainer.add(multiMenu, JLayeredPane.DRAG_LAYER);
+            bottomContainer.add(menuButton, JLayeredPane.DRAG_LAYER);
 
                     singleMulti.add(gameopt);
                     singleMulti.add(singlePlayerButton);
@@ -384,7 +385,6 @@ public class GUI{
             if(nameInput.matches("^[a-zA-ZåäöÅÄÖ]+$")){                
                 //gameOption(true);
                 player1.setName(nameInput);
-                System.out.print(nameInput);
                 setName.setVisible(false);
                 container.setVisible(true);
                 rockButton.setEnabled(true);
@@ -405,6 +405,7 @@ public class GUI{
         spectating.addActionListener((ActionEvent e) -> {
             multiMenu.setVisible(false);
             menuLayer.setVisible(false);
+            container.setVisible(false);
             waiting4players.setVisible(true);
             currentPlayers();
         });
@@ -425,7 +426,6 @@ public class GUI{
 
         scoreBoard.addActionListener((ActionEvent e) -> {
             waiting4players.setVisible(false);
-            container.setVisible(true);
             menuLayer.setVisible(false);
 
             //Handler handler = new Handler();
@@ -436,7 +436,7 @@ public class GUI{
         
                 String scoreMessage = String.join("\n", rankStrings);
         
-                JOptionPane.showMessageDialog(null, scoreMessage, "High Scores", JOptionPane.PLAIN_MESSAGE);
+                JOptionPane.showMessageDialog(null, scoreMessage + "HEJ HEJ", "High Scores", JOptionPane.PLAIN_MESSAGE);
         });
 
         exit.addActionListener((ActionEvent e) -> {
@@ -532,7 +532,14 @@ public class GUI{
         int choice;
 
         if(cScore == 3){
-            choice = JOptionPane.showConfirmDialog(frame, "You just lost to the Computer, buhu! \n Do you want to play again?", "Confirmation", JOptionPane.YES_NO_OPTION);
+
+            if(singleplayer){
+                choice = JOptionPane.showConfirmDialog(frame, "You just lost to the Computer, buhu! \n Do you want to play again?", "WINNER!", JOptionPane.YES_NO_OPTION);
+                
+            } else {
+                choice = JOptionPane.showConfirmDialog(frame, "Player2 just beat the noob on the other side!", "WINNER!", JOptionPane.YES_NO_OPTION);
+            }
+            
             if(choice == JOptionPane.YES_OPTION){
                 pScore = 0;
                 cScore = 0;
@@ -546,7 +553,12 @@ public class GUI{
                 System.exit(0);
             }
         }else if(pScore == 3){
-            choice = JOptionPane.showConfirmDialog(frame, "You just Won the Game, jippi! \n Do you want to play again?", "Confirmation", JOptionPane.YES_NO_OPTION);
+            if(singleplayer){
+                choice = JOptionPane.showConfirmDialog(frame, "You just Won the Game, jippi! \n Do you want to play again?", "WINNER!", JOptionPane.YES_NO_OPTION);
+            } else {
+                choice = JOptionPane.showConfirmDialog(frame, "Player1 just beat the noob on the other side!", "WINNER!", JOptionPane.YES_NO_OPTION);
+            }
+            
             if(choice == JOptionPane.YES_OPTION){
                 pScore = 0;
                 cScore = 0;
@@ -587,6 +599,7 @@ public class GUI{
                 // add delay here maybe? so the panel wont just disappear as soon as player 2 is connected...
                 waiting4players.setVisible(false); 
                 container.setVisible(true);
+                
             } 
     }
 
@@ -596,5 +609,11 @@ public class GUI{
         }else if(player2 == null){
             player2 = player;
         }
+    }
+
+    public void resetLabels(){
+        playerWin.setText("");
+        cpuWin.setText("");
+        draw.setText("");
     }
 }
