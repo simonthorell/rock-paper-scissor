@@ -18,8 +18,8 @@ public class GUI{
     private JLabel playerScore;
     private JLabel cpuScore;
     private JLabel draw;
-    private JLabel playerWin;
-    private JLabel cpuWin;
+    public JLabel playerWin;
+    public JLabel cpuWin;
     private JLabel playerName;
     private JLabel cpuName;
     private JPanel waiting4players;

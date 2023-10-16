@@ -78,6 +78,8 @@ public class Handler {
                     gui.scenario();
                     GameLogic gameLogic = new GameLogic(player1, player2);
                     MqttPlayer.displayGameResult(gameLogic.printMultiplayerWinner(gameLogic.getWinner()));
+                    gui.playerWin == null;
+                    gui.cpuWin == null;
 
                     // ADD SLEEP HERE? 
                 }
