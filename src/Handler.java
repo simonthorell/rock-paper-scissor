@@ -57,30 +57,39 @@ public class Handler {
         final String[] countDownMsg = {"3", "2", "1", "Rock, Paper, Scissors!"};
         System.out.println("Multiplayer func running");
 
-        try {
-            waitForMultiPlayers(MAX_PLAYERS, displayMessage);
+        boolean playing = true;
+        
+        while (playing) {
+            try {
+                // Will only be run first iteration as contion of Max players will be met.
+                waitForMultiPlayers(MAX_PLAYERS, displayMessage); 
 
-            PlayerStatus player1 = players.get(0);
-            PlayerStatus player2 = players.get(1);
+                PlayerStatus player1 = players.get(0);
+                PlayerStatus player2 = players.get(1);
 
-            gui.gotBothPlayersRobbanFix();
+                gui.gotBothPlayersRobbanFix();
 
-            MqttPlayer.countDownAndThrow(countDownMsg);
-            
-            player1.setPlayerMove(player1.mqttPlayer().getMove());
-            player2.setPlayerMove(player2.mqttPlayer().getMove());
+                MqttPlayer.countDownAndThrow(countDownMsg);
+                
+                player1.setPlayerMove(player1.mqttPlayer().getMove());
+                player2.setPlayerMove(player2.mqttPlayer().getMove());
 
-            gui.scenario();
-            GameLogic gameLogic = new GameLogic(player1.getPlayerMove(), player2.getPlayerMove());
-            MqttPlayer.displayGameResult(gameLogic.printMultiplayerWinner(gameLogic.getWinner()));
+                gui.scenario();
+                GameLogic gameLogic = new GameLogic(player1.getPlayerMove(), player2.getPlayerMove());
+                MqttPlayer.displayGameResult(gameLogic.printMultiplayerWinner(gameLogic.getWinner()));
 
-            disconnectMultiPlayers();
+                // ADD SLEEP HERE? 
+                playing = (playAgain());
 
-        } catch (MqttException e) {
-            System.out.println("MQTT Error: " + e.getMessage());
-        } catch (InterruptedException e) {
-            System.out.println("Interupted Error: " + e.getMessage());
+            } catch (MqttException e) {
+                System.out.println("MQTT Error: " + e.getMessage());
+            } catch (InterruptedException e) {
+                System.out.println("Interupted Error: " + e.getMessage());
+            }
         }
+
+        disconnectMultiPlayers();
+        
     }
 
     private void setPlayersGUI(PlayerStatus player1, PlayerStatus player2) {
@@ -100,6 +109,20 @@ public class Handler {
             gui.currentPlayers();
         }
     }
+
+    private boolean playAgain() throws MqttException, InterruptedException {
+        for (PlayerStatus player : players) {
+            String playAgainMsg = "Enter 1 to play again!";
+            player.mqttPlayer().askToPlayAgain(playAgainMsg);
+            player.setPlayerMove(player.mqttPlayer().getMove());
+        }
+
+        if ((players.get(0).getPlayerMove() == 1) && (players.get(0).getPlayerMove() == 1)) {
+            return true;
+        } else {
+            return false;
+        }
+} 
 
     private void disconnectMultiPlayers() {
         for (PlayerStatus currentPlayer : players) {
