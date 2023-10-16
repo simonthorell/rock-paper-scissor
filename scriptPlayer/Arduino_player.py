@@ -12,7 +12,7 @@ baud_rate = 9600
 usb_port = "COM3"
 
 #Globals
-player_id = -1
+player_id = 1
 result = 5
 displayMessage = ""
 
@@ -54,6 +54,9 @@ def on_message(client, userdata, message):
                 
             elif (msgPayload == "3"):                                                   #First message of the countdown
                 result = 3                                                              #Flag to write to arudino, countdown is handled by arduino code, this just triggers it
+            
+            elif (msgPayload == "Enter 1 to play again!"):
+                result = 4
                 
             elif (msgPayload == "write"):                                               #Special write for arudino to write a custom string to LCD screen
                 displayMessage = payload_json.get("write")                              #Needs a Write Payload for it to work
@@ -97,6 +100,9 @@ def arduinoUSBDecode(incoming_byte, client, serial_bus):
             if(player_id != -1):
                 serial_bus.write(player_id.to_bytes(1, "big"))
                 #Big is big endian
+                
+        case 255: #Play again
+            client.publish(f"{TOPIC_PREFIX}player{player_id}", json.dumps({"message" : "1"}))
                 
 def arduinoWriteToScreen(serial_bus, message):
     if(len(message) > 32): #warning that string too long
@@ -150,6 +156,10 @@ def serial_listen(client):
                     
                 case 3: #Start countdown on arduino
                     serial_bus.write(b'\x02')
+                    result = 5
+                    
+                case 4: #play again
+                    serial_bus.write(b'\x04')
                     result = 5
                     
                     
