@@ -51,25 +51,20 @@ public class GUI{
         "simple-pics/spritesheet-cScissor.png"
     };
 
-    public PlayerStatus player1 = new PlayerStatus(1, false, false);
-    public PlayerStatus player2 = new PlayerStatus(2, false, true);
+    public PlayerStatus player1;
+    public PlayerStatus player2;
 
     private boolean singleplayer = true;
 
-    private Handler handler;
-
-    public void setHandler(Handler handler){
-        this.handler = handler;
-    }
-
     private void gameOption(boolean isSinglePlayer) {
+        Handler gameOption = new Handler();
 
         if(isSinglePlayer){
             // Start single player game
-            handler.singlePlayer();
+            gameOption.singlePlayer();
         } else if(!isSinglePlayer){
             // Start multi player game
-            handler.multiPlayer();
+            gameOption.multiPlayer();
         }
     }
 
@@ -368,13 +363,11 @@ public class GUI{
 
         singlePlayerButton.addActionListener((ActionEvent e) -> {
             singleMulti.setVisible(false);
-            setName.setVisible(true);
          });
 
         multiPlayerButton.addActionListener((ActionEvent e) -> {
             singleMulti.setVisible(false);
             multiMenu.setVisible(true);
-            singleplayer = false;
         });
 
         submitName.addActionListener((ActionEvent e) -> {
@@ -383,7 +376,7 @@ public class GUI{
                 if(nameInput.matches("^[a-zA-ZåäöÅÄÖ]+$")){
                     
                     gameOption(true);
-                    player1.setName(nameInput);
+                    //player1.setName(nameInput); does not work? gui.player1 = null
                     System.out.print(nameInput);
                     setName.setVisible(false);
                     container.setVisible(true);
@@ -395,21 +388,9 @@ public class GUI{
                     JOptionPane.showMessageDialog(null, "Your name can only contain letters! \n \n Please try again!", "Invalid Name", JOptionPane.ERROR_MESSAGE);
                 }
             } else {
-                if(nameInput.matches("^[a-zA-ZåäöÅÄÖ]+$")){
-                    setName.setVisible(false);
-                    // also need to add a player check to see whos nr 1, nr 2, etc
-                    waiting4players.setVisible(true);
-                    int x = JOptionPane.showConfirmDialog(frame, "Do you want to play from your Arduino?", "Arduino or not!", JOptionPane.YES_NO_OPTION);
-                    if(x == JOptionPane.YES_OPTION){
-                        gameOption(false);
-                        currentPlayers(); 
-                        player1.setName(nameInput); // player1 or player2
-                    }else{
-                        gameOption(false);
-                        currentPlayers();
-                        player1.setName(nameInput); // player1 or player2
-                    }
-                }
+                waiting4players.setVisible(true);
+                gameOption(false);
+                currentPlayers();
             }
         });
 
@@ -605,4 +586,7 @@ public class GUI{
         
         
     }
+
+
+
 }
