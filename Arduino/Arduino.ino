@@ -47,7 +47,7 @@ const char *countdown[] = {
 uint8_t playerID = 0;
 uint8_t waitingDots = 0;
 uint8_t cursorLoc = 0;
-//Will overflow after 255 wins/losses/ties but who cares
+//Will overflow after 255 wins/losses/ties Too bad!
 uint8_t wins = 0;
 uint8_t losses = 0;
 uint8_t ties = 0;
@@ -153,8 +153,8 @@ void serialEvent(){
             playerID = inChar; //Set playerID to the incoming byte
 
             //Some confirmation messages on the LCD
-            char buffer[screenWidth];
-            snprintf(buffer, screenWidth, "PlayerID: %d", playerID);
+            char buffer[screenWidth + 1];
+            snprintf(buffer, screenWidth + 1, "PlayerID: %d", playerID);
             lcd.clear();
             lcd.print(buffer);
             lcd.setCursor(0, 1);
@@ -175,9 +175,9 @@ void getKeypadPress(char c){
                     //send the data over USB and display what it sent
                     Serial.println(selected);
                     //Make a char buffer with the length screenWidth
-                    char buffer[screenWidth];
+                    char buffer[screenWidth + 1];
                     //format the text into buffer with max length screenWidth
-                    snprintf(buffer, screenWidth, "Sent: %s", getSelection(selected));
+                    snprintf(buffer, screenWidth + 1, "Sent: %s", getSelection(selected));
                     //Clear the screen
                     lcd.clear();
                     //print the textbuffer
@@ -298,8 +298,8 @@ void displayResultAndClear(char c){
         break;
     }
     delay(2000);
-    char buffer[screenWidth];
-    snprintf(buffer, screenWidth, "%dW %dL %dT", wins, losses, ties);
+    char buffer[screenWidth + 1];
+    snprintf(buffer, screenWidth + 1, "%dW %dL %dT", wins, losses, ties);
     lcd.clear();
     lcd.print(buffer);
     //reset some variables and await the countdown to begin again
