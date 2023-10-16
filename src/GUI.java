@@ -584,7 +584,7 @@ public class GUI{
     }
 
     public void scenario() {
-        GameLogic gameLogic = new GameLogic(player1.getPlayerMove(), player2.getPlayerMove());
+        GameLogic gameLogic = new GameLogic(player1, player2);
         startDisplayAction(player1.getPlayerMove(), player2.getPlayerMove(), gameLogic.getWinner());
     }
 

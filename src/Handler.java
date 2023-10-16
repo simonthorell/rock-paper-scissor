@@ -69,16 +69,19 @@ public class Handler {
 
                 gui.gotBothPlayersRobbanFix();
 
-                MqttPlayer.countDownAndThrow(countDownMsg);
+                while ((player1.getScore() < 3) || (player2.getScore() < 3)) {
+                    MqttPlayer.countDownAndThrow(countDownMsg);
                 
-                player1.setPlayerMove(player1.mqttPlayer().getMove());
-                player2.setPlayerMove(player2.mqttPlayer().getMove());
+                    player1.setPlayerMove(player1.mqttPlayer().getMove());
+                    player2.setPlayerMove(player2.mqttPlayer().getMove());
 
-                gui.scenario();
-                GameLogic gameLogic = new GameLogic(player1.getPlayerMove(), player2.getPlayerMove());
-                MqttPlayer.displayGameResult(gameLogic.printMultiplayerWinner(gameLogic.getWinner()));
+                    gui.scenario();
+                    GameLogic gameLogic = new GameLogic(player1, player2);
+                    MqttPlayer.displayGameResult(gameLogic.printMultiplayerWinner(gameLogic.getWinner()));
 
-                // ADD SLEEP HERE? 
+                    // ADD SLEEP HERE? 
+                }
+
                 playing = (playAgain());
 
             } catch (MqttException e) {
