@@ -9,11 +9,12 @@ public class Handler {
     private List<PlayerStatus> players;
     private GUI gui;
 
-    public Handler() {
+    public Handler(){
         players = new ArrayList<>();
         this.gui = new GUI();
         this.gui.setHandler(this);
         this.gui.window();
+        mutliPlayerWait();  
     }
     
     // Additional methods for single player or other game modes...
@@ -24,11 +25,27 @@ public class Handler {
         setPlayersGUI(player1, player2);
     }
 
-    public void multiPlayer() {
+    private void mutliPlayerWait(){
+        while(gui.gameHandlerTesting == 0){
+            System.out.println("gamehandlertesting 0");
+        }
+
+        if (gui.gameHandlerTesting == 1){
+            singlePlayer();
+        }
+        else if(gui.gameHandlerTesting == 2){
+            System.out.println("WOWIE");
+            multiPlayer();
+        }
+
+    }
+
+    public void multiPlayer(){
         // [Adjustable] MAX_PLAYERS could be dynamic based on a GUI interaction or game setup stage
         final int MAX_PLAYERS = 2; 
         final String displayMessage = "Push any button to play!";
         final String[] countDownMsg = {"3", "2", "1", "Rock, Paper, Scissors!"};
+        System.out.println("Multiplayer func running");
 
         try {
             waitForMultiPlayers(MAX_PLAYERS, displayMessage);
@@ -36,7 +53,9 @@ public class Handler {
             PlayerStatus player1 = players.get(0);
             PlayerStatus player2 = players.get(1);
             System.out.println(player1.getName());
-            setPlayersGUI(player1, player2);
+            /* setPlayersGUI(player1, player2); */
+
+            gui.gotBothPlayersRobbanFix();
 
             MqttPlayer.countDownAndThrow(countDownMsg);
             
@@ -66,9 +85,11 @@ public class Handler {
         while (countPlayerID < MAX_PLAYERS) {
             countPlayerID++;
             PlayerStatus currentPlayer = new PlayerStatus(countPlayerID, true, false);
-            players.add(currentPlayer);
             currentPlayer.mqttPlayer().askToPlay(displayMessage, countPlayerID);
             currentPlayer.mqttPlayer().getMove();
+            players.add(currentPlayer);
+            gui.setPlayer(currentPlayer);
+            gui.currentPlayers();
         }
     }
 

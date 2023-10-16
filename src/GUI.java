@@ -10,6 +10,7 @@ import java.io.IOException;
 public class GUI{
 
     private JFrame frame;
+    private JPanel container;
 
     private JLabel playerHand;
     private JLabel cpuHand;
@@ -51,8 +52,8 @@ public class GUI{
         "simple-pics/spritesheet-cScissor.png"
     };
 
-    public PlayerStatus player1 = new PlayerStatus(1, false, false);
-    public PlayerStatus player2 = new PlayerStatus(2, false, true);
+    public PlayerStatus player1;// = new PlayerStatus(1, false, false);
+    public PlayerStatus player2;// = new PlayerStatus(2, false, true);
 
     private boolean singleplayer = true;
 
@@ -62,14 +63,18 @@ public class GUI{
         this.handler = handler;
     }
 
+    public int gameHandlerTesting;
+
     private void gameOption(boolean isSinglePlayer) {
 
         if(isSinglePlayer){
             // Start single player game
-            handler.singlePlayer();
+            //handler.singlePlayer();
+            gameHandlerTesting = 1;
         } else if(!isSinglePlayer){
             // Start multi player game
-            handler.multiPlayer();
+            //handler.multiPlayer();
+            gameHandlerTesting = 2;
         }
     }
 
@@ -176,7 +181,7 @@ public class GUI{
                     */
 
                 // Main Content/game Panel ---->
-                JPanel container = new JPanel(new GridLayout(2, 1));
+                container = new JPanel(new GridLayout(2, 1));
                     container.setSize(800, 600);
                     container.setVisible(false);
 
@@ -570,21 +575,29 @@ public class GUI{
             playerName.setText("<html><h1>"+player1.getName()+"</h1></html>");
             cpuName.setText("<html><h1>"+player2.getName()+"</h1></html>");
         }else if(!singleplayer){
-            
-                if(player1.getName() != null){
-                    player1Connected.setText("<html><h2>"+ player1.getName()+"<br>IS CONNECTED!</h2></html>");
-                    playerName.setText("<html><h1>"+player1.getName()+"</h1></html>");
-                } else if(player2.getName() != null){
-                    player2Connected.setText("<html><h2>" + player2.getName() + "<br>IS CONNECTED!</h2></html>");
-                    cpuName.setText("<html><h1>"+player2.getName()+"</h1></html>");
-                } else if(player1.getName() != null && player2.getName() != null){
-                    // add delay here maybe? so the panel wont just disappear as soon as player 2 is connected...
-                    waiting4players.setVisible(false); 
-                    
-                }
-            
+            if(player2 != null){
+                player2Connected.setText("<html><h2>" + player2.getName() + "<br>IS CONNECTED!</h2></html>");
+                cpuName.setText("<html><h1>"+player2.getName()+"</h1></html>");
+            }else if(player1 != null){
+                player1Connected.setText("<html><h2>"+ player1.getName()+"<br>IS CONNECTED!</h2></html>");
+                playerName.setText("<html><h1>"+player1.getName()+"</h1></html>");
+            }
         }
-        
-        
+    }
+
+    public void gotBothPlayersRobbanFix(){
+            if(player1 != null && player2 != null){
+                // add delay here maybe? so the panel wont just disappear as soon as player 2 is connected...
+                waiting4players.setVisible(false); 
+                container.setVisible(true);
+            } 
+    }
+
+    public void setPlayer(PlayerStatus player){
+        if(player1 == null){
+            player1 = player;
+        }else if(player2 == null){
+            player2 = player;
+        }
     }
 }
