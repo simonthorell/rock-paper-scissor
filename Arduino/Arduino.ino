@@ -126,19 +126,6 @@ void serialEvent(){
         else if(playerID != 0){ //make sure we have playID before accepting any of these 
             switch (inChar){
 
-                //
-/*                 case winChar:
-                    displayResultAndClear(inChar);
-                break;
-
-                case loseChar:
-                    displayResultAndClear(inChar);
-                break;
-
-                case tieChar:
-                    displayResultAndClear(inChar);
-                break; */
-
                 case writeToDisplayBitFlag:     //Specific byte to raise flag that we are supposed to display incoming text
                     serialIncomingChars = true; //set flag that we are in display mode
                     cursorLoc = 0;              //reset cursorLoc to start writing from to left
