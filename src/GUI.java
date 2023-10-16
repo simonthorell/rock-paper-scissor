@@ -379,35 +379,24 @@ public class GUI{
 
         submitName.addActionListener((ActionEvent e) -> {
             String nameInput = userName.getText();
-            if(singleplayer){
-                if(nameInput.matches("^[a-zA-ZåäöÅÄÖ]+$")){
-                    
-                    gameOption(true);
-                    player1.setName(nameInput);
-                    System.out.print(nameInput);
-                    setName.setVisible(false);
-                    container.setVisible(true);
-                    rockButton.setEnabled(true);
-                    paperButton.setEnabled(true);
-                    scissorButton.setEnabled(true);
-                    currentPlayers();
-                } else {
-                    JOptionPane.showMessageDialog(null, "Your name can only contain letters! \n \n Please try again!", "Invalid Name", JOptionPane.ERROR_MESSAGE);
-                }
+            if(nameInput.matches("^[a-zA-ZåäöÅÄÖ]+$")){                
+                gameOption(true);
+                player1.setName(nameInput);
+                System.out.print(nameInput);
+                setName.setVisible(false);
+                container.setVisible(true);
+                rockButton.setEnabled(true);
+                paperButton.setEnabled(true);
+                scissorButton.setEnabled(true);
+                currentPlayers();
             } else {
-                if(nameInput.matches("^[a-zA-ZåäöÅÄÖ]+$")){
-                    setName.setVisible(false);
-                    // also need to add a player check to see whos nr 1, nr 2, etc
-                    waiting4players.setVisible(true);
-                    gameOption(false);
-                    currentPlayers(); 
-                }
+                JOptionPane.showMessageDialog(null, "Your name can only contain letters! \n \n Please try again!", "Invalid Name", JOptionPane.ERROR_MESSAGE);
             }
         });
 
         playing.addActionListener((ActionEvent e) -> {
             multiMenu.setVisible(false);
-            setName.setVisible(true);   
+            waiting4players.setVisible(true);  
         });
 
         spectating.addActionListener((ActionEvent e) -> {
