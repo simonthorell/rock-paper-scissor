@@ -69,7 +69,7 @@ public class Handler {
 
                 gui.gotBothPlayersRobbanFix();
 
-                while ((player1.getScore() < 3) || (player2.getScore() < 3)) {
+                while ((gui.pScore < 3) || (gui.cScore < 3)) {
                     MqttPlayer.countDownAndThrow(countDownMsg);
                 
                     player1.setPlayerMove(player1.mqttPlayer().getMove());
@@ -77,9 +77,27 @@ public class Handler {
 
                     gui.scenario();
                     GameLogic gameLogic = new GameLogic(player1, player2);
-                    MqttPlayer.displayGameResult(gameLogic.printMultiplayerWinner(gameLogic.getWinner()));
+                    int winner = gameLogic.getWinner();
+
+                    switch (winner) {
+                        case 1:
+                            gui.pScore++;
+                            break;
+                        case 2:
+                            gui.cScore++;
+                            break;
+                        default:
+                            break;
+                    }
+                    MqttPlayer.displayGameResult(gameLogic.printMultiplayerWinner(winner));
 
                     // ADD SLEEP HERE? 
+                }
+
+                if (gui.pScore > gui.cScore) {
+                    player1.setScore(player1.getScore() + 1);
+                } else {
+                    player2.setScore(player2.getScore() + 1);
                 }
 
                 playing = (playAgain());
