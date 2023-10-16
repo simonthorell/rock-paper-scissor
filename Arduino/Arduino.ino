@@ -201,6 +201,9 @@ void getKeypadPress(char c){
                 Serial.println(0xff);
                 awaitPlayAgain = false;
                 waitForCountdown = true;
+                lcd.clear();
+                lcd.print("Playing again!");
+
             }else{
                 selected = rockFlag;
                 printSelection(rock);
