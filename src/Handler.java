@@ -69,7 +69,7 @@ public class Handler {
 
                 gui.gotBothPlayersRobbanFix();
 
-                while ((gui.pScore < 3) && (gui.cScore < 3)) {
+                while ((gui.pScore < 2) && (gui.cScore < 2)) {
                     MqttPlayer.countDownAndThrow(countDownMsg);
                 
                     player1.setPlayerMove(player1.mqttPlayer().getMove());
